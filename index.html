@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShallotWHAM Dual-Engine Synth Station</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="cyber-scanline"></div>
+    <div class="cyber-grid"></div>
+
+    <header class="app-header">
+        <div class="logo">
+            <span class="neon-text-blue">Shallot</span><span class="neon-text-pink">WHAM</span>
+            <span class="badge">V1.0</span>
+        </div>
+
+        <div class="header-controls">
+            <div class="config-row" style="display: flex; align-items: center; gap: 8px;">
+                <span class="label"
+                    style="font-size: 0.75rem; color: var(--text-muted); font-family: 'Orbitron', sans-serif;">SYNTH
+                    VOL:</span>
+                <input type="range" id="synth-volume" min="0" max="100" value="75" class="cyber-slider"
+                    style="width: 100px;">
+            </div>
+            <div class="config-row visualizer-row"
+                style="margin-left: 20px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 20px; display: flex; align-items: center; gap: 10px;">
+                <span class="label"
+                    style="font-size: 0.75rem; color: var(--text-muted); font-family: 'Orbitron', sans-serif;">SCOPE:</span>
+                <div class="visualizer-container-mini"
+                    style="width: 180px; height: 35px; background: #03030c; border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 4px; overflow: hidden; position: relative;">
+                    <canvas id="audio-visualizer" style="width: 100%; height: 100%; display: block;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-indicator">
+            <span class="status-dot green"></span>
+            <span class="status-text text-glow">ENGINE ACTIVE</span>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- KEYBOARD INTERFACE -->
+        <section class="panel keyboard-panel">
+            <div class="panel-header">
+                <h2><span class="icon">🎹</span> DUAL-SYNTH WORKSTATION &bull; LEAD (ROWS 0-1) &amp; BASS (ROWS 2-3)
+                </h2>
+            </div>
+            <div class="panel-content">
+                <!-- microKORG & Bass Synth Engine Control Dashboard -->
+                <div class="microkorg-board dual-engine-board">
+                    <!-- Left: Dedicated Lead Synth Engine Section -->
+                    <div class="korg-section lead-engine-section">
+                        <div class="korg-sub-label lead-sub-label">⚡ LEAD SYNTH &bull; PRO MATRIX</div>
+                        <div class="lead-engine-content">
+                            <div class="lead-preset-display-row">
+                                <div class="lead-led-display" id="lead-display-num">LEAD 1</div>
+                                <div class="lead-lcd-name" id="lead-display-name">TRANCE SAW LEAD</div>
+                            </div>
+
+                            <!-- Lead Preset Buttons -->
+                            <div class="lead-presets-grid">
+                                <button class="lead-preset-btn active" data-lead-preset="0">TRANCE SAW</button>
+                                <button class="lead-preset-btn" data-lead-preset="1">CHIPTUNE</button>
+                                <button class="lead-preset-btn" data-lead-preset="2">80s BRASS</button>
+                                <button class="lead-preset-btn" data-lead-preset="3">CYBERPUNK</button>
+                                <button class="lead-preset-btn" data-lead-preset="4">G-FUNK SINE</button>
+                                <button class="lead-preset-btn" data-lead-preset="5">HYPER PLUCK</button>
+                                <button class="lead-preset-btn" data-lead-preset="6">VOCO LEAD</button>
+                                <button class="lead-preset-btn" data-lead-preset="7">RAVE HOOVER</button>
+                            </div>
+
+                            <!-- Lead Controls Sliders -->
+                            <div class="lead-controls-grid">
+                                <div class="lead-control-item">
+                                    <label class="label">CUTOFF: <span id="lead-val-cutoff">3500Hz</span></label>
+                                    <input type="range" id="lead-cutoff" min="100" max="12000" value="3500"
+                                        class="cyber-slider lead-slider">
+                                </div>
+                                <div class="lead-control-item">
+                                    <label class="label">RESO: <span id="lead-val-reso">1.5</span></label>
+                                    <input type="range" id="lead-reso" min="0.1" max="15" step="0.1" value="1.5"
+                                        class="cyber-slider lead-slider">
+                                </div>
+                                <div class="lead-control-item">
+                                    <label class="label">ATTACK: <span id="lead-val-attack">0.01s</span></label>
+                                    <input type="range" id="lead-attack" min="0.001" max="2" step="0.01" value="0.01"
+                                        class="cyber-slider lead-slider">
+                                </div>
+                                <div class="lead-control-item">
+                                    <label class="label">RELEASE: <span id="lead-val-release">0.25s</span></label>
+                                    <input type="range" id="lead-release" min="0.05" max="4" step="0.05" value="0.25"
+                                        class="cyber-slider lead-slider">
+                                </div>
+                                <div class="lead-control-item">
+                                    <label class="label">POLY: <span id="lead-val-polyphony">4</span></label>
+                                    <input type="range" id="lead-polyphony" min="1" max="6" step="1" value="4"
+                                        class="cyber-slider lead-slider">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Dedicated Bassline Engine Section -->
+                    <div class="korg-section bassline-section">
+                        <div class="korg-sub-label bass-sub-label">🔊 BASSLINE ENGINE &bull; SUB-SYNTH MATRIX</div>
+                        <div class="bass-engine-content">
+                            <div class="bass-preset-display-row">
+                                <div class="bass-led-display" id="bass-display-num">BASS 1</div>
+                                <div class="bass-lcd-name" id="bass-display-name">ACID 303 SAW</div>
+                            </div>
+
+                            <!-- Bass Preset Buttons -->
+                            <div class="bass-presets-grid">
+                                <button class="bass-preset-btn active" data-bass-preset="0">303 ACID</button>
+                                <button class="bass-preset-btn" data-bass-preset="1">DEEP SUB</button>
+                                <button class="bass-preset-btn" data-bass-preset="2">FAT REESE</button>
+                                <button class="bass-preset-btn" data-bass-preset="3">FM PUNCH</button>
+                                <button class="bass-preset-btn" data-bass-preset="4">SLAP SQR</button>
+                                <button class="bass-preset-btn" data-bass-preset="5">80s ANALOG</button>
+                                <button class="bass-preset-btn" data-bass-preset="6">WARM MOOG</button>
+                                <button class="bass-preset-btn" data-bass-preset="7">SUB DROP</button>
+                            </div>
+
+                            <!-- Bass Controls Sliders -->
+                            <div class="bass-controls-grid">
+                                <div class="bass-control-item">
+                                    <label class="label">CUTOFF: <span id="bass-val-cutoff">1200Hz</span></label>
+                                    <input type="range" id="bass-cutoff" min="100" max="4500" value="1200"
+                                        class="cyber-slider bass-slider">
+                                </div>
+                                <div class="bass-control-item">
+                                    <label class="label">RESO: <span id="bass-val-reso">6.0</span></label>
+                                    <input type="range" id="bass-reso" min="0.5" max="12" step="0.5" value="6.0"
+                                        class="cyber-slider bass-slider">
+                                </div>
+                                <div class="bass-control-item">
+                                    <label class="label">SUB MIX: <span id="bass-val-sub">50%</span></label>
+                                    <input type="range" id="bass-sub-mix" min="0" max="100" value="50"
+                                        class="cyber-slider bass-slider">
+                                </div>
+                                <div class="bass-control-item">
+                                    <label class="label">BASS VOL: <span id="bass-val-vol">85%</span></label>
+                                    <input type="range" id="bass-volume" min="0" max="100" value="85"
+                                        class="cyber-slider bass-slider">
+                                </div>
+                                <div class="bass-control-item">
+                                    <label class="label">POLY: <span id="bass-val-polyphony">3</span></label>
+                                    <input type="range" id="bass-polyphony" min="1" max="6" step="1" value="3"
+                                        class="cyber-slider bass-slider">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Keyboard Key Layout Visuals with Dual Instrument Sections & Dedicated Mini Pedal Racks -->
+                <div class="virtual-keyboard-wrapper" style="margin-top: 10px;">
+                    <!-- 1. Lead Keyboard Section -->
+                    <div class="keyboard-section lead-keyboard-section">
+                        <div class="kb-section-top-bar">
+                            <div class="kb-section-badge lead-badge">⚡ LEAD SYNTH (ROWS 0 &amp; 1)</div>
+
+                            <!-- Inline Key Config: Row 0 & Row 1 Root and Octave -->
+                            <div class="kb-inline-config lead-inline-config">
+                                <div class="cfg-item">
+                                    <span class="cfg-lbl">ROW 0 (1):</span>
+                                    <select id="row0-root" class="cyber-select-mini">
+                                        <option value="C">C</option>
+                                        <option value="C#">C#</option>
+                                        <option value="D">D</option>
+                                        <option value="D#">D#</option>
+                                        <option value="E">E</option>
+                                        <option value="F">F</option>
+                                        <option value="F#">F#</option>
+                                        <option value="G" selected>G</option>
+                                        <option value="G#">G#</option>
+                                        <option value="A">A</option>
+                                        <option value="A#">A#</option>
+                                        <option value="B">B</option>
+                                    </select>
+                                    <select id="row0-octave" class="cyber-select-mini">
+                                        <option value="1">Oct 1</option>
+                                        <option value="2">Oct 2</option>
+                                        <option value="3" selected>Oct 3</option>
+                                        <option value="4">Oct 4</option>
+                                        <option value="5">Oct 5</option>
+                                    </select>
+                                </div>
+                                <div class="cfg-divider"></div>
+                                <div class="cfg-item">
+                                    <span class="cfg-lbl">ROW 1 (Q):</span>
+                                    <select id="row1-root" class="cyber-select-mini">
+                                        <option value="C">C</option>
+                                        <option value="C#">C#</option>
+                                        <option value="D" selected>D</option>
+                                        <option value="D#">D#</option>
+                                        <option value="E">E</option>
+                                        <option value="F">F</option>
+                                        <option value="F#">F#</option>
+                                        <option value="G">G</option>
+                                        <option value="G#">G#</option>
+                                        <option value="A">A</option>
+                                        <option value="A#">A#</option>
+                                        <option value="B">B</option>
+                                    </select>
+                                    <select id="row1-octave" class="cyber-select-mini">
+                                        <option value="1">Oct 1</option>
+                                        <option value="2">Oct 2</option>
+                                        <option value="3" selected>Oct 3</option>
+                                        <option value="4">Oct 4</option>
+                                        <option value="5">Oct 5</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Lead Independent Octave Shift & Configurable Hotkeys -->
+                            <div class="instrument-octave-control lead-octave-control">
+                                <span class="oct-ctrl-label">LEAD OCTAVE:</span>
+                                <button class="cyber-oct-btn lead-oct-btn" id="lead-btn-oct-down"
+                                    title="Lead Octave Down">
+                                    <span class="oct-arrow">▼</span>
+                                    <span class="oct-key-tag" id="bind-lead-oct-down"
+                                        title="Click badge to rebind hotkey">F7</span>
+                                </button>
+                                <div class="octave-mini-leds">
+                                    <span class="oct-led" id="lead-oct-down-2">-2</span>
+                                    <span class="oct-led" id="lead-oct-down-1">-1</span>
+                                    <span class="oct-led active" id="lead-oct-normal">0</span>
+                                    <span class="oct-led" id="lead-oct-up-1">+1</span>
+                                    <span class="oct-led" id="lead-oct-up-2">+2</span>
+                                </div>
+                                <button class="cyber-oct-btn lead-oct-btn" id="lead-btn-oct-up" title="Lead Octave Up">
+                                    <span class="oct-arrow">▲</span>
+                                    <span class="oct-key-tag" id="bind-lead-oct-up"
+                                        title="Click badge to rebind hotkey">F8</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Main Row: Virtual Keys on Left + 4-Pedal FX Rack on Right -->
+                        <div class="keyboard-main-row">
+                            <div class="virtual-keyboard">
+                                <div class="kb-row" id="kb-row-0">
+                                    <!-- Filled by JS -->
+                                </div>
+                                <div class="kb-row" id="kb-row-1">
+                                    <!-- Filled by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Lead Dedicated 4-Pedal Mini FX Rack -->
+                            <div class="mini-pedal-rack lead-pedal-rack">
+                                <!-- 1. Lead DS-1 Distortion -->
+                                <div class="mini-pedal pedal-ds1">
+                                    <div class="mini-pedal-header">
+                                        <span class="mini-pedal-led" id="lead-ds1-led"></span>
+                                        <span class="mini-pedal-name">DS-1 DIST</span>
+                                    </div>
+                                    <div class="mini-pedal-body">
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">DIST</span>
+                                            <input type="range" id="lead-ds1-dist" min="1" max="100" value="50"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">TONE</span>
+                                            <input type="range" id="lead-ds1-tone" min="200" max="8000" value="2500"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">LVL</span>
+                                            <input type="range" id="lead-ds1-level" min="0" max="100" value="65"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                    </div>
+                                    <button class="mini-pedal-footswitch" id="lead-ds1-toggle">
+                                        <span>ON/OFF</span>
+                                        <span class="pedal-bind-tag" id="bind-lead-ds1" title="Click to rebind">`</span>
+                                    </button>
+                                </div>
+
+                                <!-- 2. Lead PS-6 Harmonist -->
+                                <div class="mini-pedal pedal-ps6">
+                                    <div class="mini-pedal-header">
+                                        <span class="mini-pedal-led" id="lead-ps6-led"></span>
+                                        <span class="mini-pedal-name">PS-6 HARM</span>
+                                    </div>
+                                    <div class="mini-pedal-body">
+                                        <div class="mini-pedal-row">
+                                            <select id="lead-ps6-key" class="cyber-select-micro">
+                                                <option value="C" selected>C</option>
+                                                <option value="C#">C#</option>
+                                                <option value="D">D</option>
+                                                <option value="D#">D#</option>
+                                                <option value="E">E</option>
+                                                <option value="F">F</option>
+                                                <option value="F#">F#</option>
+                                                <option value="G">G</option>
+                                                <option value="G#">G#</option>
+                                                <option value="A">A</option>
+                                                <option value="A#">A#</option>
+                                                <option value="B">B</option>
+                                            </select>
+                                            <select id="lead-ps6-scale" class="cyber-select-micro">
+                                                <option value="major" selected>Maj</option>
+                                                <option value="minor">Min</option>
+                                            </select>
+                                        </div>
+                                        <div class="mini-pedal-row">
+                                            <select id="lead-ps6-interval" class="cyber-select-micro"
+                                                style="width: 100%;">
+                                                <option value="3rd" selected>+3rd (Diatonic)</option>
+                                                <option value="5th">+5th (Diatonic)</option>
+                                                <option value="oct">+Octave</option>
+                                                <option value="oct-down">-Octave</option>
+                                                <option value="triad">3rd+5th Triad</option>
+                                            </select>
+                                        </div>
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">MIX</span>
+                                            <input type="range" id="lead-ps6-mix" min="0" max="100" value="50"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                    </div>
+                                    <button class="mini-pedal-footswitch" id="lead-ps6-toggle">
+                                        <span>ON/OFF</span>
+                                        <span class="pedal-bind-tag" id="bind-lead-ps6" title="Click to rebind">\</span>
+                                    </button>
+                                </div>
+
+                                <!-- 3. Lead Stereo Delay -->
+                                <div class="mini-pedal pedal-delay">
+                                    <div class="mini-pedal-header">
+                                        <span class="mini-pedal-led" id="lead-delay-led"></span>
+                                        <span class="mini-pedal-name">DELAY</span>
+                                    </div>
+                                    <div class="mini-pedal-body">
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">TIME</span>
+                                            <input type="range" id="lead-delay-time" min="50" max="1000" value="380"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">FDBK</span>
+                                            <input type="range" id="lead-delay-fdbk" min="0" max="85" value="40"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">MIX</span>
+                                            <input type="range" id="lead-delay-mix" min="0" max="100" value="45"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                    </div>
+                                    <button class="mini-pedal-footswitch" id="lead-delay-toggle">
+                                        <span>ON/OFF</span>
+                                        <span class="pedal-bind-tag" id="bind-lead-delay"
+                                            title="Click to rebind">F10</span>
+                                    </button>
+                                </div>
+
+                                <!-- 4. Lead Convolver Reverb -->
+                                <div class="mini-pedal pedal-reverb">
+                                    <div class="mini-pedal-header">
+                                        <span class="mini-pedal-led" id="lead-reverb-led"></span>
+                                        <span class="mini-pedal-name">REVERB</span>
+                                    </div>
+                                    <div class="mini-pedal-body">
+                                        <div class="mini-pedal-ctrl" style="margin-top: 10px;">
+                                            <span class="mini-lbl">MIX</span>
+                                            <input type="range" id="lead-reverb-mix" min="0" max="100" value="55"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                    </div>
+                                    <button class="mini-pedal-footswitch" id="lead-reverb-toggle">
+                                        <span>ON/OFF</span>
+                                        <span class="pedal-bind-tag" id="bind-lead-reverb"
+                                            title="Click to rebind">F9</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Bassline Keyboard Section -->
+                    <div class="keyboard-section bass-keyboard-section">
+                        <div class="kb-section-top-bar">
+                            <div class="kb-section-badge bass-badge">🔊 BASSLINE SYNTH (ROWS 2 &amp; 3)</div>
+
+                            <!-- Inline Key Config: Row 2 & Row 3 Root and Octave -->
+                            <div class="kb-inline-config bass-inline-config">
+                                <div class="cfg-item">
+                                    <span class="cfg-lbl">ROW 2 (A):</span>
+                                    <select id="row2-root" class="cyber-select-mini">
+                                        <option value="C">C</option>
+                                        <option value="C#">C#</option>
+                                        <option value="D">D</option>
+                                        <option value="D#">D#</option>
+                                        <option value="E">E</option>
+                                        <option value="F">F</option>
+                                        <option value="F#">F#</option>
+                                        <option value="G" selected>G</option>
+                                        <option value="G#">G#</option>
+                                        <option value="A">A</option>
+                                        <option value="A#">A#</option>
+                                        <option value="B">B</option>
+                                    </select>
+                                    <select id="row2-octave" class="cyber-select-mini">
+                                        <option value="1">Oct 1</option>
+                                        <option value="2" selected>Oct 2</option>
+                                        <option value="3">Oct 3</option>
+                                        <option value="4">Oct 4</option>
+                                        <option value="5">Oct 5</option>
+                                    </select>
+                                </div>
+                                <div class="cfg-divider"></div>
+                                <div class="cfg-item">
+                                    <span class="cfg-lbl">ROW 3 (Z):</span>
+                                    <select id="row3-root" class="cyber-select-mini">
+                                        <option value="C">C</option>
+                                        <option value="C#">C#</option>
+                                        <option value="D" selected>D</option>
+                                        <option value="D#">D#</option>
+                                        <option value="E">E</option>
+                                        <option value="F">F</option>
+                                        <option value="F#">F#</option>
+                                        <option value="G">G</option>
+                                        <option value="G#">G#</option>
+                                        <option value="A">A</option>
+                                        <option value="A#">A#</option>
+                                        <option value="B">B</option>
+                                    </select>
+                                    <select id="row3-octave" class="cyber-select-mini">
+                                        <option value="1">Oct 1</option>
+                                        <option value="2" selected>Oct 2</option>
+                                        <option value="3">Oct 3</option>
+                                        <option value="4">Oct 4</option>
+                                        <option value="5">Oct 5</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Bass Independent Octave Shift & Configurable Hotkeys -->
+                            <div class="instrument-octave-control bass-octave-control">
+                                <span class="oct-ctrl-label">BASS OCTAVE:</span>
+                                <button class="cyber-oct-btn bass-oct-btn" id="bass-btn-oct-down"
+                                    title="Bass Octave Down">
+                                    <span class="oct-arrow">▼</span>
+                                    <span class="oct-key-tag" id="bind-bass-oct-down"
+                                        title="Click badge to rebind hotkey">F5</span>
+                                </button>
+                                <div class="octave-mini-leds">
+                                    <span class="oct-led" id="bass-oct-down-2">-2</span>
+                                    <span class="oct-led" id="bass-oct-down-1">-1</span>
+                                    <span class="oct-led active" id="bass-oct-normal">0</span>
+                                    <span class="oct-led" id="bass-oct-up-1">+1</span>
+                                    <span class="oct-led" id="bass-oct-up-2">+2</span>
+                                </div>
+                                <button class="cyber-oct-btn bass-oct-btn" id="bass-btn-oct-up" title="Bass Octave Up">
+                                    <span class="oct-arrow">▲</span>
+                                    <span class="oct-key-tag" id="bind-bass-oct-up"
+                                        title="Click badge to rebind hotkey">F6</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Main Row: Virtual Keys on Left + 4-Pedal FX Rack on Right -->
+                        <div class="keyboard-main-row">
+                            <div class="virtual-keyboard">
+                                <div class="kb-row" id="kb-row-2">
+                                    <!-- Filled by JS -->
+                                </div>
+                                <div class="kb-row" id="kb-row-3">
+                                    <!-- Filled by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Bass Dedicated 4-Pedal Mini FX Rack -->
+                            <div class="mini-pedal-rack bass-pedal-rack">
+                                <!-- 1. Bass DS-1 Overdrive -->
+                                <div class="mini-pedal pedal-ds1 bass-theme">
+                                    <div class="mini-pedal-header">
+                                        <span class="mini-pedal-led" id="bass-ds1-led"></span>
+                                        <span class="mini-pedal-name">BASS DS-1</span>
+                                    </div>
+                                    <div class="mini-pedal-body">
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">DRIVE</span>
+                                            <input type="range" id="bass-ds1-dist" min="1" max="100" value="45"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">TONE</span>
+                                            <input type="range" id="bass-ds1-tone" min="100" max="4000" value="900"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">LVL</span>
+                                            <input type="range" id="bass-ds1-level" min="0" max="100" value="70"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                    </div>
+                                    <button class="mini-pedal-footswitch" id="bass-ds1-toggle">
+                                        <span>ON/OFF</span>
+                                        <span class="pedal-bind-tag" id="bind-bass-ds1"
+                                            title="Click to rebind">F1</span>
+                                    </button>
+                                </div>
+
+                                <!-- 2. Bass PS-6 Harmonizer / Sub Octaver -->
+                                <div class="mini-pedal pedal-ps6 bass-theme">
+                                    <div class="mini-pedal-header">
+                                        <span class="mini-pedal-led" id="bass-ps6-led"></span>
+                                        <span class="mini-pedal-name">BASS PS-6</span>
+                                    </div>
+                                    <div class="mini-pedal-body">
+                                        <div class="mini-pedal-row">
+                                            <select id="bass-ps6-key" class="cyber-select-micro">
+                                                <option value="C" selected>C</option>
+                                                <option value="C#">C#</option>
+                                                <option value="D">D</option>
+                                                <option value="D#">D#</option>
+                                                <option value="E">E</option>
+                                                <option value="F">F</option>
+                                                <option value="F#">F#</option>
+                                                <option value="G">G</option>
+                                                <option value="G#">G#</option>
+                                                <option value="A">A</option>
+                                                <option value="A#">A#</option>
+                                                <option value="B">B</option>
+                                            </select>
+                                            <select id="bass-ps6-scale" class="cyber-select-micro">
+                                                <option value="minor" selected>Min</option>
+                                                <option value="major">Maj</option>
+                                            </select>
+                                        </div>
+                                        <div class="mini-pedal-row">
+                                            <select id="bass-ps6-interval" class="cyber-select-micro"
+                                                style="width: 100%;">
+                                                <option value="oct-down" selected>-1 Oct Sub</option>
+                                                <option value="5th">+5th Power</option>
+                                                <option value="oct">+1 Oct</option>
+                                                <option value="3rd">+3rd Min/Maj</option>
+                                                <option value="triad">Power Triad</option>
+                                            </select>
+                                        </div>
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">MIX</span>
+                                            <input type="range" id="bass-ps6-mix" min="0" max="100" value="60"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                    </div>
+                                    <button class="mini-pedal-footswitch" id="bass-ps6-toggle">
+                                        <span>ON/OFF</span>
+                                        <span class="pedal-bind-tag" id="bind-bass-ps6"
+                                            title="Click to rebind">F2</span>
+                                    </button>
+                                </div>
+
+                                <!-- 3. Bass Delay -->
+                                <div class="mini-pedal pedal-delay bass-theme">
+                                    <div class="mini-pedal-header">
+                                        <span class="mini-pedal-led" id="bass-delay-led"></span>
+                                        <span class="mini-pedal-name">BASS DLY</span>
+                                    </div>
+                                    <div class="mini-pedal-body">
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">TIME</span>
+                                            <input type="range" id="bass-delay-time" min="50" max="1000" value="280"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">FDBK</span>
+                                            <input type="range" id="bass-delay-fdbk" min="0" max="80" value="30"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                        <div class="mini-pedal-ctrl">
+                                            <span class="mini-lbl">MIX</span>
+                                            <input type="range" id="bass-delay-mix" min="0" max="100" value="35"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                    </div>
+                                    <button class="mini-pedal-footswitch" id="bass-delay-toggle">
+                                        <span>ON/OFF</span>
+                                        <span class="pedal-bind-tag" id="bind-bass-delay"
+                                            title="Click to rebind">F3</span>
+                                    </button>
+                                </div>
+
+                                <!-- 4. Bass Reverb -->
+                                <div class="mini-pedal pedal-reverb bass-theme">
+                                    <div class="mini-pedal-header">
+                                        <span class="mini-pedal-led" id="bass-reverb-led"></span>
+                                        <span class="mini-pedal-name">BASS REV</span>
+                                    </div>
+                                    <div class="mini-pedal-body">
+                                        <div class="mini-pedal-ctrl" style="margin-top: 10px;">
+                                            <span class="mini-lbl">MIX</span>
+                                            <input type="range" id="bass-reverb-mix" min="0" max="100" value="40"
+                                                class="cyber-slider-mini">
+                                        </div>
+                                    </div>
+                                    <button class="mini-pedal-footswitch" id="bass-reverb-toggle">
+                                        <span>ON/OFF</span>
+                                        <span class="pedal-bind-tag" id="bind-bass-reverb"
+                                            title="Click to rebind">F4</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <!-- XBOX CONTROLLER & DRUM MACHINE & PEDALBOARD -->
+        <section class="bottom-row">
+            <div class="panel xbox-panel">
+                <div class="panel-header">
+                    <h2><span class="icon">🎮</span> XBOX CONTROLLER BRIDGE</h2>
+                    <div class="controller-status" id="controller-status">DISCONNECTED</div>
+                </div>
+                <div class="panel-content controller-dashboard">
+                    <div class="ctrl-grid">
+                        <div class="ctrl-item">
+                            <div class="label">PITCH BEND (R-JOYSTICK)</div>
+                            <div class="joy-visualizer">
+                                <div class="joy-dot" id="r-joy-dot"></div>
+                            </div>
+                            <div class="value" id="r-joy-val">Y: 0.00</div>
+                        </div>
+
+                        <div class="ctrl-item">
+                            <div class="label">BEND RANGE LIMITS</div>
+                            <div class="range-display" id="bend-range-display">
+                                UP: +1 Oct (RT/RB) | DOWN: -1 Oct (LT/LB)
+                            </div>
+                            <div class="sub-label">RT/LT: +Oct | RB/LB: -Oct</div>
+                        </div>
+
+                        <div class="ctrl-item">
+                            <div class="label">TREMOLO (L-JOYSTICK)</div>
+                            <div class="tremolo-visualizer">
+                                <div class="tremolo-bar" id="tremolo-bar"></div>
+                            </div>
+                            <div class="value" id="l-joy-val">X: 0.00</div>
+                        </div>
+
+                        <div class="ctrl-item buttons-panel">
+                            <div class="label">EFFECT STATUS</div>
+                            <div class="fx-indicators">
+                                <div class="fx-indicator" id="fx-reverb" title="Click to toggle Reverb">
+                                    <span>REVERB (Y)</span>
+                                    <span class="fx-key-tag" id="bind-fx-reverb"
+                                        title="Click to rebind hotkey">F9</span>
+                                </div>
+                                <div class="fx-indicator" id="fx-delay" title="Click to toggle Delay">
+                                    <span>DELAY (X)</span>
+                                    <span class="fx-key-tag" id="bind-fx-delay"
+                                        title="Click to rebind hotkey">F10</span>
+                                </div>
+                            </div>
+                            <div class="btn-actions">
+                                <span class="action-btn" id="btn-a-tap">A: TAP TEMPO</span>
+                                <span class="action-btn" id="btn-b-cancel">B: FX CANCEL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+    <footer class="app-footer">
+        <div>ShallotWHAM Dual-Engine Synth Station &bull; Built for Performance by Shallot &bull; Click anywhere to enable Audio</div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

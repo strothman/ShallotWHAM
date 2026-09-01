@@ -1,0 +1,33 @@
+{
+  "name": "shallotwham",
+  "version": "1.0.0",
+  "description": "ShallotWHAM Dual-Engine Synth & Whammy Station",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable"
+  },
+  "author": "Shallot",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^35.7.5",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.shallot.shallotwham",
+    "productName": "ShallotWHAM",
+    "win": {
+      "target": "portable",
+      "icon": "icon.ico"
+    },
+    "files": [
+      "main.js",
+      "index.html",
+      "style.css",
+      "app.js"
+    ],
+    "portable": {
+      "artifactName": "ShallotWHAM.exe"
+    }
+  }
+}
