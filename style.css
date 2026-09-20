@@ -1,4 +1,10 @@
-:root {
+@import 'shallot-theme.css';
+
+/* ----------------------------------------------------
+   THEME DEFINITIONS & DESIGN TOKENS
+---------------------------------------------------- */
+:root,
+[data-theme="cyber"] {
     --bg-primary: #041216;
     --bg-secondary: #081d22;
     --border-color: #14353d;
@@ -10,6 +16,25 @@
     --shadow-blue: 0 0 10px rgba(14, 165, 233, 0.3);
     --shadow-pink: 0 0 10px rgba(0, 180, 216, 0.3);
     --panel-bg: rgba(8, 29, 34, 0.85);
+    --header-bg: rgba(4, 18, 22, 0.95);
+    --grid-line: rgba(20, 53, 61, 0.1);
+}
+
+[data-theme="shallot"],
+[data-theme="shallot-plum"] {
+    --bg-primary: var(--shallot-bg-app, #180d21);
+    --bg-secondary: #221230;
+    --border-color: var(--shallot-border, rgba(212, 130, 68, 0.22));
+    --accent-blue: var(--shallot-primary, #d48244);      /* Warm Copper Glow */
+    --accent-pink: var(--shallot-accent, #f39c12);       /* Golden Core Glow */
+    --accent-green: var(--shallot-success, #2ecc71);     /* Sprout Green */
+    --text-main: var(--shallot-text-main, #f5eff9);      /* Lilac-White */
+    --text-muted: var(--shallot-text-muted, #bda8c7);    /* Lavender Grey */
+    --shadow-blue: 0 0 12px rgba(212, 130, 68, 0.45);
+    --shadow-pink: 0 0 12px rgba(243, 156, 18, 0.45);
+    --panel-bg: rgba(38, 21, 51, 0.88);
+    --header-bg: var(--shallot-bg-header, rgba(38, 21, 51, 0.95));
+    --grid-line: rgba(212, 130, 68, 0.08);
 }
 
 * {
@@ -27,6 +52,12 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+[data-theme="shallot"] body,
+[data-theme="shallot-plum"] body {
+    font-family: 'Outfit', 'Inter', sans-serif;
 }
 
 /* SCANLINE & GRID BACKGROUND */
@@ -41,11 +72,12 @@ body {
     width: 100vw;
     height: 100vh;
     background-image: 
-        linear-gradient(to right, rgba(20, 53, 61, 0.1) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(20, 53, 61, 0.1) 1px, transparent 1px);
+        linear-gradient(to right, var(--grid-line, rgba(20, 53, 61, 0.1)) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line, rgba(20, 53, 61, 0.1)) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
     z-index: -1;
+    transition: background-image 0.25s ease;
 }
 
 /* HEADER */
@@ -55,9 +87,10 @@ body {
     align-items: center;
     padding: 15px 30px;
     border-bottom: 2px solid var(--border-color);
-    background-color: rgba(4, 18, 22, 0.95);
+    background-color: var(--header-bg, rgba(4, 18, 22, 0.95));
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
     z-index: 10;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .header-controls {
@@ -618,9 +651,9 @@ body {
 /* MINI PEDALBOARD RACK */
 .mini-pedal-rack {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    width: 420px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+    width: 520px;
     background: rgba(10, 10, 20, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
@@ -645,15 +678,67 @@ body {
     background: #14141e;
     border: 2px solid #2e2e42;
     border-radius: 6px;
-    padding: 5px 4px;
+    padding: 5px 3px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
     position: relative;
     transition: all 0.2s ease;
 }
 
+.mini-pedal.modular-pedal {
+    background: linear-gradient(180deg, #181926 0%, #0d0e17 100%);
+    min-width: 82px;
+}
+
+.cartridge-select {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 900;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-main, #fff);
+    border-radius: 3px;
+    padding: 1px 3px;
+    width: 100%;
+    outline: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s ease;
+}
+
+.cartridge-select:focus {
+    border-color: var(--accent-blue, #00e5ff);
+    box-shadow: 0 0 5px rgba(0, 229, 255, 0.4);
+}
+
+.cartridge-select optgroup {
+    background: #11121c;
+    color: #00e5ff;
+    font-weight: bold;
+    font-size: 0.6rem;
+}
+
+.cartridge-select option {
+    background: #0b0c13;
+    color: #eee;
+    font-size: 0.65rem;
+}
+
+.mini-pedal-ctrl .mini-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--text-muted, #aaa);
+    min-width: 20px;
+    text-align: right;
+}
+
 .mini-pedal.pedal-ds1 {
     background: linear-gradient(180deg, #301602 0%, #170a01 100%);
     border-color: #d97706;
+}
+
+.mini-pedal.pedal-crush {
+    background: linear-gradient(180deg, #2a0b3d 0%, #12041a 100%);
+    border-color: #a855f7;
 }
 
 .mini-pedal.pedal-ps6 {
@@ -676,6 +761,11 @@ body {
     border-color: #b45309;
 }
 
+.mini-pedal.bass-theme.pedal-crush {
+    background: linear-gradient(180deg, #381204 0%, #160601 100%);
+    border-color: #ea580c;
+}
+
 .mini-pedal.bass-theme.pedal-ps6 {
     background: linear-gradient(180deg, #181e36 0%, #090c1a 100%);
     border-color: #3b82f6;
@@ -689,6 +779,26 @@ body {
 .mini-pedal.bass-theme.pedal-reverb {
     background: linear-gradient(180deg, #2c122e 0%, #130514 100%);
     border-color: #a855f7;
+}
+
+.pedal-crush .mini-pedal-led.active {
+    background: #c084fc;
+    border-color: #f3e8ff;
+    box-shadow: 0 0 8px #c084fc;
+}
+
+.bass-theme.pedal-crush .mini-pedal-led.active {
+    background: #f97316;
+    border-color: #ffedd5;
+    box-shadow: 0 0 8px #f97316;
+}
+
+.pedal-crush .cyber-slider-mini::-webkit-slider-thumb {
+    background: #c084fc;
+}
+
+.bass-theme.pedal-crush .cyber-slider-mini::-webkit-slider-thumb {
+    background: #f97316;
 }
 
 .mini-pedal-header {
@@ -830,15 +940,16 @@ body {
 .mini-pedal-footswitch {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
     border: 1px solid #64748b;
     border-radius: 4px;
     color: #f1f5f9;
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.58rem;
+    font-size: 0.62rem;
     font-weight: 700;
-    padding: 4px 6px;
+    letter-spacing: 0.05em;
+    padding: 5px 8px;
     margin-top: 5px;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -1503,6 +1614,638 @@ body {
     animation: pulse 1s infinite alternate;
 }
 
+/* SOUND BANK SELECTOR BAR */
+.sound-bank-bar {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.bank-selector-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.bank-title-badge {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 900;
+    color: var(--accent-blue);
+    letter-spacing: 1px;
+    text-shadow: 0 0 6px var(--shadow-blue);
+}
+
+.bank-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.bank-tab {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.bank-tab:hover {
+    color: var(--text-main);
+    border-color: var(--accent-blue);
+    transform: translateY(-1px);
+}
+
+.bank-tab.active {
+    background: var(--accent-blue);
+    color: var(--bg-primary);
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 10px var(--shadow-blue);
+    font-weight: 900;
+}
+
+.bank-patch-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.bank-action-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.bank-action-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: var(--accent-blue);
+    transform: translateY(-1px);
+}
+
+.fx-master-btn {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.fx-master-btn.bypassed {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #ef4444;
+    text-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+}
+
+/* Module Manager & Top Bar QoL Actions */
+.module-manager-btn {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: #3b82f6;
+    color: #60a5fa;
+}
+
+.module-manager-btn:hover {
+    background: rgba(59, 130, 246, 0.35);
+    border-color: #60a5fa;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
+
+.panic-btn {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #ef4444;
+    color: #f87171;
+    font-weight: 900;
+}
+
+.panic-btn:hover {
+    background: #ef4444;
+    color: #fff;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+    transform: translateY(-1px);
+}
+
+.panic-btn:active {
+    background: #b91c1c;
+    transform: scale(0.96);
+}
+
+.polyphony-counter {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: bold;
+    color: var(--accent-blue);
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    letter-spacing: 0.5px;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.module-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.module-tab .slot-num {
+    opacity: 0.75;
+    font-size: 0.68rem;
+}
+
+.module-tab .slot-name {
+    font-weight: bold;
+}
+
+/* ==================================================== */
+/* PROPRIETARY SOUND MODULE MANAGER MODAL               */
+/* ==================================================== */
+.module-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 6, 12, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1.0); }
+}
+
+.module-modal-dialog {
+    background: var(--bg-primary, #0c0d14);
+    border: 1px solid var(--accent-blue, #00e5ff);
+    border-radius: 10px;
+    width: 92%;
+    max-width: 780px;
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: 0 0 35px rgba(0, 229, 255, 0.22);
+    display: flex;
+    flex-direction: column;
+}
+
+.module-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.module-modal-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: var(--accent-blue, #00e5ff);
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-shadow: 0 0 8px var(--shadow-blue, rgba(0, 229, 255, 0.4));
+}
+
+.module-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.15s ease;
+}
+
+.module-modal-close:hover {
+    color: var(--accent-pink, #ff0055);
+}
+
+.module-modal-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.module-modal-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.module-modal-desc strong {
+    color: var(--text-main);
+}
+
+.module-slots-config-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.slot-config-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    flex-wrap: wrap;
+    transition: border-color 0.15s ease;
+}
+
+.slot-config-row:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.slot-badge {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 900;
+    color: var(--accent-blue, #00e5ff);
+    background: rgba(0, 229, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    min-width: 58px;
+    text-align: center;
+}
+
+.slot-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 170px;
+}
+
+.slot-loaded-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.88rem;
+    font-weight: bold;
+    color: var(--text-main);
+}
+
+.slot-loaded-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+}
+
+.slot-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.slot-module-select {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 5px 8px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+.slot-module-select:focus {
+    border-color: var(--accent-blue);
+}
+
+.module-dropzone {
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 20px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.module-dropzone:hover,
+.module-dropzone.drag-over {
+    border-color: var(--accent-blue, #00e5ff);
+    background: rgba(0, 229, 255, 0.06);
+    transform: translateY(-1px);
+}
+
+.dropzone-icon {
+    font-size: 1.8rem;
+}
+
+.dropzone-text {
+    font-size: 0.85rem;
+    color: var(--text-main);
+}
+
+.dropzone-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.module-modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* SOUND BANK VAULT / LIBRARY BROWSER */
+.module-vault-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.module-vault-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.module-vault-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--accent-blue, #00e5ff);
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.vault-search-box input {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+    color: var(--text-main, #fff);
+    padding: 4px 10px;
+    border-radius: 4px;
+    width: 170px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.vault-search-box input:focus {
+    border-color: var(--accent-blue, #00e5ff);
+    box-shadow: 0 0 6px rgba(0, 229, 255, 0.3);
+}
+
+.module-vault-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 10px;
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.vault-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.vault-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.vault-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+}
+
+.vault-card-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 900;
+    color: var(--text-main, #fff);
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.vault-category-badge {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: rgba(0, 229, 255, 0.12);
+    color: var(--accent-blue, #00e5ff);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    white-space: nowrap;
+}
+
+.vault-card-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted, #888);
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.vault-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.vault-tag {
+    font-size: 0.6rem;
+    font-family: 'Share Tech Mono', monospace;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted, #aaa);
+    padding: 1px 5px;
+    border-radius: 3px;
+}
+
+.vault-slot-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 4px;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.vault-slot-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted, #888);
+    font-weight: bold;
+}
+
+.vault-slot-btn-group {
+    display: flex;
+    gap: 3px;
+}
+
+.vault-slot-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 800;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-main, #eee);
+    padding: 2px 7px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.vault-slot-btn:hover {
+    background: var(--accent-blue, #00e5ff);
+    color: #000;
+    border-color: var(--accent-blue, #00e5ff);
+    box-shadow: 0 0 6px var(--accent-blue, #00e5ff);
+}
+
+.vault-slot-btn.active-slot {
+    background: var(--accent-blue, #00e5ff);
+    color: #000;
+    font-weight: 900;
+    border-color: var(--accent-blue, #00e5ff);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+}
+
+.vault-card-export {
+    background: none;
+    border: none;
+    color: var(--text-muted, #777);
+    font-size: 0.72rem;
+    cursor: pointer;
+    padding: 2px 4px;
+    transition: color 0.15s ease;
+}
+
+.vault-card-export:hover {
+    color: var(--accent-blue, #00e5ff);
+}
+
+/* ARPEGGIATOR INPUTS */
+.arp-input-row {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.arp-latch-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.arp-latch-btn.active {
+    background: var(--accent-green);
+    color: #000;
+    border-color: var(--accent-green);
+    box-shadow: 0 0 8px var(--accent-green);
+    font-weight: 900;
+}
+
+.arp-control-item {
+    grid-column: 1 / -1;
+}
+
+.mute-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 900;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    cursor: pointer;
+    line-height: 1.2;
+    transition: all 0.15s ease;
+}
+
+.mute-btn:hover {
+    color: var(--text-main);
+    border-color: #ef4444;
+}
+
+.mute-btn.active {
+    background: #ef4444 !important;
+    color: #fff !important;
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.8) !important;
+}
+
 /* Dual-Instrument Synth Station Dashboard (Lead Left, Bass Right) */
 .microkorg-board {
     display: grid;
@@ -2079,4 +2822,461 @@ body {
     white-space: nowrap;
     overflow: hidden;
     max-width: 100%;
+}
+
+/* ====================================================
+   THEME SWITCHER CONTROLS (HEADER)
+   ==================================================== */
+.theme-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 4px 10px;
+    transition: all 0.25s ease;
+}
+
+.theme-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.theme-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+.theme-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text-muted);
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.theme-btn:hover {
+    color: var(--text-main);
+    border-color: var(--accent-blue);
+    transform: translateY(-1px);
+}
+
+.theme-btn.active {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--accent-blue);
+    color: var(--text-main);
+    box-shadow: 0 0 10px var(--shadow-blue);
+}
+
+.theme-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.plum-swatch {
+    background: #d48244;
+    border: 1px solid #f39c12;
+    box-shadow: 0 0 5px #d48244;
+}
+
+.cyber-swatch {
+    background: #0ea5e9;
+    border: 1px solid #38bdf8;
+    box-shadow: 0 0 5px #0ea5e9;
+}
+
+/* ====================================================
+   SHALLOT PLUM COMPONENT OVERRIDES & HARMONIZATION
+   ==================================================== */
+[data-theme="shallot"],
+[data-theme="shallot-plum"] {
+    /* Header & Branding */
+    .neon-text-blue {
+        color: #d48244;
+        text-shadow: 0 0 12px rgba(212, 130, 68, 0.6);
+    }
+
+    .neon-text-pink {
+        color: #f39c12;
+        text-shadow: 0 0 8px rgba(243, 156, 18, 0.4);
+    }
+
+    .badge {
+        background: #3d234a;
+        color: #e69150;
+        border-color: rgba(212, 130, 68, 0.4);
+    }
+
+    .header-controls {
+        background: rgba(212, 130, 68, 0.06);
+        border: 1px solid rgba(212, 130, 68, 0.22);
+        box-shadow: 0 0 12px rgba(24, 13, 33, 0.6);
+    }
+
+    .visualizer-container-mini {
+        background: #140b1c !important;
+        border: 1px solid rgba(212, 130, 68, 0.35) !important;
+    }
+
+    .panel-header {
+        background: rgba(74, 29, 106, 0.28);
+    }
+
+    /* MicroKORG Synthesizer Console */
+    .microkorg-board {
+        background: linear-gradient(135deg, #241331 0%, #150b1d 100%);
+        border: 3px solid #3d214f;
+        border-left: 12px solid #5a2e76; /* Royal Shallot Plum Wood Sides */
+        border-right: 12px solid #5a2e76; /* Royal Shallot Plum Wood Sides */
+        box-shadow: inset 0 0 20px rgba(10, 4, 15, 0.9), 0 10px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    .korg-section {
+        background: rgba(20, 10, 28, 0.45);
+        border-color: #3b1d4d;
+    }
+
+    .lead-engine-section {
+        border-color: rgba(212, 130, 68, 0.3);
+        background: rgba(38, 20, 50, 0.45);
+    }
+
+    .lead-sub-label {
+        color: #d48244;
+        border-bottom-color: rgba(212, 130, 68, 0.35);
+        text-shadow: 0 0 8px rgba(212, 130, 68, 0.5);
+    }
+
+    .lead-preset-display-row {
+        background: #130a1b;
+        border-color: rgba(212, 130, 68, 0.35);
+    }
+
+    .lead-led-display {
+        color: #e69150;
+        text-shadow: 0 0 10px rgba(230, 145, 80, 0.85);
+    }
+
+    .lead-lcd-name {
+        color: #f5eff9;
+        text-shadow: 0 0 6px rgba(245, 239, 249, 0.4);
+    }
+
+    .lead-preset-btn {
+        background: rgba(30, 15, 41, 0.7);
+        border-color: rgba(212, 130, 68, 0.22);
+        color: #bda8c7;
+    }
+
+    .lead-preset-btn:hover {
+        color: #f5eff9;
+        border-color: #d48244;
+    }
+
+    .lead-preset-btn.active {
+        background: linear-gradient(135deg, #d48244 0%, #b36329 100%);
+        color: #180d21;
+        border-color: #f39c12;
+        box-shadow: 0 0 10px rgba(212, 130, 68, 0.55);
+        text-shadow: none;
+    }
+
+    .lead-control-item {
+        background: rgba(24, 11, 33, 0.4);
+        border-color: rgba(212, 130, 68, 0.18);
+    }
+
+    .lead-control-item .label {
+        color: #e69150;
+    }
+
+    .lead-slider::-webkit-slider-thumb {
+        background: #d48244;
+        box-shadow: 0 0 8px rgba(212, 130, 68, 0.7);
+    }
+
+    /* Keyboard Rows & Keys */
+    .keyboard-section {
+        border-color: rgba(212, 130, 68, 0.22);
+        background: rgba(26, 13, 36, 0.3);
+    }
+
+    .key-cap {
+        background: linear-gradient(135deg, #2b153b 0%, #180a22 100%);
+        border-color: rgba(212, 130, 68, 0.2);
+    }
+
+    .key-cap .char {
+        color: #bda8c7;
+    }
+
+    /* Lead Keys */
+    .key-cap.lead-key {
+        border-color: rgba(212, 130, 68, 0.3);
+    }
+
+    .key-cap.lead-key .note {
+        color: #d48244;
+    }
+
+    .key-cap.lead-key:hover {
+        border-color: #e69150;
+        box-shadow: 0 0 10px rgba(212, 130, 68, 0.4);
+    }
+
+    .key-cap.lead-key.active {
+        background: linear-gradient(135deg, #d48244 0%, #9e4e1a 100%);
+        border-color: #f39c12;
+        box-shadow: 0 0 18px rgba(212, 130, 68, 0.9);
+    }
+
+    .key-cap.lead-key.active .char,
+    .key-cap.lead-key.active .note {
+        color: #ffffff;
+        text-shadow: 0 0 4px #ffffff;
+    }
+
+    /* Bass Keys */
+    .key-cap.bass-key {
+        background: linear-gradient(135deg, #381944 0%, #1f0d26 100%);
+        border-color: rgba(243, 156, 18, 0.3);
+    }
+
+    .key-cap.bass-key .note {
+        color: #f39c12;
+    }
+
+    .key-cap.bass-key:hover {
+        border-color: #f39c12;
+        box-shadow: 0 0 10px rgba(243, 156, 18, 0.4);
+    }
+
+    .key-cap.bass-key.active {
+        background: linear-gradient(135deg, #f39c12 0%, #a86205 100%);
+        border-color: #fed7aa;
+        box-shadow: 0 0 18px rgba(243, 156, 18, 0.9);
+    }
+
+    .key-cap.bass-key.active .char,
+    .key-cap.bass-key.active .note {
+        color: #ffffff;
+        text-shadow: 0 0 4px #ffffff;
+    }
+
+    /* Controls & Footer */
+    .ctrl-item {
+        background: rgba(28, 14, 38, 0.5);
+        border-color: rgba(212, 130, 68, 0.2);
+    }
+
+    .joy-visualizer {
+        background: rgba(20, 9, 28, 0.85);
+        border-color: rgba(212, 130, 68, 0.25);
+    }
+
+    .tremolo-visualizer {
+        background: #140a1b;
+        border-color: rgba(212, 130, 68, 0.25);
+    }
+
+    .fx-indicator {
+        background: rgba(38, 19, 52, 0.8);
+        border-color: rgba(212, 130, 68, 0.22);
+    }
+
+    .app-footer {
+        background-color: rgba(20, 10, 27, 0.95);
+        border-top-color: rgba(212, 130, 68, 0.22);
+    }
+
+    /* Sound Bank & Decimator Overrides in Plum Theme */
+    .sound-bank-bar {
+        background: rgba(22, 11, 30, 0.6);
+        border-color: rgba(212, 130, 68, 0.25);
+    }
+
+    .bank-title-badge {
+        color: #d48244;
+        text-shadow: 0 0 6px rgba(212, 130, 68, 0.4);
+    }
+
+    .bank-tab.active {
+        background: #d48244;
+        color: #180d21;
+        border-color: #f39c12;
+        box-shadow: 0 0 10px rgba(212, 130, 68, 0.6);
+    }
+
+    .bank-action-btn {
+        background: rgba(74, 29, 106, 0.4);
+        border-color: rgba(212, 130, 68, 0.25);
+        color: #f5eff9;
+    }
+
+    .bank-action-btn:hover {
+        background: rgba(212, 130, 68, 0.2);
+        border-color: #d48244;
+    }
+
+    .mini-pedal.pedal-crush {
+        background: linear-gradient(180deg, #371542 0%, #17071c 100%);
+        border-color: #a855f7;
+    }
+
+    .mini-pedal.bass-theme.pedal-crush {
+        background: linear-gradient(180deg, #421808 0%, #1a0802 100%);
+        border-color: #f97316;
+    }
+
+    /* Plum Theme Overrides for Module Manager, Panic & Counter */
+    .module-manager-btn {
+        background: rgba(168, 85, 247, 0.25);
+        border-color: #a855f7;
+        color: #d8b4fe;
+    }
+
+    .module-manager-btn:hover {
+        background: rgba(168, 85, 247, 0.4);
+        border-color: #d8b4fe;
+        box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+    }
+
+    .polyphony-counter {
+        color: #d48244;
+        border-color: rgba(212, 130, 68, 0.3);
+        background: rgba(24, 13, 33, 0.7);
+    }
+
+    .module-modal-overlay {
+        background: rgba(12, 6, 17, 0.88);
+    }
+
+    .module-modal-dialog {
+        background: #180d21;
+        border-color: #d48244;
+        box-shadow: 0 0 45px rgba(212, 130, 68, 0.3);
+    }
+
+    .module-modal-title {
+        color: #d48244;
+        text-shadow: 0 0 10px rgba(212, 130, 68, 0.5);
+    }
+
+    .slot-badge {
+        color: #d48244;
+        background: rgba(212, 130, 68, 0.15);
+        border-color: rgba(212, 130, 68, 0.4);
+    }
+
+    .slot-config-row {
+        background: rgba(38, 21, 51, 0.6);
+        border-color: rgba(212, 130, 68, 0.2);
+    }
+
+    .slot-config-row:hover {
+        border-color: rgba(212, 130, 68, 0.45);
+    }
+
+    .slot-module-select {
+        background: rgba(24, 13, 33, 0.9);
+        border-color: rgba(212, 130, 68, 0.35);
+        color: #f5eff9;
+    }
+
+    .slot-module-select:focus {
+        border-color: #d48244;
+        box-shadow: 0 0 6px rgba(212, 130, 68, 0.4);
+    }
+
+    .module-dropzone:hover,
+    .module-dropzone.drag-over {
+        border-color: #d48244;
+        background: rgba(212, 130, 68, 0.08);
+    }
+
+    .module-vault-title {
+        color: #d48244;
+        text-shadow: 0 0 6px rgba(212, 130, 68, 0.4);
+    }
+
+    .vault-search-box input {
+        background: rgba(20, 10, 27, 0.85);
+        border-color: rgba(212, 130, 68, 0.3);
+        color: #f5eff9;
+    }
+
+    .vault-search-box input:focus {
+        border-color: #d48244;
+        box-shadow: 0 0 6px rgba(212, 130, 68, 0.4);
+    }
+
+    .vault-card {
+        background: rgba(38, 21, 51, 0.5);
+        border-color: rgba(212, 130, 68, 0.2);
+    }
+
+    .vault-card:hover {
+        background: rgba(48, 26, 64, 0.7);
+        border-color: rgba(212, 130, 68, 0.5);
+    }
+
+    .vault-category-badge {
+        background: rgba(212, 130, 68, 0.15);
+        color: #d48244;
+        border-color: rgba(212, 130, 68, 0.4);
+    }
+
+    .vault-slot-btn:hover {
+        background: #d48244;
+        color: #180d21;
+        border-color: #f39c12;
+        box-shadow: 0 0 6px rgba(212, 130, 68, 0.6);
+    }
+
+    .vault-slot-btn.active-slot {
+        background: #d48244;
+        color: #180d21;
+        border-color: #f39c12;
+        box-shadow: 0 0 8px rgba(212, 130, 68, 0.6);
+    }
+
+    .vault-card-export:hover {
+        color: #d48244;
+    }
+
+    .mini-pedal.modular-pedal {
+        background: linear-gradient(180deg, #241133 0%, #13091c 100%);
+        border-color: rgba(212, 130, 68, 0.35);
+    }
+
+    .mini-pedal.modular-pedal.bass-theme {
+        background: linear-gradient(180deg, #33150d 0%, #1c0803 100%);
+        border-color: rgba(212, 130, 68, 0.45);
+    }
+
+    .cartridge-select {
+        background: rgba(20, 10, 27, 0.9);
+        border-color: rgba(212, 130, 68, 0.35);
+        color: #f5eff9;
+    }
+
+    .cartridge-select:focus {
+        border-color: #d48244;
+        box-shadow: 0 0 5px rgba(212, 130, 68, 0.5);
+    }
 }

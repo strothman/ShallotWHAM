@@ -1,0 +1,326 @@
+{
+  "format": "ShallotWHAM-Module",
+  "version": "1.0.0",
+  "id": "crystal-castles",
+  "name": "CRYSTAL CASTLES",
+  "subtitle": "Lo-Fi Chiptune, Glitch & 8-Bit Noise",
+  "author": "Shallot & Antigravity IDE",
+  "description": "Authentic chiptune and electro-glitch soundscapes accurately modeled after Crystal Castles tracks (Alice Practice, Crimewave, Untrust Us, Celestica, Vanished).",
+  "themeGlow": "#ff0055",
+  "leads": [
+    {
+      "name": "ALICE PRACTICE",
+      "label": "ALICE PRAC",
+      "osc1": "square",
+      "osc2": "square",
+      "osc2Detune": 1.009,
+      "filterType": "lowpass",
+      "cutoff": 8200,
+      "reso": 5.5,
+      "attack": 0.001,
+      "release": 0.12,
+      "bitcrush": true,
+      "pitchDrop": true
+    },
+    {
+      "name": "CRIMEWAVE LEAD",
+      "label": "CRIMEWAVE",
+      "osc1": "square",
+      "osc2": "sawtooth",
+      "osc2Detune": 1.014,
+      "filterType": "bandpass",
+      "cutoff": 3600,
+      "reso": 4.2,
+      "attack": 0.008,
+      "release": 0.32
+    },
+    {
+      "name": "UNTRUST US ARP",
+      "label": "UNTRUST US",
+      "osc1": "square",
+      "osc2": "square",
+      "osc2Detune": 2.001,
+      "filterType": "lowpass",
+      "cutoff": 6400,
+      "reso": 3.5,
+      "attack": 0.002,
+      "release": 0.22,
+      "arp": "chip60"
+    },
+    {
+      "name": "COURTSHIP DATING",
+      "label": "COURTSHIP",
+      "osc1": "sawtooth",
+      "osc2": "square",
+      "osc2Detune": 1.025,
+      "filterType": "lowpass",
+      "cutoff": 5200,
+      "reso": 6,
+      "attack": 0.001,
+      "release": 0.18,
+      "bitcrush": true
+    },
+    {
+      "name": "BAPTISM SAW",
+      "label": "BAPTISM",
+      "osc1": "sawtooth",
+      "osc2": "sawtooth",
+      "osc2Detune": 1.035,
+      "filterType": "lowpass",
+      "cutoff": 8800,
+      "reso": 7,
+      "attack": 0.001,
+      "release": 0.15
+    },
+    {
+      "name": "SUFFOCATION CHIP",
+      "label": "SUFFOCATE",
+      "osc1": "sine",
+      "osc2": "square",
+      "osc2Detune": 1.006,
+      "filterType": "lowpass",
+      "cutoff": 2900,
+      "reso": 2.2,
+      "attack": 0.04,
+      "release": 0.55
+    },
+    {
+      "name": "CELESTICA CHIME",
+      "label": "CELESTICA",
+      "osc1": "triangle",
+      "osc2": "sine",
+      "osc2Detune": 4,
+      "filterType": "lowpass",
+      "cutoff": 9500,
+      "reso": 2,
+      "attack": 0.001,
+      "release": 0.42
+    },
+    {
+      "name": "AIR WAR VOCO",
+      "label": "AIR WAR",
+      "osc1": "sawtooth",
+      "osc2": "square",
+      "osc2Detune": 0.995,
+      "filterType": "bandpass",
+      "cutoff": 2700,
+      "reso": 8.5,
+      "attack": 0.005,
+      "release": 0.22
+    }
+  ],
+  "basses": [
+    {
+      "name": "TRASH 8-BIT SUB",
+      "label": "TRASH SUB",
+      "oscType": "square",
+      "subType": "square",
+      "subOctave": -1,
+      "cutoff": 1400,
+      "reso": 5.5,
+      "envMod": 2800,
+      "decay": 0.25,
+      "attack": 0.002,
+      "subMix": 0.85
+    },
+    {
+      "name": "DOE DEER GLITCH",
+      "label": "DOE DEER",
+      "oscType": "sawtooth",
+      "subType": "square",
+      "subOctave": -1,
+      "cutoff": 3600,
+      "reso": 7.5,
+      "envMod": 4200,
+      "decay": 0.18,
+      "attack": 0.001,
+      "subMix": 0.65
+    },
+    {
+      "name": "VANISHED C64",
+      "label": "VANISHED",
+      "oscType": "square",
+      "subType": "sawtooth",
+      "subOctave": -1,
+      "cutoff": 1900,
+      "reso": 4.8,
+      "envMod": 2400,
+      "decay": 0.32,
+      "attack": 0.004,
+      "subMix": 0.5
+    },
+    {
+      "name": "BLACK PANTHER",
+      "label": "BLK PANTHER",
+      "oscType": "square",
+      "subType": "triangle",
+      "subOctave": -1,
+      "cutoff": 1200,
+      "reso": 6.5,
+      "envMod": 1900,
+      "decay": 0.22,
+      "attack": 0.003,
+      "subMix": 0.75
+    },
+    {
+      "name": "EMPATHY SUB",
+      "label": "EMPATHY",
+      "oscType": "triangle",
+      "subType": "sine",
+      "subOctave": -1,
+      "cutoff": 800,
+      "reso": 2.5,
+      "envMod": 950,
+      "decay": 0.48,
+      "attack": 0.01,
+      "subMix": 0.9
+    },
+    {
+      "name": "PAP SMEAR ACID",
+      "label": "PAP SMEAR",
+      "oscType": "sawtooth",
+      "subType": "sawtooth",
+      "subOctave": -1,
+      "cutoff": 2300,
+      "reso": 8.5,
+      "envMod": 3600,
+      "decay": 0.28,
+      "attack": 0.002,
+      "subMix": 0.45
+    },
+    {
+      "name": "PLAGUE SLAP",
+      "label": "PLAGUE",
+      "oscType": "square",
+      "subType": "square",
+      "subOctave": -1,
+      "cutoff": 2900,
+      "reso": 5.2,
+      "envMod": 3000,
+      "decay": 0.16,
+      "attack": 0.001,
+      "subMix": 0.55
+    },
+    {
+      "name": "BENT PITCH DROP",
+      "label": "BENT DROP",
+      "oscType": "sine",
+      "subType": "square",
+      "subOctave": -1,
+      "pitchDrop": true,
+      "cutoff": 850,
+      "reso": 3.2,
+      "envMod": 1300,
+      "decay": 0.55,
+      "attack": 0.005,
+      "subMix": 0.95
+    }
+  ],
+  "pedalboard": {
+    "lead": [
+      {
+        "slot": 0,
+        "cartridge": "decimator",
+        "active": true,
+        "params": {
+          "bits": 6,
+          "rate": 30,
+          "mix": 75
+        }
+      },
+      {
+        "slot": 1,
+        "cartridge": "ring-mod",
+        "active": false,
+        "params": {
+          "carrier": 440,
+          "lfo": 3,
+          "mix": 40
+        }
+      },
+      {
+        "slot": 2,
+        "cartridge": "sid-resonator",
+        "active": true,
+        "params": {
+          "cutoff": 3800,
+          "squelch": 70,
+          "decay": 0.2
+        }
+      },
+      {
+        "slot": 3,
+        "cartridge": "glitch-delay",
+        "active": true,
+        "params": {
+          "size": 120,
+          "feedback": 55,
+          "jitter": 60,
+          "mix": 50
+        }
+      },
+      {
+        "slot": 4,
+        "cartridge": "cathedral-reverb",
+        "active": false,
+        "params": {
+          "decay": 3.2,
+          "damping": 40,
+          "mix": 45
+        }
+      }
+    ],
+    "bass": [
+      {
+        "slot": 0,
+        "cartridge": "big-muff",
+        "active": true,
+        "params": {
+          "sustain": 70,
+          "tone": 45,
+          "volume": 75
+        }
+      },
+      {
+        "slot": 1,
+        "cartridge": "decimator",
+        "active": true,
+        "params": {
+          "bits": 8,
+          "rate": 25,
+          "mix": 60
+        }
+      },
+      {
+        "slot": 2,
+        "cartridge": "sid-resonator",
+        "active": true,
+        "params": {
+          "cutoff": 1800,
+          "squelch": 80,
+          "decay": 0.18
+        }
+      },
+      {
+        "slot": 3,
+        "cartridge": "analog-delay",
+        "active": false,
+        "params": {
+          "time": 220,
+          "feedback": 25,
+          "mix": 30
+        }
+      },
+      {
+        "slot": 4,
+        "cartridge": "spring-reverb",
+        "active": false,
+        "params": {
+          "tension": 65,
+          "decay": 1.5,
+          "mix": 35
+        }
+      }
+    ]
+  }
+}

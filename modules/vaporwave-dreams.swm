@@ -1,0 +1,334 @@
+{
+  "format": "ShallotWHAM-Module",
+  "version": "1.0.0",
+  "id": "vaporwave-dreams",
+  "name": "VAPORWAVE DREAMS",
+  "subtitle": "Nostalgic Mallsoft, Chillwave & Chorus Saws",
+  "author": "Shallot & Antigravity IDE",
+  "description": "Dreamy, nostalgic aesthetics of late-night malls, Windows 95 boot sounds, lush FM chorused keys, and tape-fluttered slushwave bass.",
+  "themeGlow": "#06b6d4",
+  "category": "Chillwave / Mallsoft",
+  "tags": [
+    "vaporwave",
+    "mallsoft",
+    "chillwave",
+    "lofi",
+    "chorus",
+    "nostalgia",
+    "90s"
+  ],
+  "leads": [
+    {
+      "name": "LATE NIGHT DX7",
+      "label": "DX7 PIANO",
+      "osc1": "triangle",
+      "osc2": "sine",
+      "osc2Detune": 2.001,
+      "filterType": "lowpass",
+      "cutoff": 6200,
+      "reso": 1.5,
+      "attack": 0.005,
+      "release": 0.45
+    },
+    {
+      "name": "ABANDONED MALL CHIME",
+      "label": "MALL CHIME",
+      "osc1": "sine",
+      "osc2": "triangle",
+      "osc2Detune": 3.2,
+      "filterType": "lowpass",
+      "cutoff": 8000,
+      "reso": 2.2,
+      "attack": 0.001,
+      "release": 0.6
+    },
+    {
+      "name": "MACINTOSH FLUTE",
+      "label": "MAC FLUTE",
+      "osc1": "triangle",
+      "osc2": "sine",
+      "osc2Detune": 1.002,
+      "filterType": "lowpass",
+      "cutoff": 4200,
+      "reso": 1.2,
+      "attack": 0.03,
+      "release": 0.35
+    },
+    {
+      "name": "FLORAL CHORUS SAW",
+      "label": "FLORAL SAW",
+      "osc1": "sawtooth",
+      "osc2": "sawtooth",
+      "osc2Detune": 1.012,
+      "filterType": "lowpass",
+      "cutoff": 4800,
+      "reso": 2.8,
+      "attack": 0.015,
+      "release": 0.4
+    },
+    {
+      "name": "SLOW DIVE SINE",
+      "label": "SLOW DIVE",
+      "osc1": "sine",
+      "osc2": "sine",
+      "osc2Detune": 1.004,
+      "filterType": "lowpass",
+      "cutoff": 3500,
+      "reso": 0.9,
+      "attack": 0.05,
+      "release": 0.7
+    },
+    {
+      "name": "WINDOWS 95 GLOW",
+      "label": "WIN 95 GLOW",
+      "osc1": "sawtooth",
+      "osc2": "triangle",
+      "osc2Detune": 1.008,
+      "filterType": "bandpass",
+      "cutoff": 2600,
+      "reso": 4.5,
+      "attack": 0.04,
+      "release": 0.55
+    },
+    {
+      "name": "ECCOJAMS PLUCK",
+      "label": "ECCO PLUCK",
+      "osc1": "square",
+      "osc2": "sine",
+      "osc2Detune": 2,
+      "filterType": "lowpass",
+      "cutoff": 5500,
+      "reso": 3,
+      "attack": 0.002,
+      "release": 0.25
+    },
+    {
+      "name": "PALM TREE LEAD",
+      "label": "PALM TREE",
+      "osc1": "sawtooth",
+      "osc2": "square",
+      "osc2Detune": 1.015,
+      "filterType": "lowpass",
+      "cutoff": 5000,
+      "reso": 3.5,
+      "attack": 0.01,
+      "release": 0.3
+    }
+  ],
+  "basses": [
+    {
+      "name": "SLUSH SUB",
+      "label": "SLUSH SUB",
+      "oscType": "sine",
+      "subType": "sine",
+      "subOctave": -1,
+      "cutoff": 350,
+      "reso": 1,
+      "envMod": 250,
+      "decay": 0.6,
+      "attack": 0.02,
+      "subMix": 0.95
+    },
+    {
+      "name": "VHS DRIFT BASS",
+      "label": "VHS DRIFT",
+      "oscType": "sawtooth",
+      "subType": "triangle",
+      "subOctave": -1,
+      "cutoff": 1200,
+      "reso": 3.5,
+      "envMod": 1400,
+      "decay": 0.4,
+      "attack": 0.008,
+      "subMix": 0.7
+    },
+    {
+      "name": "SUNSET 303",
+      "label": "SUNSET 303",
+      "oscType": "sawtooth",
+      "subType": "square",
+      "subOctave": -1,
+      "cutoff": 1800,
+      "reso": 7,
+      "envMod": 2800,
+      "decay": 0.28,
+      "attack": 0.003,
+      "subMix": 0.5
+    },
+    {
+      "name": "SUPERMARKET BASS",
+      "label": "SUPERMRKT",
+      "oscType": "triangle",
+      "subType": "sine",
+      "subOctave": -1,
+      "cutoff": 750,
+      "reso": 2,
+      "envMod": 800,
+      "decay": 0.45,
+      "attack": 0.01,
+      "subMix": 0.8
+    },
+    {
+      "name": "RESONANCE SUB",
+      "label": "RESO SUB",
+      "oscType": "square",
+      "subType": "sine",
+      "subOctave": -1,
+      "cutoff": 900,
+      "reso": 5,
+      "envMod": 1200,
+      "decay": 0.38,
+      "attack": 0.005,
+      "subMix": 0.75
+    },
+    {
+      "name": "1992 ACID SQUELCH",
+      "label": "1992 ACID",
+      "oscType": "sawtooth",
+      "subType": "sawtooth",
+      "subOctave": -1,
+      "cutoff": 2100,
+      "reso": 8,
+      "envMod": 3200,
+      "decay": 0.22,
+      "attack": 0.002,
+      "subMix": 0.45
+    },
+    {
+      "name": "CASSETTE TAPE DROP",
+      "label": "TAPE DROP",
+      "oscType": "sine",
+      "subType": "square",
+      "subOctave": -1,
+      "pitchDrop": true,
+      "cutoff": 600,
+      "reso": 2.5,
+      "envMod": 1000,
+      "decay": 0.55,
+      "attack": 0.008,
+      "subMix": 0.85
+    },
+    {
+      "name": "PLAZA HEARTBEAT",
+      "label": "PLAZA BEAT",
+      "oscType": "triangle",
+      "subType": "triangle",
+      "subOctave": -1,
+      "pitchDrop": true,
+      "cutoff": 700,
+      "reso": 3,
+      "envMod": 1100,
+      "decay": 0.48,
+      "attack": 0.006,
+      "subMix": 0.7
+    }
+  ],
+  "pedalboard": {
+    "lead": [
+      {
+        "slot": 0,
+        "cartridge": "french-preamp",
+        "active": false,
+        "params": {
+          "drive": 30,
+          "warmth": 70,
+          "output": 65
+        }
+      },
+      {
+        "slot": 1,
+        "cartridge": "dimension-chorus",
+        "active": true,
+        "params": {
+          "mode": 4,
+          "width": 90,
+          "mix": 65
+        }
+      },
+      {
+        "slot": 2,
+        "cartridge": "formant-filter",
+        "active": false,
+        "params": {
+          "vowel": 1,
+          "reso": 45,
+          "glide": 40
+        }
+      },
+      {
+        "slot": 3,
+        "cartridge": "space-echo",
+        "active": true,
+        "params": {
+          "time": 440,
+          "intensity": 48,
+          "flutter": 55,
+          "mix": 50
+        }
+      },
+      {
+        "slot": 4,
+        "cartridge": "cosmic-shimmer",
+        "active": true,
+        "params": {
+          "shimmer": 65,
+          "decay": 3.5,
+          "mix": 55
+        }
+      }
+    ],
+    "bass": [
+      {
+        "slot": 0,
+        "cartridge": "french-preamp",
+        "active": false,
+        "params": {
+          "drive": 35,
+          "warmth": 75,
+          "output": 70
+        }
+      },
+      {
+        "slot": 1,
+        "cartridge": "dimension-chorus",
+        "active": true,
+        "params": {
+          "mode": 2,
+          "width": 65,
+          "mix": 45
+        }
+      },
+      {
+        "slot": 2,
+        "cartridge": "sidechain-pumper",
+        "active": true,
+        "params": {
+          "depth": 75,
+          "rate": 4,
+          "release": 0.3
+        }
+      },
+      {
+        "slot": 3,
+        "cartridge": "space-echo",
+        "active": false,
+        "params": {
+          "time": 320,
+          "intensity": 30,
+          "flutter": 35,
+          "mix": 30
+        }
+      },
+      {
+        "slot": 4,
+        "cartridge": "cosmic-shimmer",
+        "active": false,
+        "params": {
+          "shimmer": 40,
+          "decay": 2.5,
+          "mix": 35
+        }
+      }
+    ]
+  }
+}

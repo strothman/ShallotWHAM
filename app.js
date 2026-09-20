@@ -16,6 +16,7 @@ const ROW3_CHAR = ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"];
 let audioCtx = null;
 let masterGain = null;
 let analyser = null;
+let masterLimiter = null;
 
 // Pitch bend range state (controlled by Xbox RT/RB and LT/LB)
 let pitchBendOctavesUp = 1;
@@ -82,28 +83,3339 @@ let appSettings = {
 };
 
 // Lead Preset Templates (Rows 0 & 1 Dedicated Pro Engine)
-const LEAD_PRESETS = [
-    { name: "TRANCE SAW LEAD", osc1: "sawtooth", osc2: "sawtooth", osc2Detune: 1.006, filterType: "lowpass", cutoff: 4200, reso: 2.0, attack: 0.005, release: 0.35 },
-    { name: "CHIPTUNE PULSE", osc1: "square", osc2: "square", osc2Detune: 2.0, filterType: "lowpass", cutoff: 8000, reso: 1.0, attack: 0.001, release: 0.15 },
-    { name: "80s SYNTH BRASS", osc1: "sawtooth", osc2: "sawtooth", osc2Detune: 0.992, filterType: "lowpass", cutoff: 3200, reso: 3.5, attack: 0.04, release: 0.45 },
-    { name: "CYBERPUNK LEAD", osc1: "sawtooth", osc2: "square", osc2Detune: 1.01, filterType: "lowpass", cutoff: 3800, reso: 4.0, attack: 0.01, release: 0.28 },
-    { name: "G-FUNK SINE", osc1: "sine", osc2: "sine", osc2Detune: 2.002, filterType: "lowpass", cutoff: 6000, reso: 0.8, attack: 0.02, release: 0.3 },
-    { name: "HYPER PLUCK", osc1: "triangle", osc2: "sine", osc2Detune: 3.0, filterType: "lowpass", cutoff: 5500, reso: 2.5, attack: 0.002, release: 0.18 },
-    { name: "VOCO VOICE", osc1: "sawtooth", osc2: "sawtooth", osc2Detune: 1.003, filterType: "bandpass", cutoff: 2200, reso: 6.0, attack: 0.01, release: 0.25 },
-    { name: "RAVE HOOVER", osc1: "sawtooth", osc2: "sawtooth", osc2Detune: 1.015, filterType: "lowpass", cutoff: 4800, reso: 3.0, attack: 0.015, release: 0.4 }
-];
+// ====================================================
+// PROPRIETARY SOUND MODULE LIBRARY & 5-SLOT ARCHITECTURE
+// ====================================================
+const MODULE_LIBRARY = {
+    "8bit-arcade": {
+        "format": "ShallotWHAM-Module",
+        "version": "1.0.0",
+        "id": "8bit-arcade",
+        "name": "8-BIT ARCADE",
+        "subtitle": "NES, Game Boy & SID 6581 Emulation",
+        "author": "Shallot & Antigravity IDE",
+        "description": "Authentic vintage video game chip sound generators: NES 2A03 pulse and triangle, Game Boy DMG-01 hardware, and Commodore 64 SID chip arpeggios.",
+        "themeGlow": "#00ffcc",
+        "leads": [
+            {
+                "name": "GAME BOY PULSE",
+                "label": "GB PULSE",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 1,
+                "filterType": "lowpass",
+                "cutoff": 9500,
+                "reso": 1.2,
+                "attack": 0.001,
+                "release": 0.1
+            },
+            {
+                "name": "SID 6581 ARPEGGIO",
+                "label": "SID 6581",
+                "osc1": "triangle",
+                "osc2": "square",
+                "osc2Detune": 2,
+                "filterType": "bandpass",
+                "cutoff": 3800,
+                "reso": 5,
+                "attack": 0.002,
+                "release": 0.2,
+                "arp": "chip60"
+            },
+            {
+                "name": "NES COIN PLUCK",
+                "label": "NES COIN",
+                "osc1": "sine",
+                "osc2": "square",
+                "osc2Detune": 3,
+                "filterType": "lowpass",
+                "cutoff": 8000,
+                "reso": 2,
+                "attack": 0.001,
+                "release": 0.25
+            },
+            {
+                "name": "MEGAMAN LEAD",
+                "label": "MEGAMAN",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 1.008,
+                "filterType": "lowpass",
+                "cutoff": 6500,
+                "reso": 4,
+                "attack": 0.005,
+                "release": 0.2
+            },
+            {
+                "name": "ARCADE BOSS SAW",
+                "label": "BOSS SAW",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.018,
+                "filterType": "lowpass",
+                "cutoff": 5800,
+                "reso": 4.5,
+                "attack": 0.002,
+                "release": 0.3
+            },
+            {
+                "name": "KONAMI BRASS",
+                "label": "KONAMI",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 0.994,
+                "filterType": "lowpass",
+                "cutoff": 3400,
+                "reso": 3,
+                "attack": 0.03,
+                "release": 0.35
+            },
+            {
+                "name": "CHIP FLUTE",
+                "label": "CHIP FLUTE",
+                "osc1": "triangle",
+                "osc2": "triangle",
+                "osc2Detune": 1.002,
+                "filterType": "lowpass",
+                "cutoff": 4500,
+                "reso": 1.5,
+                "attack": 0.02,
+                "release": 0.28
+            },
+            {
+                "name": "GLITCH NOISE BENT",
+                "label": "GLITCH BENT",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.05,
+                "filterType": "highpass",
+                "cutoff": 1200,
+                "reso": 6,
+                "attack": 0.001,
+                "release": 0.15
+            }
+        ],
+        "basses": [
+            {
+                "name": "NES TRIANGLE SUB",
+                "label": "NES TRI",
+                "oscType": "triangle",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 1800,
+                "reso": 1.5,
+                "envMod": 600,
+                "decay": 0.35,
+                "attack": 0.001,
+                "subMix": 0.9
+            },
+            {
+                "name": "LSDJ HEAVY PULSE",
+                "label": "LSDJ PULSE",
+                "oscType": "square",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 2400,
+                "reso": 6,
+                "envMod": 2600,
+                "decay": 0.22,
+                "attack": 0.002,
+                "subMix": 0.7
+            },
+            {
+                "name": "ARCADE JUMP BASS",
+                "label": "ARCADE JUMP",
+                "oscType": "square",
+                "subType": "sine",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 1600,
+                "reso": 4,
+                "envMod": 2000,
+                "decay": 0.3,
+                "attack": 0.002,
+                "subMix": 0.6
+            },
+            {
+                "name": "COMMODORE ACID",
+                "label": "C64 ACID",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 2000,
+                "reso": 7,
+                "envMod": 3200,
+                "decay": 0.26,
+                "attack": 0.003,
+                "subMix": 0.5
+            },
+            {
+                "name": "SEGA FM BASS",
+                "label": "SEGA FM",
+                "oscType": "triangle",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 2600,
+                "reso": 5,
+                "envMod": 3400,
+                "decay": 0.18,
+                "attack": 0.001,
+                "subMix": 0.4
+            },
+            {
+                "name": "FAT 8-BIT REESE",
+                "label": "8-BIT REESE",
+                "oscType": "sawtooth",
+                "subType": "sawtooth",
+                "subOctave": -1,
+                "detune": 1.02,
+                "cutoff": 1500,
+                "reso": 3.5,
+                "envMod": 1400,
+                "decay": 0.45,
+                "attack": 0.01,
+                "subMix": 0.6
+            },
+            {
+                "name": "PAC-MAN WOBBLE",
+                "label": "PAC WOBBLE",
+                "oscType": "square",
+                "subType": "triangle",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 7.5,
+                "envMod": 2200,
+                "decay": 0.24,
+                "attack": 0.005,
+                "subMix": 0.7
+            },
+            {
+                "name": "GAME OVER DROP",
+                "label": "GAME OVER",
+                "oscType": "sine",
+                "subType": "square",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 550,
+                "reso": 2,
+                "envMod": 900,
+                "decay": 0.7,
+                "attack": 0.01,
+                "subMix": 0.9
+            }
+        ],
+        "pedalboard": {
+            "lead": [
+                {
+                    "slot": 0,
+                    "cartridge": "decimator",
+                    "active": true,
+                    "params": {
+                        "bits": 6,
+                        "rate": 35,
+                        "mix": 65
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "flanger",
+                    "active": false,
+                    "params": {
+                        "speed": 1,
+                        "depth": 60,
+                        "regen": 45
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "sid-resonator",
+                    "active": true,
+                    "params": {
+                        "cutoff": 3500,
+                        "squelch": 65,
+                        "decay": 0.2
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "glitch-delay",
+                    "active": false,
+                    "params": {
+                        "size": 100,
+                        "feedback": 40,
+                        "jitter": 50,
+                        "mix": 40
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "spring-reverb",
+                    "active": true,
+                    "params": {
+                        "tension": 60,
+                        "decay": 1.8,
+                        "mix": 40
+                    }
+                }
+            ],
+            "bass": [
+                {
+                    "slot": 0,
+                    "cartridge": "decimator",
+                    "active": true,
+                    "params": {
+                        "bits": 8,
+                        "rate": 28,
+                        "mix": 55
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "optical-tremolo",
+                    "active": false,
+                    "params": {
+                        "rate": 5,
+                        "depth": 50,
+                        "shape": "square"
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "sid-resonator",
+                    "active": true,
+                    "params": {
+                        "cutoff": 1600,
+                        "squelch": 75,
+                        "decay": 0.22
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "analog-delay",
+                    "active": false,
+                    "params": {
+                        "time": 200,
+                        "feedback": 25,
+                        "mix": 25
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "spring-reverb",
+                    "active": false,
+                    "params": {
+                        "tension": 50,
+                        "decay": 1.4,
+                        "mix": 30
+                    }
+                }
+            ]
+        }
+    },
+    "crystal-castles": {
+        "format": "ShallotWHAM-Module",
+        "version": "1.0.0",
+        "id": "crystal-castles",
+        "name": "CRYSTAL CASTLES",
+        "subtitle": "Lo-Fi Chiptune, Glitch & 8-Bit Noise",
+        "author": "Shallot & Antigravity IDE",
+        "description": "Authentic chiptune and electro-glitch soundscapes accurately modeled after Crystal Castles tracks (Alice Practice, Crimewave, Untrust Us, Celestica, Vanished).",
+        "themeGlow": "#ff0055",
+        "leads": [
+            {
+                "name": "ALICE PRACTICE",
+                "label": "ALICE PRAC",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 1.009,
+                "filterType": "lowpass",
+                "cutoff": 8200,
+                "reso": 5.5,
+                "attack": 0.001,
+                "release": 0.12,
+                "bitcrush": true,
+                "pitchDrop": true
+            },
+            {
+                "name": "CRIMEWAVE LEAD",
+                "label": "CRIMEWAVE",
+                "osc1": "square",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.014,
+                "filterType": "bandpass",
+                "cutoff": 3600,
+                "reso": 4.2,
+                "attack": 0.008,
+                "release": 0.32
+            },
+            {
+                "name": "UNTRUST US ARP",
+                "label": "UNTRUST US",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 2.001,
+                "filterType": "lowpass",
+                "cutoff": 6400,
+                "reso": 3.5,
+                "attack": 0.002,
+                "release": 0.22,
+                "arp": "chip60"
+            },
+            {
+                "name": "COURTSHIP DATING",
+                "label": "COURTSHIP",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.025,
+                "filterType": "lowpass",
+                "cutoff": 5200,
+                "reso": 6,
+                "attack": 0.001,
+                "release": 0.18,
+                "bitcrush": true
+            },
+            {
+                "name": "BAPTISM SAW",
+                "label": "BAPTISM",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.035,
+                "filterType": "lowpass",
+                "cutoff": 8800,
+                "reso": 7,
+                "attack": 0.001,
+                "release": 0.15
+            },
+            {
+                "name": "SUFFOCATION CHIP",
+                "label": "SUFFOCATE",
+                "osc1": "sine",
+                "osc2": "square",
+                "osc2Detune": 1.006,
+                "filterType": "lowpass",
+                "cutoff": 2900,
+                "reso": 2.2,
+                "attack": 0.04,
+                "release": 0.55
+            },
+            {
+                "name": "CELESTICA CHIME",
+                "label": "CELESTICA",
+                "osc1": "triangle",
+                "osc2": "sine",
+                "osc2Detune": 4,
+                "filterType": "lowpass",
+                "cutoff": 9500,
+                "reso": 2,
+                "attack": 0.001,
+                "release": 0.42
+            },
+            {
+                "name": "AIR WAR VOCO",
+                "label": "AIR WAR",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 0.995,
+                "filterType": "bandpass",
+                "cutoff": 2700,
+                "reso": 8.5,
+                "attack": 0.005,
+                "release": 0.22
+            }
+        ],
+        "basses": [
+            {
+                "name": "TRASH 8-BIT SUB",
+                "label": "TRASH SUB",
+                "oscType": "square",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1400,
+                "reso": 5.5,
+                "envMod": 2800,
+                "decay": 0.25,
+                "attack": 0.002,
+                "subMix": 0.85
+            },
+            {
+                "name": "DOE DEER GLITCH",
+                "label": "DOE DEER",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 3600,
+                "reso": 7.5,
+                "envMod": 4200,
+                "decay": 0.18,
+                "attack": 0.001,
+                "subMix": 0.65
+            },
+            {
+                "name": "VANISHED C64",
+                "label": "VANISHED",
+                "oscType": "square",
+                "subType": "sawtooth",
+                "subOctave": -1,
+                "cutoff": 1900,
+                "reso": 4.8,
+                "envMod": 2400,
+                "decay": 0.32,
+                "attack": 0.004,
+                "subMix": 0.5
+            },
+            {
+                "name": "BLACK PANTHER",
+                "label": "BLK PANTHER",
+                "oscType": "square",
+                "subType": "triangle",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 6.5,
+                "envMod": 1900,
+                "decay": 0.22,
+                "attack": 0.003,
+                "subMix": 0.75
+            },
+            {
+                "name": "EMPATHY SUB",
+                "label": "EMPATHY",
+                "oscType": "triangle",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 800,
+                "reso": 2.5,
+                "envMod": 950,
+                "decay": 0.48,
+                "attack": 0.01,
+                "subMix": 0.9
+            },
+            {
+                "name": "PAP SMEAR ACID",
+                "label": "PAP SMEAR",
+                "oscType": "sawtooth",
+                "subType": "sawtooth",
+                "subOctave": -1,
+                "cutoff": 2300,
+                "reso": 8.5,
+                "envMod": 3600,
+                "decay": 0.28,
+                "attack": 0.002,
+                "subMix": 0.45
+            },
+            {
+                "name": "PLAGUE SLAP",
+                "label": "PLAGUE",
+                "oscType": "square",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 2900,
+                "reso": 5.2,
+                "envMod": 3000,
+                "decay": 0.16,
+                "attack": 0.001,
+                "subMix": 0.55
+            },
+            {
+                "name": "BENT PITCH DROP",
+                "label": "BENT DROP",
+                "oscType": "sine",
+                "subType": "square",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 850,
+                "reso": 3.2,
+                "envMod": 1300,
+                "decay": 0.55,
+                "attack": 0.005,
+                "subMix": 0.95
+            }
+        ],
+        "pedalboard": {
+            "lead": [
+                {
+                    "slot": 0,
+                    "cartridge": "decimator",
+                    "active": true,
+                    "params": {
+                        "bits": 6,
+                        "rate": 30,
+                        "mix": 75
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "ring-mod",
+                    "active": false,
+                    "params": {
+                        "carrier": 440,
+                        "lfo": 3,
+                        "mix": 40
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "sid-resonator",
+                    "active": true,
+                    "params": {
+                        "cutoff": 3800,
+                        "squelch": 70,
+                        "decay": 0.2
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "glitch-delay",
+                    "active": true,
+                    "params": {
+                        "size": 120,
+                        "feedback": 55,
+                        "jitter": 60,
+                        "mix": 50
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "cathedral-reverb",
+                    "active": false,
+                    "params": {
+                        "decay": 3.2,
+                        "damping": 40,
+                        "mix": 45
+                    }
+                }
+            ],
+            "bass": [
+                {
+                    "slot": 0,
+                    "cartridge": "big-muff",
+                    "active": true,
+                    "params": {
+                        "sustain": 70,
+                        "tone": 45,
+                        "volume": 75
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "decimator",
+                    "active": true,
+                    "params": {
+                        "bits": 8,
+                        "rate": 25,
+                        "mix": 60
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "sid-resonator",
+                    "active": true,
+                    "params": {
+                        "cutoff": 1800,
+                        "squelch": 80,
+                        "decay": 0.18
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "analog-delay",
+                    "active": false,
+                    "params": {
+                        "time": 220,
+                        "feedback": 25,
+                        "mix": 30
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "spring-reverb",
+                    "active": false,
+                    "params": {
+                        "tension": 65,
+                        "decay": 1.5,
+                        "mix": 35
+                    }
+                }
+            ]
+        }
+    },
+    "daft-punk": {
+        "format": "ShallotWHAM-Module",
+        "version": "1.0.0",
+        "id": "daft-punk",
+        "name": "DAFT PUNK",
+        "subtitle": "French House, Electropunk & Robotic Funk",
+        "author": "Shallot & Antigravity IDE",
+        "description": "Legendary robotic vocoder saws, talkbox brass, screaming Aerodynamic leads, and funky squelching French Touch basslines.",
+        "themeGlow": "#ffb700",
+        "category": "Electronic / House",
+        "tags": [
+            "daft-punk",
+            "french-touch",
+            "robot",
+            "talkbox",
+            "house",
+            "electro"
+        ],
+        "leads": [
+            {
+                "name": "DISCOVERY SAW",
+                "label": "DISCOVERY",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.008,
+                "filterType": "lowpass",
+                "cutoff": 4800,
+                "reso": 3,
+                "attack": 0.005,
+                "release": 0.35
+            },
+            {
+                "name": "ROBOT TALKBOX",
+                "label": "TALKBOX",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.003,
+                "filterType": "bandpass",
+                "cutoff": 2100,
+                "reso": 7.5,
+                "attack": 0.01,
+                "release": 0.25
+            },
+            {
+                "name": "AERODYNAMIC SQUEAL",
+                "label": "AERODYNAM",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.02,
+                "filterType": "lowpass",
+                "cutoff": 9200,
+                "reso": 5,
+                "attack": 0.002,
+                "release": 0.45
+            },
+            {
+                "name": "HARDER BETTER PULSE",
+                "label": "HBFS LEAD",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 2,
+                "filterType": "lowpass",
+                "cutoff": 6200,
+                "reso": 2.5,
+                "attack": 0.001,
+                "release": 0.2
+            },
+            {
+                "name": "DIGITAL LOVE PLUCK",
+                "label": "DIGI LOVE",
+                "osc1": "triangle",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.005,
+                "filterType": "lowpass",
+                "cutoff": 5500,
+                "reso": 3.2,
+                "attack": 0.002,
+                "release": 0.22
+            },
+            {
+                "name": "ROULE FILTER SWEEP",
+                "label": "ROULE SWEEP",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 0.995,
+                "filterType": "lowpass",
+                "cutoff": 3400,
+                "reso": 6.8,
+                "attack": 0.02,
+                "release": 0.4
+            },
+            {
+                "name": "SHORT CIRCUIT CHIP",
+                "label": "SHORT CIRC",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 1.012,
+                "filterType": "bandpass",
+                "cutoff": 4200,
+                "reso": 4.5,
+                "attack": 0.001,
+                "release": 0.15,
+                "bitcrush": true
+            },
+            {
+                "name": "TECHNOLOGIC VOCO",
+                "label": "TECHNOLOGIC",
+                "osc1": "sawtooth",
+                "osc2": "triangle",
+                "osc2Detune": 1,
+                "filterType": "bandpass",
+                "cutoff": 1800,
+                "reso": 8,
+                "attack": 0.008,
+                "release": 0.2
+            }
+        ],
+        "basses": [
+            {
+                "name": "AROUND THE WORLD",
+                "label": "AROUND WRD",
+                "oscType": "sawtooth",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 1300,
+                "reso": 5.5,
+                "envMod": 2200,
+                "decay": 0.32,
+                "attack": 0.005,
+                "subMix": 0.7
+            },
+            {
+                "name": "DA FUNK SAW",
+                "label": "DA FUNK",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 2600,
+                "reso": 7,
+                "envMod": 3400,
+                "decay": 0.28,
+                "attack": 0.002,
+                "subMix": 0.5
+            },
+            {
+                "name": "ROLLIN' SUB",
+                "label": "ROLLIN SUB",
+                "oscType": "sine",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 400,
+                "reso": 1,
+                "envMod": 300,
+                "decay": 0.5,
+                "attack": 0.01,
+                "subMix": 0.9
+            },
+            {
+                "name": "VOYAGER SQUELCH",
+                "label": "VOYAGER",
+                "oscType": "sawtooth",
+                "subType": "triangle",
+                "subOctave": -1,
+                "cutoff": 1600,
+                "reso": 8,
+                "envMod": 2800,
+                "decay": 0.24,
+                "attack": 0.003,
+                "subMix": 0.6
+            },
+            {
+                "name": "REVOLUTION 909",
+                "label": "REV 909",
+                "oscType": "square",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1800,
+                "reso": 4.5,
+                "envMod": 2000,
+                "decay": 0.3,
+                "attack": 0.004,
+                "subMix": 0.65
+            },
+            {
+                "name": "BURNIN' ACID",
+                "label": "BURNIN ACID",
+                "oscType": "sawtooth",
+                "subType": "sawtooth",
+                "subOctave": -1,
+                "cutoff": 2200,
+                "reso": 8.5,
+                "envMod": 3800,
+                "decay": 0.22,
+                "attack": 0.001,
+                "subMix": 0.45
+            },
+            {
+                "name": "PHOENIX FAT SUB",
+                "label": "PHOENIX",
+                "oscType": "triangle",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 750,
+                "reso": 2,
+                "envMod": 800,
+                "decay": 0.42,
+                "attack": 0.008,
+                "subMix": 0.8
+            },
+            {
+                "name": "CRESCENDOLLS BASS",
+                "label": "CRESCEND",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1500,
+                "reso": 6,
+                "envMod": 2400,
+                "decay": 0.26,
+                "attack": 0.004,
+                "subMix": 0.55
+            }
+        ],
+        "pedalboard": {
+            "lead": [
+                {
+                    "slot": 0,
+                    "cartridge": "french-preamp",
+                    "active": true,
+                    "params": {
+                        "drive": 65,
+                        "warmth": 60,
+                        "output": 75
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "small-stone",
+                    "active": true,
+                    "params": {
+                        "rate": 0.6,
+                        "depth": 80,
+                        "feedback": 40
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "sidechain-pumper",
+                    "active": true,
+                    "params": {
+                        "depth": 75,
+                        "rate": 4,
+                        "release": 0.25
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "ping-pong",
+                    "active": true,
+                    "params": {
+                        "time": 340,
+                        "feedback": 45,
+                        "mix": 40
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "gated-plate",
+                    "active": false,
+                    "params": {
+                        "size": 60,
+                        "gate": 55,
+                        "mix": 40
+                    }
+                }
+            ],
+            "bass": [
+                {
+                    "slot": 0,
+                    "cartridge": "proco-rat",
+                    "active": true,
+                    "params": {
+                        "dist": 55,
+                        "filter": 1400,
+                        "level": 75
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "small-stone",
+                    "active": false,
+                    "params": {
+                        "rate": 0.4,
+                        "depth": 60,
+                        "feedback": 25
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "sidechain-pumper",
+                    "active": true,
+                    "params": {
+                        "depth": 85,
+                        "rate": 4,
+                        "release": 0.2
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "analog-delay",
+                    "active": false,
+                    "params": {
+                        "time": 240,
+                        "feedback": 30,
+                        "mix": 30
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "gated-plate",
+                    "active": false,
+                    "params": {
+                        "size": 50,
+                        "gate": 60,
+                        "mix": 35
+                    }
+                }
+            ]
+        }
+    },
+    "depeche-mode": {
+        "format": "ShallotWHAM-Module",
+        "version": "1.0.0",
+        "id": "depeche-mode",
+        "name": "DEPECHE MODE",
+        "subtitle": "Dark 80s Synthpop, Industrial & Gothic Electro",
+        "author": "Shallot & Antigravity IDE",
+        "description": "Dark, brooding synthpop inspired by Depeche Mode (Violator, Black Celebration, Music for the Masses): heavy analog brass, metallic chimes, and punchy synth bass.",
+        "themeGlow": "#ec4899",
+        "category": "Synthpop / New Wave",
+        "tags": [
+            "depeche-mode",
+            "synthpop",
+            "darkwave",
+            "new-wave",
+            "80s",
+            "violator"
+        ],
+        "leads": [
+            {
+                "name": "ENJOY THE SILENCE",
+                "label": "ENJOY SILNC",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.006,
+                "filterType": "lowpass",
+                "cutoff": 4600,
+                "reso": 2.5,
+                "attack": 0.01,
+                "release": 0.4
+            },
+            {
+                "name": "PERSONAL JESUS",
+                "label": "PERS JESUS",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.01,
+                "filterType": "lowpass",
+                "cutoff": 3800,
+                "reso": 3.8,
+                "attack": 0.005,
+                "release": 0.25
+            },
+            {
+                "name": "STRANGELOVE BELL",
+                "label": "STRANGELOVE",
+                "osc1": "sine",
+                "osc2": "triangle",
+                "osc2Detune": 2.5,
+                "filterType": "lowpass",
+                "cutoff": 7000,
+                "reso": 2.8,
+                "attack": 0.001,
+                "release": 0.5
+            },
+            {
+                "name": "BLACK CELEBRATION",
+                "label": "BLACK CELEB",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.018,
+                "filterType": "bandpass",
+                "cutoff": 2200,
+                "reso": 6,
+                "attack": 0.04,
+                "release": 0.6
+            },
+            {
+                "name": "POLICY OF TRUTH",
+                "label": "POLICY LEAD",
+                "osc1": "square",
+                "osc2": "sawtooth",
+                "osc2Detune": 0.994,
+                "filterType": "lowpass",
+                "cutoff": 4200,
+                "reso": 3.2,
+                "attack": 0.015,
+                "release": 0.3
+            },
+            {
+                "name": "NEVER LET ME DOWN",
+                "label": "NEVER DOWN",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.009,
+                "filterType": "lowpass",
+                "cutoff": 5200,
+                "reso": 3,
+                "attack": 0.008,
+                "release": 0.35
+            },
+            {
+                "name": "HALO CHOIR SAW",
+                "label": "HALO CHOIR",
+                "osc1": "sawtooth",
+                "osc2": "sine",
+                "osc2Detune": 1.003,
+                "filterType": "bandpass",
+                "cutoff": 2800,
+                "reso": 5,
+                "attack": 0.05,
+                "release": 0.7
+            },
+            {
+                "name": "MASTER & SERVANT",
+                "label": "MASTER SRV",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 1.015,
+                "filterType": "lowpass",
+                "cutoff": 6500,
+                "reso": 4.5,
+                "attack": 0.002,
+                "release": 0.2
+            }
+        ],
+        "basses": [
+            {
+                "name": "POLICY TRUTH BASS",
+                "label": "POLICY BASS",
+                "oscType": "sawtooth",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 1400,
+                "reso": 5,
+                "envMod": 2200,
+                "decay": 0.3,
+                "attack": 0.004,
+                "subMix": 0.7
+            },
+            {
+                "name": "WALKING SUB",
+                "label": "WALKING SUB",
+                "oscType": "sine",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 450,
+                "reso": 1,
+                "envMod": 350,
+                "decay": 0.48,
+                "attack": 0.01,
+                "subMix": 0.9
+            },
+            {
+                "name": "VIOLATOR ACID",
+                "label": "VIOLATOR",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1900,
+                "reso": 7.5,
+                "envMod": 3200,
+                "decay": 0.25,
+                "attack": 0.002,
+                "subMix": 0.5
+            },
+            {
+                "name": "BLASPHEMOUS SUB",
+                "label": "BLASPHEMOUS",
+                "oscType": "triangle",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 850,
+                "reso": 3,
+                "envMod": 1100,
+                "decay": 0.4,
+                "attack": 0.008,
+                "subMix": 0.8
+            },
+            {
+                "name": "WORLD IN MY EYES",
+                "label": "WORLD EYES",
+                "oscType": "square",
+                "subType": "sawtooth",
+                "subOctave": -1,
+                "cutoff": 1700,
+                "reso": 4.8,
+                "envMod": 2000,
+                "decay": 0.28,
+                "attack": 0.003,
+                "subMix": 0.6
+            },
+            {
+                "name": "QUESTION OF TIME",
+                "label": "QUEST TIME",
+                "oscType": "square",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 2200,
+                "reso": 5.5,
+                "envMod": 2600,
+                "decay": 0.2,
+                "attack": 0.002,
+                "subMix": 0.65
+            },
+            {
+                "name": "STRIPPED HEAVY SAW",
+                "label": "STRIPPED",
+                "oscType": "sawtooth",
+                "subType": "sawtooth",
+                "subOctave": -1,
+                "cutoff": 1300,
+                "reso": 4.2,
+                "envMod": 1700,
+                "decay": 0.36,
+                "attack": 0.006,
+                "subMix": 0.55
+            },
+            {
+                "name": "BEHIND THE WHEEL",
+                "label": "BEHIND WHL",
+                "oscType": "sawtooth",
+                "subType": "triangle",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 1100,
+                "reso": 6,
+                "envMod": 2400,
+                "decay": 0.38,
+                "attack": 0.004,
+                "subMix": 0.7
+            }
+        ],
+        "pedalboard": {
+            "lead": [
+                {
+                    "slot": 0,
+                    "cartridge": "proco-rat",
+                    "active": true,
+                    "params": {
+                        "dist": 50,
+                        "filter": 2200,
+                        "level": 70
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "dimension-chorus",
+                    "active": true,
+                    "params": {
+                        "mode": 3,
+                        "width": 80,
+                        "mix": 60
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "mutron-wah",
+                    "active": false,
+                    "params": {
+                        "peak": 65,
+                        "drive": 45,
+                        "mode": "bp"
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "analog-delay",
+                    "active": true,
+                    "params": {
+                        "time": 320,
+                        "feedback": 40,
+                        "mix": 40
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "gated-plate",
+                    "active": true,
+                    "params": {
+                        "size": 65,
+                        "gate": 55,
+                        "mix": 50
+                    }
+                }
+            ],
+            "bass": [
+                {
+                    "slot": 0,
+                    "cartridge": "ds1",
+                    "active": true,
+                    "params": {
+                        "dist": 45,
+                        "tone": 1100,
+                        "level": 75
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "dimension-chorus",
+                    "active": false,
+                    "params": {
+                        "mode": 2,
+                        "width": 60,
+                        "mix": 45
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "sid-resonator",
+                    "active": true,
+                    "params": {
+                        "cutoff": 1700,
+                        "squelch": 70,
+                        "decay": 0.28
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "analog-delay",
+                    "active": false,
+                    "params": {
+                        "time": 240,
+                        "feedback": 25,
+                        "mix": 25
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "gated-plate",
+                    "active": true,
+                    "params": {
+                        "size": 50,
+                        "gate": 65,
+                        "mix": 40
+                    }
+                }
+            ]
+        }
+    },
+    "dungeon-synth": {
+        "format": "ShallotWHAM-Module",
+        "version": "1.0.0",
+        "id": "dungeon-synth",
+        "name": "DUNGEON SYNTH",
+        "subtitle": "Medieval Lo-Fi Fantasy, Organs & Flutes",
+        "author": "Shallot & Antigravity IDE",
+        "description": "Atmospheric, nostalgic medieval dungeon synth textures: haunting cathedral organs, misty forest flutes, sorcerer chimes, and deep crypt bass.",
+        "themeGlow": "#a855f7",
+        "category": "Atmospheric / Ambient",
+        "tags": [
+            "dungeon-synth",
+            "medieval",
+            "fantasy",
+            "organ",
+            "lofi",
+            "ambient",
+            "rpg"
+        ],
+        "leads": [
+            {
+                "name": "CASTLEVANIA ORGAN",
+                "label": "CASTLE ORG",
+                "osc1": "square",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.002,
+                "filterType": "lowpass",
+                "cutoff": 4200,
+                "reso": 2,
+                "attack": 0.02,
+                "release": 0.5
+            },
+            {
+                "name": "ANCIENT FLUTE",
+                "label": "ANCIENT FLT",
+                "osc1": "triangle",
+                "osc2": "sine",
+                "osc2Detune": 1.001,
+                "filterType": "lowpass",
+                "cutoff": 3800,
+                "reso": 1.8,
+                "attack": 0.04,
+                "release": 0.4
+            },
+            {
+                "name": "CRYPT DRONE",
+                "label": "CRYPT DRONE",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.007,
+                "filterType": "bandpass",
+                "cutoff": 1800,
+                "reso": 4.5,
+                "attack": 0.08,
+                "release": 0.8
+            },
+            {
+                "name": "FORGOTTEN BELL",
+                "label": "LOST BELL",
+                "osc1": "sine",
+                "osc2": "triangle",
+                "osc2Detune": 2.76,
+                "filterType": "lowpass",
+                "cutoff": 7500,
+                "reso": 3,
+                "attack": 0.001,
+                "release": 0.7
+            },
+            {
+                "name": "MEDIEVAL REED",
+                "label": "MEDIEVAL RD",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 1.004,
+                "filterType": "bandpass",
+                "cutoff": 2600,
+                "reso": 5,
+                "attack": 0.03,
+                "release": 0.35
+            },
+            {
+                "name": "CASTLE ECHO PLUCK",
+                "label": "CASTLE PLK",
+                "osc1": "triangle",
+                "osc2": "sawtooth",
+                "osc2Detune": 2,
+                "filterType": "lowpass",
+                "cutoff": 5000,
+                "reso": 2.2,
+                "attack": 0.002,
+                "release": 0.4
+            },
+            {
+                "name": "CAVERN REVERB SAW",
+                "label": "CAVERN SAW",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.012,
+                "filterType": "lowpass",
+                "cutoff": 3200,
+                "reso": 2.8,
+                "attack": 0.03,
+                "release": 0.65
+            },
+            {
+                "name": "SORCERER CHIME",
+                "label": "SORCERER",
+                "osc1": "sine",
+                "osc2": "triangle",
+                "osc2Detune": 3.5,
+                "filterType": "lowpass",
+                "cutoff": 8500,
+                "reso": 2,
+                "attack": 0.001,
+                "release": 0.6
+            }
+        ],
+        "basses": [
+            {
+                "name": "DUNGEON BASS",
+                "label": "DUNGEON BAS",
+                "oscType": "sawtooth",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 1000,
+                "reso": 3.5,
+                "envMod": 1400,
+                "decay": 0.42,
+                "attack": 0.01,
+                "subMix": 0.75
+            },
+            {
+                "name": "CASTLE DEEP SAW",
+                "label": "CASTLE BASS",
+                "oscType": "sawtooth",
+                "subType": "triangle",
+                "subOctave": -1,
+                "cutoff": 1300,
+                "reso": 4,
+                "envMod": 1600,
+                "decay": 0.36,
+                "attack": 0.008,
+                "subMix": 0.6
+            },
+            {
+                "name": "OGRE SUB",
+                "label": "OGRE SUB",
+                "oscType": "sine",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 380,
+                "reso": 1,
+                "envMod": 300,
+                "decay": 0.55,
+                "attack": 0.02,
+                "subMix": 0.9
+            },
+            {
+                "name": "CRYPT RUMBLER",
+                "label": "CRYPT RUMBL",
+                "oscType": "square",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 800,
+                "reso": 5,
+                "envMod": 1100,
+                "decay": 0.45,
+                "attack": 0.015,
+                "subMix": 0.8
+            },
+            {
+                "name": "STONE SQUELCH",
+                "label": "STONE ACID",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1700,
+                "reso": 7,
+                "envMod": 2600,
+                "decay": 0.28,
+                "attack": 0.005,
+                "subMix": 0.5
+            },
+            {
+                "name": "DRAGON HEARTBEAT",
+                "label": "DRAGON BEAT",
+                "oscType": "triangle",
+                "subType": "sine",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 650,
+                "reso": 2.5,
+                "envMod": 900,
+                "decay": 0.6,
+                "attack": 0.008,
+                "subMix": 0.85
+            },
+            {
+                "name": "MEDIEVAL DRONE",
+                "label": "MED DRONE",
+                "oscType": "sawtooth",
+                "subType": "sawtooth",
+                "subOctave": -1,
+                "cutoff": 950,
+                "reso": 2.5,
+                "envMod": 800,
+                "decay": 0.7,
+                "attack": 0.03,
+                "subMix": 0.7
+            },
+            {
+                "name": "TOWER DROP",
+                "label": "TOWER DROP",
+                "oscType": "sine",
+                "subType": "square",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 750,
+                "reso": 3,
+                "envMod": 1200,
+                "decay": 0.5,
+                "attack": 0.006,
+                "subMix": 0.8
+            }
+        ],
+        "pedalboard": {
+            "lead": [
+                {
+                    "slot": 0,
+                    "cartridge": "tube-screamer",
+                    "active": false,
+                    "params": {
+                        "drive": 30,
+                        "tone": 40,
+                        "level": 65
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "flanger",
+                    "active": false,
+                    "params": {
+                        "speed": 0.4,
+                        "depth": 70,
+                        "regen": 40
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "formant-filter",
+                    "active": false,
+                    "params": {
+                        "vowel": 2,
+                        "reso": 60,
+                        "glide": 30
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "space-echo",
+                    "active": true,
+                    "params": {
+                        "time": 420,
+                        "intensity": 50,
+                        "flutter": 45,
+                        "mix": 50
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "cathedral-reverb",
+                    "active": true,
+                    "params": {
+                        "decay": 4.5,
+                        "damping": 25,
+                        "mix": 65
+                    }
+                }
+            ],
+            "bass": [
+                {
+                    "slot": 0,
+                    "cartridge": "tube-screamer",
+                    "active": false,
+                    "params": {
+                        "drive": 35,
+                        "tone": 30,
+                        "level": 70
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "optical-tremolo",
+                    "active": false,
+                    "params": {
+                        "rate": 2,
+                        "depth": 45,
+                        "shape": "sine"
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "sid-resonator",
+                    "active": false,
+                    "params": {
+                        "cutoff": 900,
+                        "squelch": 50,
+                        "decay": 0.4
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "space-echo",
+                    "active": false,
+                    "params": {
+                        "time": 300,
+                        "intensity": 35,
+                        "flutter": 30,
+                        "mix": 35
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "cathedral-reverb",
+                    "active": true,
+                    "params": {
+                        "decay": 3.8,
+                        "damping": 30,
+                        "mix": 50
+                    }
+                }
+            ]
+        }
+    },
+    "kraftwerk": {
+        "format": "ShallotWHAM-Module",
+        "version": "1.0.0",
+        "id": "kraftwerk",
+        "name": "KRAFTWERK",
+        "subtitle": "Kling Klang Minimalist Electronic Pioneers",
+        "author": "Shallot & Antigravity IDE",
+        "description": "Pure minimalist German synthesizer craftsmanship: crystal sine tones, robotic computer world blips, trans-europe pulse lines, and analog Kling Klang bass.",
+        "themeGlow": "#00ff66",
+        "category": "Electronic / Krautrock",
+        "tags": [
+            "kraftwerk",
+            "kling-klang",
+            "analog",
+            "minimalist",
+            "germany",
+            "synth-pioneer"
+        ],
+        "leads": [
+            {
+                "name": "AUTOBAHN SINE",
+                "label": "AUTOBAHN",
+                "osc1": "sine",
+                "osc2": "sine",
+                "osc2Detune": 1.002,
+                "filterType": "lowpass",
+                "cutoff": 5000,
+                "reso": 0.8,
+                "attack": 0.04,
+                "release": 0.5
+            },
+            {
+                "name": "COMPUTER WORLD",
+                "label": "COMP WORLD",
+                "osc1": "square",
+                "osc2": "triangle",
+                "osc2Detune": 2,
+                "filterType": "lowpass",
+                "cutoff": 6500,
+                "reso": 2.5,
+                "attack": 0.002,
+                "release": 0.18,
+                "arp": "16th"
+            },
+            {
+                "name": "TRANS-EUROPE PULSE",
+                "label": "TRANS-EUR",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 1.006,
+                "filterType": "lowpass",
+                "cutoff": 7200,
+                "reso": 3,
+                "attack": 0.001,
+                "release": 0.2
+            },
+            {
+                "name": "POCKET CALCULATOR",
+                "label": "CALCULATOR",
+                "osc1": "triangle",
+                "osc2": "sine",
+                "osc2Detune": 3,
+                "filterType": "lowpass",
+                "cutoff": 8500,
+                "reso": 1.2,
+                "attack": 0.001,
+                "release": 0.15
+            },
+            {
+                "name": "RADIOACTIVITY GLOW",
+                "label": "RADIOACTIV",
+                "osc1": "sawtooth",
+                "osc2": "sine",
+                "osc2Detune": 0.998,
+                "filterType": "bandpass",
+                "cutoff": 2400,
+                "reso": 5.5,
+                "attack": 0.03,
+                "release": 0.6
+            },
+            {
+                "name": "THE MODEL SAW",
+                "label": "THE MODEL",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.004,
+                "filterType": "lowpass",
+                "cutoff": 3800,
+                "reso": 2.2,
+                "attack": 0.01,
+                "release": 0.3
+            },
+            {
+                "name": "KLING KLANG CHIME",
+                "label": "KLING CHIME",
+                "osc1": "triangle",
+                "osc2": "sine",
+                "osc2Detune": 4,
+                "filterType": "lowpass",
+                "cutoff": 9000,
+                "reso": 1.5,
+                "attack": 0.001,
+                "release": 0.4
+            },
+            {
+                "name": "THE MAN MACHINE",
+                "label": "MAN MACHINE",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.01,
+                "filterType": "lowpass",
+                "cutoff": 4200,
+                "reso": 4,
+                "attack": 0.008,
+                "release": 0.3
+            }
+        ],
+        "basses": [
+            {
+                "name": "KLING KLANG BASS",
+                "label": "KLING BASS",
+                "oscType": "square",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 4,
+                "envMod": 1800,
+                "decay": 0.28,
+                "attack": 0.004,
+                "subMix": 0.7
+            },
+            {
+                "name": "NUMBERS SUB",
+                "label": "NUMBERS SUB",
+                "oscType": "sine",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 500,
+                "reso": 1,
+                "envMod": 400,
+                "decay": 0.45,
+                "attack": 0.01,
+                "subMix": 0.85
+            },
+            {
+                "name": "NEON LIGHTS",
+                "label": "NEON LIGHTS",
+                "oscType": "sawtooth",
+                "subType": "triangle",
+                "subOctave": -1,
+                "cutoff": 1400,
+                "reso": 3,
+                "envMod": 1600,
+                "decay": 0.35,
+                "attack": 0.006,
+                "subMix": 0.6
+            },
+            {
+                "name": "AUTOBAHN DRIVE",
+                "label": "AUTO DRIVE",
+                "oscType": "sawtooth",
+                "subType": "sawtooth",
+                "subOctave": -1,
+                "cutoff": 1600,
+                "reso": 3.5,
+                "envMod": 1900,
+                "decay": 0.3,
+                "attack": 0.005,
+                "subMix": 0.5
+            },
+            {
+                "name": "COMPUTER BASS",
+                "label": "COMP BASS",
+                "oscType": "square",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1800,
+                "reso": 5,
+                "envMod": 2200,
+                "decay": 0.22,
+                "attack": 0.002,
+                "subMix": 0.65
+            },
+            {
+                "name": "TOUR DE FRANCE",
+                "label": "TOUR BASS",
+                "oscType": "triangle",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 900,
+                "reso": 2.5,
+                "envMod": 1100,
+                "decay": 0.38,
+                "attack": 0.008,
+                "subMix": 0.75
+            },
+            {
+                "name": "SPACELAB ACID",
+                "label": "SPACELAB",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 2000,
+                "reso": 7.5,
+                "envMod": 3000,
+                "decay": 0.24,
+                "attack": 0.002,
+                "subMix": 0.45
+            },
+            {
+                "name": "ELECTRIC CAFE",
+                "label": "ELEC CAFE",
+                "oscType": "sine",
+                "subType": "triangle",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 800,
+                "reso": 2,
+                "envMod": 1000,
+                "decay": 0.5,
+                "attack": 0.006,
+                "subMix": 0.8
+            }
+        ],
+        "pedalboard": {
+            "lead": [
+                {
+                    "slot": 0,
+                    "cartridge": "ds1",
+                    "active": false,
+                    "params": {
+                        "dist": 35,
+                        "tone": 3000,
+                        "level": 65
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "flanger",
+                    "active": true,
+                    "params": {
+                        "speed": 0.8,
+                        "depth": 75,
+                        "regen": 50
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "formant-filter",
+                    "active": true,
+                    "params": {
+                        "vowel": 3,
+                        "reso": 70,
+                        "glide": 20
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "ping-pong",
+                    "active": true,
+                    "params": {
+                        "time": 280,
+                        "feedback": 50,
+                        "mix": 45
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "gated-plate",
+                    "active": false,
+                    "params": {
+                        "size": 55,
+                        "gate": 60,
+                        "mix": 35
+                    }
+                }
+            ],
+            "bass": [
+                {
+                    "slot": 0,
+                    "cartridge": "proco-rat",
+                    "active": false,
+                    "params": {
+                        "dist": 40,
+                        "filter": 1600,
+                        "level": 70
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "flanger",
+                    "active": false,
+                    "params": {
+                        "speed": 0.5,
+                        "depth": 50,
+                        "regen": 30
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "sid-resonator",
+                    "active": true,
+                    "params": {
+                        "cutoff": 1400,
+                        "squelch": 65,
+                        "decay": 0.22
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "ping-pong",
+                    "active": false,
+                    "params": {
+                        "time": 240,
+                        "feedback": 30,
+                        "mix": 25
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "gated-plate",
+                    "active": false,
+                    "params": {
+                        "size": 45,
+                        "gate": 65,
+                        "mix": 30
+                    }
+                }
+            ]
+        }
+    },
+    "pornophonique-sad-robot": {
+        "format": "ShallotWHAM-Module",
+        "version": "1.0.0",
+        "id": "pornophonique-sad-robot",
+        "name": "SAD ROBOT",
+        "subtitle": "Pornophonique Chiptune / C64 SID & LSDJ",
+        "author": "Shallot & Antigravity IDE",
+        "description": "Authentic bitpop & chiptune synthesis inspired by Pornophonique's legendary 'Sad Robot' (8-bit lagerfeuer album). Featuring bittersweet SID 6581 leads, 60Hz Game Boy pulse arpeggios, acoustic-chip plucks, and robotic vocal formants.",
+        "themeGlow": "#e056fd",
+        "leads": [
+            {
+                "name": "SAD ROBOT SOLO",
+                "label": "SAD ROBOT",
+                "osc1": "sawtooth",
+                "osc2": "triangle",
+                "osc2Detune": 1.004,
+                "filterType": "lowpass",
+                "cutoff": 3800,
+                "reso": 3.8,
+                "attack": 0.015,
+                "release": 0.38,
+                "vibrato": true
+            },
+            {
+                "name": "LSDJ CRYING ARP",
+                "label": "LSDJ CRY",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 2.001,
+                "filterType": "lowpass",
+                "cutoff": 6800,
+                "reso": 3,
+                "attack": 0.001,
+                "release": 0.18,
+                "arp": "chip60"
+            },
+            {
+                "name": "LAGERFEUER PLUCK",
+                "label": "LAGERFEUER",
+                "osc1": "triangle",
+                "osc2": "square",
+                "osc2Detune": 1.008,
+                "filterType": "lowpass",
+                "cutoff": 5600,
+                "reso": 4.5,
+                "attack": 0.002,
+                "release": 0.2,
+                "pluck": true,
+                "decay": 0.16
+            },
+            {
+                "name": "ROBOT FORMANT",
+                "label": "ROBOT FORM",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 0.996,
+                "filterType": "bandpass",
+                "cutoff": 2100,
+                "reso": 7,
+                "attack": 0.01,
+                "release": 0.28
+            },
+            {
+                "name": "LONELY PULSE",
+                "label": "LONELY PLS",
+                "osc1": "square",
+                "osc2": "sine",
+                "osc2Detune": 1.002,
+                "filterType": "lowpass",
+                "cutoff": 2800,
+                "reso": 1.8,
+                "attack": 0.02,
+                "release": 0.45
+            },
+            {
+                "name": "C64 DIRTY CRUNCH",
+                "label": "C64 CRUNCH",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.022,
+                "filterType": "lowpass",
+                "cutoff": 5400,
+                "reso": 5.2,
+                "attack": 0.002,
+                "release": 0.22,
+                "bitcrush": true
+            },
+            {
+                "name": "SAD BENT CHIRP",
+                "label": "BENT CHIRP",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 1.006,
+                "filterType": "lowpass",
+                "cutoff": 4600,
+                "reso": 4,
+                "attack": 0.001,
+                "release": 0.15,
+                "pitchDrop": true
+            },
+            {
+                "name": "SID OCTAVE HOP",
+                "label": "SID OCT HOP",
+                "osc1": "triangle",
+                "osc2": "square",
+                "osc2Detune": 2,
+                "filterType": "bandpass",
+                "cutoff": 4200,
+                "reso": 4.8,
+                "attack": 0.002,
+                "release": 0.22,
+                "arp": "octave"
+            }
+        ],
+        "basses": [
+            {
+                "name": "GAME BOY WAVE SUB",
+                "label": "GB SUB",
+                "oscType": "square",
+                "subType": "triangle",
+                "subOctave": -1,
+                "cutoff": 1100,
+                "reso": 3.2,
+                "envMod": 750,
+                "decay": 0.35,
+                "attack": 0.002,
+                "subMix": 0.85
+            },
+            {
+                "name": "CAMPFIRE BASS",
+                "label": "CAMPFIRE",
+                "oscType": "triangle",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 850,
+                "reso": 2,
+                "envMod": 900,
+                "decay": 0.42,
+                "attack": 0.005,
+                "subMix": 0.7
+            },
+            {
+                "name": "SID ACID 6581",
+                "label": "SID 6581",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1800,
+                "reso": 7.5,
+                "envMod": 3200,
+                "decay": 0.24,
+                "attack": 0.002,
+                "subMix": 0.5
+            },
+            {
+                "name": "ROBOT HEARTBEAT",
+                "label": "HEARTBEAT",
+                "oscType": "sine",
+                "subType": "sine",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 450,
+                "reso": 1.8,
+                "envMod": 600,
+                "decay": 0.5,
+                "attack": 0.008,
+                "subMix": 0.9
+            },
+            {
+                "name": "NOISE CHIP PERC",
+                "label": "NOISE PERC",
+                "oscType": "square",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 2600,
+                "reso": 5.5,
+                "envMod": 3800,
+                "decay": 0.14,
+                "attack": 0.001,
+                "subMix": 0.6
+            },
+            {
+                "name": "8-BIT REESE",
+                "label": "8-BIT REESE",
+                "oscType": "square",
+                "subType": "square",
+                "subOctave": -1,
+                "detune": 1.018,
+                "cutoff": 1400,
+                "reso": 3.8,
+                "envMod": 1600,
+                "decay": 0.45,
+                "attack": 0.01,
+                "subMix": 0.65
+            },
+            {
+                "name": "MELANCHOLY ACID",
+                "label": "MELAN ACID",
+                "oscType": "sawtooth",
+                "subType": "sawtooth",
+                "subOctave": -1,
+                "cutoff": 2200,
+                "reso": 6.8,
+                "envMod": 2600,
+                "decay": 0.48,
+                "attack": 0.004,
+                "subMix": 0.55
+            },
+            {
+                "name": "POWER DOWN DROP",
+                "label": "POWER DOWN",
+                "oscType": "sine",
+                "subType": "square",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 500,
+                "reso": 2.5,
+                "envMod": 1000,
+                "decay": 0.75,
+                "attack": 0.005,
+                "subMix": 0.95
+            }
+        ],
+        "pedalboard": {
+            "lead": [
+                {
+                    "slot": 0,
+                    "cartridge": "tube-screamer",
+                    "active": true,
+                    "params": {
+                        "drive": 40,
+                        "tone": 55,
+                        "level": 70
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "optical-tremolo",
+                    "active": true,
+                    "params": {
+                        "rate": 4.5,
+                        "depth": 60,
+                        "shape": "sine"
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "mutron-wah",
+                    "active": false,
+                    "params": {
+                        "peak": 70,
+                        "drive": 50,
+                        "mode": "lp"
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "space-echo",
+                    "active": true,
+                    "params": {
+                        "time": 360,
+                        "intensity": 45,
+                        "flutter": 35,
+                        "mix": 45
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "spring-reverb",
+                    "active": true,
+                    "params": {
+                        "tension": 50,
+                        "decay": 2,
+                        "mix": 45
+                    }
+                }
+            ],
+            "bass": [
+                {
+                    "slot": 0,
+                    "cartridge": "ds1",
+                    "active": false,
+                    "params": {
+                        "dist": 40,
+                        "tone": 1200,
+                        "level": 70
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "optical-tremolo",
+                    "active": false,
+                    "params": {
+                        "rate": 3,
+                        "depth": 40,
+                        "shape": "sine"
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "sid-resonator",
+                    "active": true,
+                    "params": {
+                        "cutoff": 1600,
+                        "squelch": 75,
+                        "decay": 0.25
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "analog-delay",
+                    "active": false,
+                    "params": {
+                        "time": 260,
+                        "feedback": 25,
+                        "mix": 30
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "spring-reverb",
+                    "active": false,
+                    "params": {
+                        "tension": 45,
+                        "decay": 1.6,
+                        "mix": 30
+                    }
+                }
+            ]
+        }
+    },
+    "synthwave": {
+        "format": "ShallotWHAM-Module",
+        "version": "1.0.0",
+        "id": "synthwave",
+        "name": "SYNTHWAVE",
+        "subtitle": "Classic 80s Analog Leads & Basslines",
+        "author": "Shallot & Antigravity IDE",
+        "description": "Warm retro synthwave sounds with dual detuned sawtooth leads, lush brass, G-Funk sines, and punchy 303/Moog basslines.",
+        "themeGlow": "#00e5ff",
+        "leads": [
+            {
+                "name": "TRANCE SAW LEAD",
+                "label": "TRANCE SAW",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.006,
+                "filterType": "lowpass",
+                "cutoff": 4200,
+                "reso": 2,
+                "attack": 0.005,
+                "release": 0.35
+            },
+            {
+                "name": "CHIPTUNE PULSE",
+                "label": "CHIPTUNE",
+                "osc1": "square",
+                "osc2": "square",
+                "osc2Detune": 2,
+                "filterType": "lowpass",
+                "cutoff": 8000,
+                "reso": 1,
+                "attack": 0.001,
+                "release": 0.15
+            },
+            {
+                "name": "80s SYNTH BRASS",
+                "label": "80s BRASS",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 0.992,
+                "filterType": "lowpass",
+                "cutoff": 3200,
+                "reso": 3.5,
+                "attack": 0.04,
+                "release": 0.45
+            },
+            {
+                "name": "CYBERPUNK LEAD",
+                "label": "CYBERPUNK",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.01,
+                "filterType": "lowpass",
+                "cutoff": 3800,
+                "reso": 4,
+                "attack": 0.01,
+                "release": 0.28
+            },
+            {
+                "name": "G-FUNK SINE",
+                "label": "G-FUNK",
+                "osc1": "sine",
+                "osc2": "sine",
+                "osc2Detune": 2.002,
+                "filterType": "lowpass",
+                "cutoff": 6000,
+                "reso": 0.8,
+                "attack": 0.02,
+                "release": 0.3
+            },
+            {
+                "name": "HYPER PLUCK",
+                "label": "HYPER PLUCK",
+                "osc1": "triangle",
+                "osc2": "sine",
+                "osc2Detune": 3,
+                "filterType": "lowpass",
+                "cutoff": 5500,
+                "reso": 2.5,
+                "attack": 0.002,
+                "release": 0.18
+            },
+            {
+                "name": "VOCO VOICE",
+                "label": "VOCO LEAD",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.003,
+                "filterType": "bandpass",
+                "cutoff": 2200,
+                "reso": 6,
+                "attack": 0.01,
+                "release": 0.25
+            },
+            {
+                "name": "RAVE HOOVER",
+                "label": "RAVE HOOVER",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.015,
+                "filterType": "lowpass",
+                "cutoff": 4800,
+                "reso": 3,
+                "attack": 0.015,
+                "release": 0.4
+            }
+        ],
+        "basses": [
+            {
+                "name": "ACID 303 SAW",
+                "label": "303 ACID",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 6,
+                "envMod": 2200,
+                "decay": 0.28,
+                "attack": 0.005,
+                "subMix": 0.4
+            },
+            {
+                "name": "DEEP SUB SINE",
+                "label": "DEEP SUB",
+                "oscType": "sine",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 450,
+                "reso": 1,
+                "envMod": 400,
+                "decay": 0.45,
+                "attack": 0.01,
+                "subMix": 0.75
+            },
+            {
+                "name": "FAT REESE BASS",
+                "label": "FAT REESE",
+                "oscType": "sawtooth",
+                "subType": "sine",
+                "subOctave": -1,
+                "detune": 1.018,
+                "cutoff": 1800,
+                "reso": 3.5,
+                "envMod": 1500,
+                "decay": 0.5,
+                "attack": 0.01,
+                "subMix": 0.5
+            },
+            {
+                "name": "FM PUNCH BASS",
+                "label": "FM PUNCH",
+                "oscType": "triangle",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 2400,
+                "reso": 4,
+                "envMod": 3200,
+                "decay": 0.22,
+                "attack": 0.002,
+                "subMix": 0.45
+            },
+            {
+                "name": "SLAP SQUARE",
+                "label": "SLAP SQR",
+                "oscType": "square",
+                "subType": "triangle",
+                "subOctave": -1,
+                "cutoff": 2000,
+                "reso": 5,
+                "envMod": 2800,
+                "decay": 0.2,
+                "attack": 0.003,
+                "subMix": 0.35
+            },
+            {
+                "name": "80s ANALOG BASS",
+                "label": "80s ANALOG",
+                "oscType": "sawtooth",
+                "subType": "sawtooth",
+                "subOctave": -1,
+                "detune": 1.006,
+                "cutoff": 1600,
+                "reso": 2.5,
+                "envMod": 1800,
+                "decay": 0.35,
+                "attack": 0.008,
+                "subMix": 0.5
+            },
+            {
+                "name": "WARM MOOG BASS",
+                "label": "WARM MOOG",
+                "oscType": "sawtooth",
+                "subType": "triangle",
+                "subOctave": -1,
+                "cutoff": 900,
+                "reso": 3,
+                "envMod": 1200,
+                "decay": 0.4,
+                "attack": 0.01,
+                "subMix": 0.6
+            },
+            {
+                "name": "SUB DROPPER",
+                "label": "SUB DROP",
+                "oscType": "sine",
+                "subType": "sine",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 600,
+                "reso": 1.5,
+                "envMod": 800,
+                "decay": 0.6,
+                "attack": 0.01,
+                "subMix": 0.85
+            }
+        ],
+        "pedalboard": {
+            "lead": [
+                {
+                    "slot": 0,
+                    "cartridge": "ds1",
+                    "active": false,
+                    "params": {
+                        "dist": 50,
+                        "tone": 2500,
+                        "level": 65
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "dimension-chorus",
+                    "active": true,
+                    "params": {
+                        "mode": 3,
+                        "width": 75,
+                        "mix": 55
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "ps6",
+                    "active": false,
+                    "params": {
+                        "key": "C",
+                        "scale": "major",
+                        "interval": "3rd",
+                        "mix": 50
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "delay",
+                    "active": false,
+                    "params": {
+                        "time": 380,
+                        "feedback": 40,
+                        "mix": 45
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "reverb",
+                    "active": false,
+                    "params": {
+                        "mix": 55,
+                        "decay": 2.5
+                    }
+                }
+            ],
+            "bass": [
+                {
+                    "slot": 0,
+                    "cartridge": "ds1",
+                    "active": false,
+                    "params": {
+                        "dist": 45,
+                        "tone": 900,
+                        "level": 70
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "decimator",
+                    "active": false,
+                    "params": {
+                        "bits": 8,
+                        "rate": 35,
+                        "mix": 50
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "ps6",
+                    "active": false,
+                    "params": {
+                        "key": "C",
+                        "scale": "minor",
+                        "interval": "oct-down",
+                        "mix": 60
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "delay",
+                    "active": false,
+                    "params": {
+                        "time": 280,
+                        "feedback": 30,
+                        "mix": 35
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "reverb",
+                    "active": false,
+                    "params": {
+                        "mix": 40,
+                        "decay": 1.8
+                    }
+                }
+            ]
+        }
+    },
+    "user-custom": {
+        "format": "ShallotWHAM-Module",
+        "version": "1.0.0",
+        "id": "user-custom",
+        "name": "USER PATCHES",
+        "subtitle": "Custom User Synthesizer Patches",
+        "author": "User",
+        "description": "Custom user patch bank. Save, tweak, customize, and export your personal signature lead and bass presets.",
+        "themeGlow": "#f39c12",
+        "leads": [
+            {
+                "name": "USER LEAD 1",
+                "label": "USER 1",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.01,
+                "filterType": "lowpass",
+                "cutoff": 3500,
+                "reso": 2,
+                "attack": 0.01,
+                "release": 0.25
+            },
+            {
+                "name": "USER LEAD 2",
+                "label": "USER 2",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.01,
+                "filterType": "lowpass",
+                "cutoff": 3500,
+                "reso": 2,
+                "attack": 0.01,
+                "release": 0.25
+            },
+            {
+                "name": "USER LEAD 3",
+                "label": "USER 3",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.01,
+                "filterType": "lowpass",
+                "cutoff": 3500,
+                "reso": 2,
+                "attack": 0.01,
+                "release": 0.25
+            },
+            {
+                "name": "USER LEAD 4",
+                "label": "USER 4",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.01,
+                "filterType": "lowpass",
+                "cutoff": 3500,
+                "reso": 2,
+                "attack": 0.01,
+                "release": 0.25
+            },
+            {
+                "name": "USER LEAD 5",
+                "label": "USER 5",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.01,
+                "filterType": "lowpass",
+                "cutoff": 3500,
+                "reso": 2,
+                "attack": 0.01,
+                "release": 0.25
+            },
+            {
+                "name": "USER LEAD 6",
+                "label": "USER 6",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.01,
+                "filterType": "lowpass",
+                "cutoff": 3500,
+                "reso": 2,
+                "attack": 0.01,
+                "release": 0.25
+            },
+            {
+                "name": "USER LEAD 7",
+                "label": "USER 7",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.01,
+                "filterType": "lowpass",
+                "cutoff": 3500,
+                "reso": 2,
+                "attack": 0.01,
+                "release": 0.25
+            },
+            {
+                "name": "USER LEAD 8",
+                "label": "USER 8",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.01,
+                "filterType": "lowpass",
+                "cutoff": 3500,
+                "reso": 2,
+                "attack": 0.01,
+                "release": 0.25
+            }
+        ],
+        "basses": [
+            {
+                "name": "USER BASS 1",
+                "label": "USER 1",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 5,
+                "envMod": 2000,
+                "decay": 0.3,
+                "attack": 0.005,
+                "subMix": 0.5
+            },
+            {
+                "name": "USER BASS 2",
+                "label": "USER 2",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 5,
+                "envMod": 2000,
+                "decay": 0.3,
+                "attack": 0.005,
+                "subMix": 0.5
+            },
+            {
+                "name": "USER BASS 3",
+                "label": "USER 3",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 5,
+                "envMod": 2000,
+                "decay": 0.3,
+                "attack": 0.005,
+                "subMix": 0.5
+            },
+            {
+                "name": "USER BASS 4",
+                "label": "USER 4",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 5,
+                "envMod": 2000,
+                "decay": 0.3,
+                "attack": 0.005,
+                "subMix": 0.5
+            },
+            {
+                "name": "USER BASS 5",
+                "label": "USER 5",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 5,
+                "envMod": 2000,
+                "decay": 0.3,
+                "attack": 0.005,
+                "subMix": 0.5
+            },
+            {
+                "name": "USER BASS 6",
+                "label": "USER 6",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 5,
+                "envMod": 2000,
+                "decay": 0.3,
+                "attack": 0.005,
+                "subMix": 0.5
+            },
+            {
+                "name": "USER BASS 7",
+                "label": "USER 7",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 5,
+                "envMod": 2000,
+                "decay": 0.3,
+                "attack": 0.005,
+                "subMix": 0.5
+            },
+            {
+                "name": "USER BASS 8",
+                "label": "USER 8",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 5,
+                "envMod": 2000,
+                "decay": 0.3,
+                "attack": 0.005,
+                "subMix": 0.5
+            }
+        ],
+        "pedalboard": {
+            "lead": [
+                {
+                    "slot": 0,
+                    "cartridge": "ds1",
+                    "active": false,
+                    "params": {
+                        "dist": 50,
+                        "tone": 2500,
+                        "level": 65
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "decimator",
+                    "active": false,
+                    "params": {
+                        "bits": 8,
+                        "rate": 40,
+                        "mix": 60
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "ps6",
+                    "active": false,
+                    "params": {
+                        "key": "C",
+                        "scale": "major",
+                        "interval": "3rd",
+                        "mix": 50
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "delay",
+                    "active": false,
+                    "params": {
+                        "time": 380,
+                        "feedback": 40,
+                        "mix": 45
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "reverb",
+                    "active": false,
+                    "params": {
+                        "mix": 55,
+                        "decay": 2.5
+                    }
+                }
+            ],
+            "bass": [
+                {
+                    "slot": 0,
+                    "cartridge": "ds1",
+                    "active": false,
+                    "params": {
+                        "dist": 45,
+                        "tone": 900,
+                        "level": 70
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "decimator",
+                    "active": false,
+                    "params": {
+                        "bits": 8,
+                        "rate": 35,
+                        "mix": 50
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "ps6",
+                    "active": false,
+                    "params": {
+                        "key": "C",
+                        "scale": "minor",
+                        "interval": "oct-down",
+                        "mix": 60
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "delay",
+                    "active": false,
+                    "params": {
+                        "time": 280,
+                        "feedback": 30,
+                        "mix": 35
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "reverb",
+                    "active": false,
+                    "params": {
+                        "mix": 40,
+                        "decay": 1.8
+                    }
+                }
+            ]
+        }
+    },
+    "vaporwave-dreams": {
+        "format": "ShallotWHAM-Module",
+        "version": "1.0.0",
+        "id": "vaporwave-dreams",
+        "name": "VAPORWAVE DREAMS",
+        "subtitle": "Nostalgic Mallsoft, Chillwave & Chorus Saws",
+        "author": "Shallot & Antigravity IDE",
+        "description": "Dreamy, nostalgic aesthetics of late-night malls, Windows 95 boot sounds, lush FM chorused keys, and tape-fluttered slushwave bass.",
+        "themeGlow": "#06b6d4",
+        "category": "Chillwave / Mallsoft",
+        "tags": [
+            "vaporwave",
+            "mallsoft",
+            "chillwave",
+            "lofi",
+            "chorus",
+            "nostalgia",
+            "90s"
+        ],
+        "leads": [
+            {
+                "name": "LATE NIGHT DX7",
+                "label": "DX7 PIANO",
+                "osc1": "triangle",
+                "osc2": "sine",
+                "osc2Detune": 2.001,
+                "filterType": "lowpass",
+                "cutoff": 6200,
+                "reso": 1.5,
+                "attack": 0.005,
+                "release": 0.45
+            },
+            {
+                "name": "ABANDONED MALL CHIME",
+                "label": "MALL CHIME",
+                "osc1": "sine",
+                "osc2": "triangle",
+                "osc2Detune": 3.2,
+                "filterType": "lowpass",
+                "cutoff": 8000,
+                "reso": 2.2,
+                "attack": 0.001,
+                "release": 0.6
+            },
+            {
+                "name": "MACINTOSH FLUTE",
+                "label": "MAC FLUTE",
+                "osc1": "triangle",
+                "osc2": "sine",
+                "osc2Detune": 1.002,
+                "filterType": "lowpass",
+                "cutoff": 4200,
+                "reso": 1.2,
+                "attack": 0.03,
+                "release": 0.35
+            },
+            {
+                "name": "FLORAL CHORUS SAW",
+                "label": "FLORAL SAW",
+                "osc1": "sawtooth",
+                "osc2": "sawtooth",
+                "osc2Detune": 1.012,
+                "filterType": "lowpass",
+                "cutoff": 4800,
+                "reso": 2.8,
+                "attack": 0.015,
+                "release": 0.4
+            },
+            {
+                "name": "SLOW DIVE SINE",
+                "label": "SLOW DIVE",
+                "osc1": "sine",
+                "osc2": "sine",
+                "osc2Detune": 1.004,
+                "filterType": "lowpass",
+                "cutoff": 3500,
+                "reso": 0.9,
+                "attack": 0.05,
+                "release": 0.7
+            },
+            {
+                "name": "WINDOWS 95 GLOW",
+                "label": "WIN 95 GLOW",
+                "osc1": "sawtooth",
+                "osc2": "triangle",
+                "osc2Detune": 1.008,
+                "filterType": "bandpass",
+                "cutoff": 2600,
+                "reso": 4.5,
+                "attack": 0.04,
+                "release": 0.55
+            },
+            {
+                "name": "ECCOJAMS PLUCK",
+                "label": "ECCO PLUCK",
+                "osc1": "square",
+                "osc2": "sine",
+                "osc2Detune": 2,
+                "filterType": "lowpass",
+                "cutoff": 5500,
+                "reso": 3,
+                "attack": 0.002,
+                "release": 0.25
+            },
+            {
+                "name": "PALM TREE LEAD",
+                "label": "PALM TREE",
+                "osc1": "sawtooth",
+                "osc2": "square",
+                "osc2Detune": 1.015,
+                "filterType": "lowpass",
+                "cutoff": 5000,
+                "reso": 3.5,
+                "attack": 0.01,
+                "release": 0.3
+            }
+        ],
+        "basses": [
+            {
+                "name": "SLUSH SUB",
+                "label": "SLUSH SUB",
+                "oscType": "sine",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 350,
+                "reso": 1,
+                "envMod": 250,
+                "decay": 0.6,
+                "attack": 0.02,
+                "subMix": 0.95
+            },
+            {
+                "name": "VHS DRIFT BASS",
+                "label": "VHS DRIFT",
+                "oscType": "sawtooth",
+                "subType": "triangle",
+                "subOctave": -1,
+                "cutoff": 1200,
+                "reso": 3.5,
+                "envMod": 1400,
+                "decay": 0.4,
+                "attack": 0.008,
+                "subMix": 0.7
+            },
+            {
+                "name": "SUNSET 303",
+                "label": "SUNSET 303",
+                "oscType": "sawtooth",
+                "subType": "square",
+                "subOctave": -1,
+                "cutoff": 1800,
+                "reso": 7,
+                "envMod": 2800,
+                "decay": 0.28,
+                "attack": 0.003,
+                "subMix": 0.5
+            },
+            {
+                "name": "SUPERMARKET BASS",
+                "label": "SUPERMRKT",
+                "oscType": "triangle",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 750,
+                "reso": 2,
+                "envMod": 800,
+                "decay": 0.45,
+                "attack": 0.01,
+                "subMix": 0.8
+            },
+            {
+                "name": "RESONANCE SUB",
+                "label": "RESO SUB",
+                "oscType": "square",
+                "subType": "sine",
+                "subOctave": -1,
+                "cutoff": 900,
+                "reso": 5,
+                "envMod": 1200,
+                "decay": 0.38,
+                "attack": 0.005,
+                "subMix": 0.75
+            },
+            {
+                "name": "1992 ACID SQUELCH",
+                "label": "1992 ACID",
+                "oscType": "sawtooth",
+                "subType": "sawtooth",
+                "subOctave": -1,
+                "cutoff": 2100,
+                "reso": 8,
+                "envMod": 3200,
+                "decay": 0.22,
+                "attack": 0.002,
+                "subMix": 0.45
+            },
+            {
+                "name": "CASSETTE TAPE DROP",
+                "label": "TAPE DROP",
+                "oscType": "sine",
+                "subType": "square",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 600,
+                "reso": 2.5,
+                "envMod": 1000,
+                "decay": 0.55,
+                "attack": 0.008,
+                "subMix": 0.85
+            },
+            {
+                "name": "PLAZA HEARTBEAT",
+                "label": "PLAZA BEAT",
+                "oscType": "triangle",
+                "subType": "triangle",
+                "subOctave": -1,
+                "pitchDrop": true,
+                "cutoff": 700,
+                "reso": 3,
+                "envMod": 1100,
+                "decay": 0.48,
+                "attack": 0.006,
+                "subMix": 0.7
+            }
+        ],
+        "pedalboard": {
+            "lead": [
+                {
+                    "slot": 0,
+                    "cartridge": "french-preamp",
+                    "active": false,
+                    "params": {
+                        "drive": 30,
+                        "warmth": 70,
+                        "output": 65
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "dimension-chorus",
+                    "active": true,
+                    "params": {
+                        "mode": 4,
+                        "width": 90,
+                        "mix": 65
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "formant-filter",
+                    "active": false,
+                    "params": {
+                        "vowel": 1,
+                        "reso": 45,
+                        "glide": 40
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "space-echo",
+                    "active": true,
+                    "params": {
+                        "time": 440,
+                        "intensity": 48,
+                        "flutter": 55,
+                        "mix": 50
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "cosmic-shimmer",
+                    "active": true,
+                    "params": {
+                        "shimmer": 65,
+                        "decay": 3.5,
+                        "mix": 55
+                    }
+                }
+            ],
+            "bass": [
+                {
+                    "slot": 0,
+                    "cartridge": "french-preamp",
+                    "active": false,
+                    "params": {
+                        "drive": 35,
+                        "warmth": 75,
+                        "output": 70
+                    }
+                },
+                {
+                    "slot": 1,
+                    "cartridge": "dimension-chorus",
+                    "active": true,
+                    "params": {
+                        "mode": 2,
+                        "width": 65,
+                        "mix": 45
+                    }
+                },
+                {
+                    "slot": 2,
+                    "cartridge": "sidechain-pumper",
+                    "active": true,
+                    "params": {
+                        "depth": 75,
+                        "rate": 4,
+                        "release": 0.3
+                    }
+                },
+                {
+                    "slot": 3,
+                    "cartridge": "space-echo",
+                    "active": false,
+                    "params": {
+                        "time": 320,
+                        "intensity": 30,
+                        "flutter": 35,
+                        "mix": 30
+                    }
+                },
+                {
+                    "slot": 4,
+                    "cartridge": "cosmic-shimmer",
+                    "active": false,
+                    "params": {
+                        "shimmer": 40,
+                        "decay": 2.5,
+                        "mix": 35
+                    }
+                }
+            ]
+        }
+    }
+};
 
-// Bass Preset Templates (Rows 2 & 3 Dedicated Engine)
-const BASS_PRESETS = [
-    { name: "ACID 303 SAW", oscType: "sawtooth", subType: "square", subOctave: -1, cutoff: 1200, reso: 6.0, envMod: 2200, decay: 0.28, attack: 0.005, subMix: 0.4 },
-    { name: "DEEP SUB SINE", oscType: "sine", subType: "sine", subOctave: -1, cutoff: 450, reso: 1.0, envMod: 400, decay: 0.45, attack: 0.01, subMix: 0.75 },
-    { name: "FAT REESE BASS", oscType: "sawtooth", subType: "sine", subOctave: -1, detune: 1.018, cutoff: 1800, reso: 3.5, envMod: 1500, decay: 0.5, attack: 0.01, subMix: 0.5 },
-    { name: "FM PUNCH BASS", oscType: "triangle", subType: "square", subOctave: -1, cutoff: 2400, reso: 4.0, envMod: 3200, decay: 0.22, attack: 0.002, subMix: 0.45 },
-    { name: "SLAP SQUARE", oscType: "square", subType: "triangle", subOctave: -1, cutoff: 2000, reso: 5.0, envMod: 2800, decay: 0.2, attack: 0.003, subMix: 0.35 },
-    { name: "80s ANALOG BASS", oscType: "sawtooth", subType: "sawtooth", subOctave: -1, detune: 1.006, cutoff: 1600, reso: 2.5, envMod: 1800, decay: 0.35, attack: 0.008, subMix: 0.5 },
-    { name: "WARM MOOG BASS", oscType: "sawtooth", subType: "triangle", subOctave: -1, cutoff: 900, reso: 3.0, envMod: 1200, decay: 0.4, attack: 0.01, subMix: 0.6 },
-    { name: "SUB DROPPER", oscType: "sine", subType: "sine", subOctave: -1, pitchDrop: true, cutoff: 600, reso: 1.5, envMod: 800, decay: 0.6, attack: 0.01, subMix: 0.85 }
-];
+// Runtime Custom Modules Registry (populated from localStorage and imported .swm files)
+const CUSTOM_MODULE_VAULT = {};
+
+function registerModule(mod, persist = false) {
+    if (!mod || !mod.id) return;
+    MODULE_LIBRARY[mod.id] = mod;
+    if (persist) {
+        try {
+            CUSTOM_MODULE_VAULT[mod.id] = mod;
+            localStorage.setItem("shallotwham_custom_library", JSON.stringify(CUSTOM_MODULE_VAULT));
+        } catch (e) {
+            console.warn("Failed to persist module to custom vault", e);
+        }
+    }
+}
+
+function loadCustomLibraryFromStorage() {
+    try {
+        const raw = localStorage.getItem("shallotwham_custom_library");
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            Object.keys(parsed).forEach(id => {
+                CUSTOM_MODULE_VAULT[id] = parsed[id];
+                MODULE_LIBRARY[id] = parsed[id];
+            });
+        }
+    } catch (e) {
+        console.warn("Failed to load custom vault from storage", e);
+    }
+}
+
+const DEFAULT_SLOT_MODULE_KEYS = ["synthwave", "crystal-castles", "8bit-arcade", "pornophonique-sad-robot", "user-custom"];
+
+function cloneModule(mod) {
+    return JSON.parse(JSON.stringify(mod));
+}
+
+// 5 Active Top-Bar Module Slots
+const LOADED_MODULE_SLOTS = DEFAULT_SLOT_MODULE_KEYS.map(key => cloneModule(MODULE_LIBRARY[key]));
+const SOUND_BANKS = LOADED_MODULE_SLOTS;
+
+let LEAD_PRESETS = SOUND_BANKS[0].leads;
+let BASS_PRESETS = SOUND_BANKS[0].basses;
 
 function saveSettings() {
     try {
@@ -181,6 +3493,14 @@ function saveSettings() {
             appSettings.bassPolyphony = parseInt(document.getElementById("bass-polyphony").value);
         }
 
+        // 5-Slot Module Architecture Persistence
+        appSettings.loadedModuleSlots = LOADED_MODULE_SLOTS.map(m => m.id);
+        appSettings.shallotwham_pedalboards = {
+            lead: leadPedalSlots.map(s => ({ slot: s.slotIdx, cartridge: s.cartridgeId, active: s.active, params: s.params })),
+            bass: bassPedalSlots.map(s => ({ slot: s.slotIdx, cartridge: s.cartridgeId, active: s.active, params: s.params }))
+        };
+        // 5-Slot Module Architecture Persistence
+        appSettings.loadedModuleSlots = LOADED_MODULE_SLOTS.map(m => m.id);
         localStorage.setItem("shallotwham_settings", JSON.stringify(appSettings));
     } catch (e) {
         console.warn("Failed to save settings", e);
@@ -534,22 +3854,29 @@ function isBassKey(key) {
     return ROW2_KEYS.includes(key) || ROW3_KEYS.includes(key);
 }
 
+// Pre-computed O(1) Lookup Cache for Zero-Latency Note Triggering
+let KEY_CACHE = {};
+let KEY_ELEMENTS = {};
+
 // Virtual Keyboard layout builder with Dual Instrument Separation
 function buildVirtualKeyboard() {
-    const r0Root = document.getElementById("row0-root") ? document.getElementById("row0-root").value : "G";
-    const r1Root = document.getElementById("row1-root") ? document.getElementById("row1-root").value : "D";
-    const r2Root = document.getElementById("row2-root") ? document.getElementById("row2-root").value : "G";
-    const r3Root = document.getElementById("row3-root") ? document.getElementById("row3-root").value : "D";
+    const r0Root = document.getElementById("row0-root") ? document.getElementById("row0-root").value : (appSettings.row0Root || "G");
+    const r1Root = document.getElementById("row1-root") ? document.getElementById("row1-root").value : (appSettings.row1Root || "D");
+    const r2Root = document.getElementById("row2-root") ? document.getElementById("row2-root").value : (appSettings.row2Root || "G");
+    const r3Root = document.getElementById("row3-root") ? document.getElementById("row3-root").value : (appSettings.row3Root || "D");
 
-    const r0Octave = parseInt(document.getElementById("row0-octave") ? document.getElementById("row0-octave").value : 3);
-    const r1Octave = parseInt(document.getElementById("row1-octave") ? document.getElementById("row1-octave").value : 3);
-    const r2Octave = parseInt(document.getElementById("row2-octave") ? document.getElementById("row2-octave").value : 2);
-    const r3Octave = parseInt(document.getElementById("row3-octave") ? document.getElementById("row3-octave").value : 2);
+    const r0Octave = parseInt(document.getElementById("row0-octave") ? document.getElementById("row0-octave").value : (appSettings.row0Octave || 3));
+    const r1Octave = parseInt(document.getElementById("row1-octave") ? document.getElementById("row1-octave").value : (appSettings.row1Octave || 3));
+    const r2Octave = parseInt(document.getElementById("row2-octave") ? document.getElementById("row2-octave").value : (appSettings.row2Octave || 2));
+    const r3Octave = parseInt(document.getElementById("row3-octave") ? document.getElementById("row3-octave").value : (appSettings.row3Octave || 2));
 
     const r0RootIndex = NOTES.indexOf(r0Root);
     const r1RootIndex = NOTES.indexOf(r1Root);
     const r2RootIndex = NOTES.indexOf(r2Root);
     const r3RootIndex = NOTES.indexOf(r3Root);
+
+    KEY_CACHE = {};
+    KEY_ELEMENTS = {};
 
     setupRowHTML("kb-row-0", ROW0_KEYS, ROW0_CHAR, r0RootIndex, r0Octave + leadOctaveShift, "lead");
     setupRowHTML("kb-row-1", ROW1_KEYS, ROW1_CHAR, r1RootIndex, r1Octave + leadOctaveShift, "lead");
@@ -566,6 +3893,14 @@ function setupRowHTML(rowId, keys, chars, rootNoteIndex, baseOctave, instrumentT
         const noteName = NOTES[noteIndex];
         const octOffset = Math.floor((rootNoteIndex + i) / 12);
         const finalOctave = baseOctave + octOffset;
+        const frequency = getNoteFrequency(noteName, finalOctave);
+
+        // Pre-compute O(1) cache entry
+        KEY_CACHE[key] = {
+            noteName: `${noteName}${finalOctave}`,
+            frequency: frequency,
+            instrument: instrumentType
+        };
 
         const keyCap = document.createElement("div");
         keyCap.className = `key-cap ${instrumentType}-key`;
@@ -579,6 +3914,7 @@ function setupRowHTML(rowId, keys, chars, rootNoteIndex, baseOctave, instrumentT
         keyCap.addEventListener("mouseup", () => handleKeyUp(key));
         keyCap.addEventListener("mouseleave", () => handleKeyUp(key));
 
+        KEY_ELEMENTS[key] = keyCap;
         rowEl.appendChild(keyCap);
     });
 }
@@ -589,488 +3925,13 @@ function getNoteFrequency(noteName, octave) {
     return 440 * Math.pow(2, stepsFromA4 / 12);
 }
 
+// Instant O(1) frequency lookup without layout thrashing
 function getKeyNoteAndFrequency(keyCode) {
-    const r0Root = document.getElementById("row0-root") ? document.getElementById("row0-root").value : "G";
-    const r1Root = document.getElementById("row1-root") ? document.getElementById("row1-root").value : "D";
-    const r2Root = document.getElementById("row2-root") ? document.getElementById("row2-root").value : "G";
-    const r3Root = document.getElementById("row3-root") ? document.getElementById("row3-root").value : "D";
-
-    const r0Octave = parseInt(document.getElementById("row0-octave") ? document.getElementById("row0-octave").value : 3);
-    const r1Octave = parseInt(document.getElementById("row1-octave") ? document.getElementById("row1-octave").value : 3);
-    const r2Octave = parseInt(document.getElementById("row2-octave") ? document.getElementById("row2-octave").value : 2);
-    const r3Octave = parseInt(document.getElementById("row3-octave") ? document.getElementById("row3-octave").value : 2);
-
-    let noteIndex = -1;
-    let octave = 4;
-    let shiftedOctave = 4;
-
-    if (ROW0_KEYS.includes(keyCode)) {
-        const idx = ROW0_KEYS.indexOf(keyCode);
-        noteIndex = (NOTES.indexOf(r0Root) + idx) % 12;
-        octave = r0Octave + Math.floor((NOTES.indexOf(r0Root) + idx) / 12);
-        shiftedOctave = octave + leadOctaveShift;
-    } else if (ROW1_KEYS.includes(keyCode)) {
-        const idx = ROW1_KEYS.indexOf(keyCode);
-        noteIndex = (NOTES.indexOf(r1Root) + idx) % 12;
-        octave = r1Octave + Math.floor((NOTES.indexOf(r1Root) + idx) / 12);
-        shiftedOctave = octave + leadOctaveShift;
-    } else if (ROW2_KEYS.includes(keyCode)) {
-        const idx = ROW2_KEYS.indexOf(keyCode);
-        noteIndex = (NOTES.indexOf(r2Root) + idx) % 12;
-        octave = r2Octave + Math.floor((NOTES.indexOf(r2Root) + idx) / 12);
-        shiftedOctave = octave + bassOctaveShift;
-    } else if (ROW3_KEYS.includes(keyCode)) {
-        const idx = ROW3_KEYS.indexOf(keyCode);
-        noteIndex = (NOTES.indexOf(r3Root) + idx) % 12;
-        octave = r3Octave + Math.floor((NOTES.indexOf(r3Root) + idx) / 12);
-        shiftedOctave = octave + bassOctaveShift;
-    } else {
-        return null;
-    }
-
-    const noteName = NOTES[noteIndex];
-    return {
-        noteName: noteName + shiftedOctave,
-        frequency: getNoteFrequency(noteName, shiftedOctave)
-    };
+    return KEY_CACHE[keyCode] || null;
 }
 
-// Lead DSP Nodes
-let leadVoiceBus = null;
-let leadDS1DistNode = null;
-let leadDS1ToneFilter = null;
-let leadDS1LevelGain = null;
-let leadDS1DryGain = null;
-let leadDS1WetGain = null;
-let leadPreFXBus = null;
-let leadDelayNode = null;
-let leadDelayFeedbackNode = null;
-let leadDelayWetGain = null;
-let leadReverbNode = null;
-let leadReverbWetGain = null;
-let leadMasterGain = null;
-
-// Bass DSP Nodes
-let bassVoiceBus = null;
-let bassDS1DistNode = null;
-let bassDS1ToneFilter = null;
-let bassDS1LevelGain = null;
-let bassDS1DryGain = null;
-let bassDS1WetGain = null;
-let bassPreFXBus = null;
-let bassDelayNode = null;
-let bassDelayFeedbackNode = null;
-let bassDelayWetGain = null;
-let bassReverbNode = null;
-let bassReverbWetGain = null;
-let bassMasterGain = null;
-
-function initAudio() {
-    if (audioCtx) return;
-
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    audioCtx = new AudioContext();
-
-    masterGain = audioCtx.createGain();
-    masterGain.gain.setValueAtTime(appSettings.synthVolume / 100, audioCtx.currentTime);
-
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 512;
-
-    tremoloNode = audioCtx.createGain();
-    tremoloNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
-    tremoloNode.connect(masterGain);
-
-    masterGain.connect(analyser);
-    analyser.connect(audioCtx.destination);
-
-    // ==========================================
-    // 1. LEAD FX CHAIN SETUP
-    // ==========================================
-    leadVoiceBus = audioCtx.createGain();
-    leadPreFXBus = audioCtx.createGain();
-    leadMasterGain = audioCtx.createGain();
-    leadMasterGain.gain.setValueAtTime(1.0, audioCtx.currentTime);
-
-    // Lead DS-1
-    leadDS1DryGain = audioCtx.createGain();
-    leadDS1WetGain = audioCtx.createGain();
-    leadDS1DryGain.gain.setValueAtTime(appSettings.leadDS1Active ? 0.0 : 1.0, audioCtx.currentTime);
-    leadDS1WetGain.gain.setValueAtTime(appSettings.leadDS1Active ? 1.0 : 0.0, audioCtx.currentTime);
-
-    leadDS1DistNode = audioCtx.createWaveShaper();
-    leadDS1DistNode.curve = makeDistortionCurve(appSettings.leadDS1Dist || 50);
-    leadDS1DistNode.oversample = '4x';
-
-    leadDS1ToneFilter = audioCtx.createBiquadFilter();
-    leadDS1ToneFilter.type = 'peaking';
-    leadDS1ToneFilter.frequency.setValueAtTime(appSettings.leadDS1Tone || 2500, audioCtx.currentTime);
-    leadDS1ToneFilter.Q.setValueAtTime(1.0, audioCtx.currentTime);
-    leadDS1ToneFilter.gain.setValueAtTime(6.0, audioCtx.currentTime);
-
-    leadDS1LevelGain = audioCtx.createGain();
-    leadDS1LevelGain.gain.setValueAtTime(((appSettings.leadDS1Level || 65) / 100) * 0.8, audioCtx.currentTime);
-
-    leadVoiceBus.connect(leadDS1DryGain);
-    leadDS1DryGain.connect(leadPreFXBus);
-
-    leadVoiceBus.connect(leadDS1DistNode);
-    leadDS1DistNode.connect(leadDS1ToneFilter);
-    leadDS1ToneFilter.connect(leadDS1LevelGain);
-    leadDS1LevelGain.connect(leadDS1WetGain);
-    leadDS1WetGain.connect(leadPreFXBus);
-
-    // Lead Delay
-    leadDelayNode = audioCtx.createDelay(5.0);
-    leadDelayFeedbackNode = audioCtx.createGain();
-    leadDelayWetGain = audioCtx.createGain();
-
-    leadDelayNode.delayTime.setValueAtTime((appSettings.leadDelayTime || 380) / 1000, audioCtx.currentTime);
-    leadDelayFeedbackNode.gain.setValueAtTime(((appSettings.leadDelayFeedback || 40) / 100) * 0.85, audioCtx.currentTime);
-    leadDelayWetGain.gain.setValueAtTime(appSettings.leadDelayActive ? ((appSettings.leadDelayMix || 45) / 100) * 0.7 : 0.0, audioCtx.currentTime);
-
-    leadDelayNode.connect(leadDelayFeedbackNode);
-    leadDelayFeedbackNode.connect(leadDelayNode);
-
-    // Lead Reverb
-    leadReverbNode = audioCtx.createConvolver();
-    leadReverbNode.buffer = createReverbImpulse(audioCtx, 2.5, 2.0);
-    leadReverbWetGain = audioCtx.createGain();
-    leadReverbWetGain.gain.setValueAtTime(appSettings.leadReverbActive ? ((appSettings.leadReverbMix || 55) / 100) * 0.8 : 0.0, audioCtx.currentTime);
-
-    // Lead FX Bus Connections to Master
-    leadPreFXBus.connect(leadMasterGain);
-    leadPreFXBus.connect(leadDelayNode);
-    leadDelayNode.connect(leadDelayWetGain);
-    leadDelayWetGain.connect(leadMasterGain);
-
-    leadPreFXBus.connect(leadReverbNode);
-    leadReverbNode.connect(leadReverbWetGain);
-    leadReverbWetGain.connect(leadMasterGain);
-
-    leadMasterGain.connect(tremoloNode);
-
-    // ==========================================
-    // 2. BASS FX CHAIN SETUP
-    // ==========================================
-    bassVoiceBus = audioCtx.createGain();
-    bassPreFXBus = audioCtx.createGain();
-    bassMasterGain = audioCtx.createGain();
-    const bassVolVal = appSettings.bassVolume !== undefined ? appSettings.bassVolume / 100 : 0.85;
-    bassMasterGain.gain.setValueAtTime(bassVolVal, audioCtx.currentTime);
-
-    // Bass DS-1 Overdrive
-    bassDS1DryGain = audioCtx.createGain();
-    bassDS1WetGain = audioCtx.createGain();
-    bassDS1DryGain.gain.setValueAtTime(appSettings.bassDS1Active ? 0.0 : 1.0, audioCtx.currentTime);
-    bassDS1WetGain.gain.setValueAtTime(appSettings.bassDS1Active ? 1.0 : 0.0, audioCtx.currentTime);
-
-    bassDS1DistNode = audioCtx.createWaveShaper();
-    bassDS1DistNode.curve = makeDistortionCurve((appSettings.bassDS1Dist || 45) * 0.8);
-    bassDS1DistNode.oversample = '4x';
-
-    bassDS1ToneFilter = audioCtx.createBiquadFilter();
-    bassDS1ToneFilter.type = 'lowshelf';
-    bassDS1ToneFilter.frequency.setValueAtTime(appSettings.bassDS1Tone || 900, audioCtx.currentTime);
-    bassDS1ToneFilter.gain.setValueAtTime(4.0, audioCtx.currentTime);
-
-    bassDS1LevelGain = audioCtx.createGain();
-    bassDS1LevelGain.gain.setValueAtTime(((appSettings.bassDS1Level || 70) / 100) * 0.85, audioCtx.currentTime);
-
-    bassVoiceBus.connect(bassDS1DryGain);
-    bassDS1DryGain.connect(bassPreFXBus);
-
-    bassVoiceBus.connect(bassDS1DistNode);
-    bassDS1DistNode.connect(bassDS1ToneFilter);
-    bassDS1ToneFilter.connect(bassDS1LevelGain);
-    bassDS1LevelGain.connect(bassDS1WetGain);
-    bassDS1WetGain.connect(bassPreFXBus);
-
-    // Bass Delay
-    bassDelayNode = audioCtx.createDelay(5.0);
-    bassDelayFeedbackNode = audioCtx.createGain();
-    bassDelayWetGain = audioCtx.createGain();
-
-    bassDelayNode.delayTime.setValueAtTime((appSettings.bassDelayTime || 280) / 1000, audioCtx.currentTime);
-    bassDelayFeedbackNode.gain.setValueAtTime(((appSettings.bassDelayFeedback || 30) / 100) * 0.75, audioCtx.currentTime);
-    bassDelayWetGain.gain.setValueAtTime(appSettings.bassDelayActive ? ((appSettings.bassDelayMix || 35) / 100) * 0.6 : 0.0, audioCtx.currentTime);
-
-    bassDelayNode.connect(bassDelayFeedbackNode);
-    bassDelayFeedbackNode.connect(bassDelayNode);
-
-    // Bass Reverb
-    bassReverbNode = audioCtx.createConvolver();
-    bassReverbNode.buffer = createReverbImpulse(audioCtx, 1.8, 2.5);
-    bassReverbWetGain = audioCtx.createGain();
-    bassReverbWetGain.gain.setValueAtTime(appSettings.bassReverbActive ? ((appSettings.bassReverbMix || 40) / 100) * 0.6 : 0.0, audioCtx.currentTime);
-
-    // Bass FX Bus Connections to Master
-    bassPreFXBus.connect(bassMasterGain);
-    bassPreFXBus.connect(bassDelayNode);
-    bassDelayNode.connect(bassDelayWetGain);
-    bassDelayWetGain.connect(bassMasterGain);
-
-    bassPreFXBus.connect(bassReverbNode);
-    bassReverbNode.connect(bassReverbWetGain);
-    bassReverbWetGain.connect(bassMasterGain);
-
-    bassMasterGain.connect(tremoloNode);
-
-    startVisualizer();
-}
-
-function createReverbImpulse(context, duration, decay) {
-    const sampleRate = context.sampleRate;
-    const length = sampleRate * duration;
-    const impulse = context.createBuffer(2, length, sampleRate);
-    const left = impulse.getChannelData(0);
-    const right = impulse.getChannelData(1);
-
-    for (let i = 0; i < length; i++) {
-        const noise = Math.random() * 2 - 1;
-        const val = noise * Math.pow(1 - i / length, decay);
-        left[i] = val;
-        right[i] = val;
-    }
-    return impulse;
-}
-
-function makeDistortionCurve(amount) {
-    const k = typeof amount === 'number' ? amount : 50;
-    const n_samples = 44100;
-    const curve = new Float32Array(n_samples);
-    const deg = Math.PI / 180;
-    for (let i = 0; i < n_samples; ++i) {
-        const x = (i * 2) / n_samples - 1;
-        curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
-    }
-    return curve;
-}
-
-function getHarmonizedFrequencies(baseFreq, noteNameWithOctave, instrument = "lead") {
-    const isLead = instrument === "lead";
-    const active = isLead ? appSettings.leadPS6Active : appSettings.bassPS6Active;
-    if (!active) return [];
-
-    const match = noteNameWithOctave.match(/^([A-G]#?)(-?\d+)$/);
-    if (!match) return [];
-    const noteName = match[1];
-
-    const scaleRoot = isLead ? (appSettings.leadPS6Key || "C") : (appSettings.bassPS6Key || "C");
-    const scaleType = isLead ? (appSettings.leadPS6Scale || "major") : (appSettings.bassPS6Scale || "minor");
-    const interval = isLead ? (appSettings.leadPS6Interval || "3rd") : (appSettings.bassPS6Interval || "oct-down");
-
-    const chromNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-    const majorSteps = [0, 2, 4, 5, 7, 9, 11];
-    const minorSteps = [0, 2, 3, 5, 7, 8, 10];
-    const scaleSteps = scaleType === 'major' ? majorSteps : minorSteps;
-
-    const rootChromIdx = chromNotes.indexOf(scaleRoot);
-    const noteChromIdx = chromNotes.indexOf(noteName);
-    let semitonesFromRoot = (noteChromIdx - rootChromIdx + 12) % 12;
-
-    let currentDegree = 0;
-    let minDiff = 12;
-    for (let d = 0; d < 7; d++) {
-        const diff = Math.min((semitonesFromRoot - scaleSteps[d] + 12) % 12, (scaleSteps[d] - semitonesFromRoot + 12) % 12);
-        if (diff < minDiff) {
-            minDiff = diff;
-            currentDegree = d;
-        }
-    }
-
-    let harmonies = [];
-    if (interval === '3rd') {
-        const harmonyDegree = (currentDegree + 2) % 7;
-        const octWrap = Math.floor((currentDegree + 2) / 7);
-        const harmonySemitones = scaleSteps[harmonyDegree] + (octWrap * 12);
-        const semitoneOffset = harmonySemitones - semitonesFromRoot;
-        harmonies.push(baseFreq * Math.pow(2, semitoneOffset / 12));
-    } else if (interval === '5th') {
-        const harmonyDegree = (currentDegree + 4) % 7;
-        const octWrap = Math.floor((currentDegree + 4) / 7);
-        const harmonySemitones = scaleSteps[harmonyDegree] + (octWrap * 12);
-        const semitoneOffset = harmonySemitones - semitonesFromRoot;
-        harmonies.push(baseFreq * Math.pow(2, semitoneOffset / 12));
-    } else if (interval === 'oct') {
-        harmonies.push(baseFreq * 2.0);
-    } else if (interval === 'oct-down') {
-        harmonies.push(baseFreq * 0.5);
-    } else if (interval === 'triad') {
-        const degree3 = (currentDegree + 2) % 7;
-        const octWrap3 = Math.floor((currentDegree + 2) / 7);
-        const semitones3 = scaleSteps[degree3] + (octWrap3 * 12);
-        harmonies.push(baseFreq * Math.pow(2, (semitones3 - semitonesFromRoot) / 12));
-
-        const degree5 = (currentDegree + 4) % 7;
-        const octWrap5 = Math.floor((currentDegree + 4) / 7);
-        const semitones5 = scaleSteps[degree5] + (octWrap5 * 12);
-        harmonies.push(baseFreq * Math.pow(2, (semitones5 - semitonesFromRoot) / 12));
-    }
-    return harmonies;
-}
-
-// 1. LEAD SYNTH ENGINE (Rows 0 & 1)
-function spawnLeadVoice(key, frequency, isHarmony) {
-    const presetIdx = appSettings.leadPreset !== undefined ? appSettings.leadPreset : 0;
-    const patch = LEAD_PRESETS[presetIdx] || LEAD_PRESETS[0];
-
-    const osc1 = audioCtx.createOscillator();
-    const osc2 = audioCtx.createOscillator();
-    const filter = audioCtx.createBiquadFilter();
-    const voiceGain = audioCtx.createGain();
-    let vibratoNode = null;
-    let vibratoGain = null;
-
-    voiceGain.gain.setValueAtTime(0, audioCtx.currentTime);
-
-    const harmonyScale = isHarmony ? (((appSettings.leadPS6Mix || 50) / 100) * 0.8) : 1.0;
-
-    osc1.type = patch.osc1;
-    osc1.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-
-    osc2.type = patch.osc2;
-    osc2.frequency.setValueAtTime(frequency * (patch.osc2Detune || 1.004), audioCtx.currentTime);
-
-    filter.type = patch.filterType || "lowpass";
-
-    const cutoffVal = document.getElementById("lead-cutoff") ? parseFloat(document.getElementById("lead-cutoff").value) : (appSettings.leadCutoff || patch.cutoff || 3500);
-    const resonanceVal = document.getElementById("lead-reso") ? parseFloat(document.getElementById("lead-reso").value) : (appSettings.leadResonance || patch.reso || 1.5);
-
-    filter.Q.setValueAtTime(resonanceVal, audioCtx.currentTime);
-    filter.frequency.setValueAtTime(cutoffVal, audioCtx.currentTime);
-    if (filter.type === "lowpass") {
-        const decayCutoff = Math.max(80, cutoffVal * 0.35);
-        filter.frequency.exponentialRampToValueAtTime(decayCutoff, audioCtx.currentTime + 0.18);
-    }
-
-    const attackVal = document.getElementById("lead-attack") ? parseFloat(document.getElementById("lead-attack").value) : (appSettings.leadAttack || patch.attack || 0.01);
-    let targetGainVal = 0.25 * harmonyScale;
-    voiceGain.gain.linearRampToValueAtTime(targetGainVal, audioCtx.currentTime + attackVal);
-
-    if (presetIdx === 6 || presetIdx === 2 || patch.name.includes("VOICE") || patch.name.includes("BRASS") || patch.name.includes("SINE")) {
-        vibratoNode = audioCtx.createOscillator();
-        vibratoGain = audioCtx.createGain();
-        vibratoNode.frequency.setValueAtTime(5.8, audioCtx.currentTime);
-        vibratoGain.gain.setValueAtTime(6.0, audioCtx.currentTime);
-        vibratoNode.connect(vibratoGain);
-        vibratoGain.connect(osc1.frequency);
-        vibratoGain.connect(osc2.frequency);
-        vibratoNode.start();
-    }
-
-    osc1.connect(filter);
-    osc2.connect(filter);
-    filter.connect(voiceGain);
-    voiceGain.connect(leadVoiceBus || masterGain);
-
-    osc1.start();
-    osc2.start();
-
-    const voiceObj = {
-        instrument: "lead",
-        key: key,
-        isHarmony: isHarmony,
-        osc1: osc1,
-        osc2: osc2,
-        osc2DetuneRatio: patch.osc2Detune || 1.004,
-        vibrato: vibratoNode,
-        filter: filter,
-        gainNode: voiceGain,
-        baseFreq: frequency
-    };
-
-    activeLeadVoices.push(voiceObj);
-}
-
-// 2. BASSLINE SYNTH ENGINE (Rows 2 & 3)
-function spawnBassVoice(key, frequency, isHarmony = false) {
-    const presetIdx = appSettings.bassPreset !== undefined ? appSettings.bassPreset : 0;
-    const preset = BASS_PRESETS[presetIdx] || BASS_PRESETS[0];
-
-    const oscMain = audioCtx.createOscillator();
-    let oscMain2 = null;
-    const oscSub = audioCtx.createOscillator();
-    const filter = audioCtx.createBiquadFilter();
-    const mainGain = audioCtx.createGain();
-    const subGain = audioCtx.createGain();
-    const voiceGain = audioCtx.createGain();
-
-    voiceGain.gain.setValueAtTime(0, audioCtx.currentTime);
-
-    // 1. Main Oscillator
-    oscMain.type = preset.oscType;
-    oscMain.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-
-    if (preset.pitchDrop) {
-        oscMain.frequency.exponentialRampToValueAtTime(Math.max(20, frequency * 0.45), audioCtx.currentTime + 0.35);
-    }
-
-    if (preset.detune) {
-        oscMain2 = audioCtx.createOscillator();
-        oscMain2.type = preset.oscType;
-        oscMain2.frequency.setValueAtTime(frequency * preset.detune, audioCtx.currentTime);
-        oscMain2.connect(mainGain);
-        oscMain2.start();
-    }
-
-    // 2. Sub-Oscillator (1 octave down)
-    const subFreq = frequency * 0.5;
-    oscSub.type = preset.subType || "sine";
-    oscSub.frequency.setValueAtTime(subFreq, audioCtx.currentTime);
-
-    const subMixRatio = (appSettings.bassSubLevel !== undefined ? appSettings.bassSubLevel : 50) / 100;
-    mainGain.gain.setValueAtTime(0.7, audioCtx.currentTime);
-    subGain.gain.setValueAtTime(subMixRatio * 0.7, audioCtx.currentTime);
-
-    // 3. Bass Filter Envelope
-    filter.type = "lowpass";
-    const customCutoff = document.getElementById("bass-cutoff") ? parseFloat(document.getElementById("bass-cutoff").value) : preset.cutoff;
-    const customReso = document.getElementById("bass-reso") ? parseFloat(document.getElementById("bass-reso").value) : preset.reso;
-
-    filter.Q.setValueAtTime(customReso, audioCtx.currentTime);
-
-    const envPeakCutoff = Math.min(12000, customCutoff + preset.envMod);
-    filter.frequency.setValueAtTime(envPeakCutoff, audioCtx.currentTime);
-    filter.frequency.exponentialRampToValueAtTime(Math.max(50, customCutoff), audioCtx.currentTime + preset.decay);
-
-    // 4. Amplitude Envelope
-    const attackTime = preset.attack || 0.005;
-    const harmonyScale = isHarmony ? (((appSettings.bassPS6Mix || 60) / 100) * 0.8) : 1.0;
-    voiceGain.gain.linearRampToValueAtTime(0.35 * harmonyScale, audioCtx.currentTime + attackTime);
-
-    // Routing to Bass Voice Bus
-    oscMain.connect(mainGain);
-    oscSub.connect(subGain);
-    mainGain.connect(filter);
-    subGain.connect(filter);
-    filter.connect(voiceGain);
-    voiceGain.connect(bassVoiceBus || masterGain);
-
-    oscMain.start();
-    oscSub.start();
-
-    const voiceObj = {
-        instrument: "bass",
-        key: key,
-        isHarmony: isHarmony,
-        osc1: oscMain,
-        osc2: oscMain2,
-        osc2DetuneRatio: preset.detune || 1,
-        oscSub: oscSub,
-        filter: filter,
-        gainNode: voiceGain,
-        baseFreq: frequency
-    };
-
-    activeBassVoices.push(voiceObj);
-}
-
-function handleKeyDown(key) {
+function playNote(key) {
     initAudio();
-    if (audioCtx.state === "suspended") {
-        audioCtx.resume();
-    }
 
     if (isLeadKey(key)) {
         if (activeLeadVoices.some(voice => voice.key === key && !voice.isHarmony)) return;
@@ -1128,60 +3989,10 @@ function handleKeyDown(key) {
         return;
     }
 
-    const keyCap = document.getElementById(`key-${key}`);
+    const keyCap = KEY_ELEMENTS[key] || document.getElementById(`key-${key}`);
     if (keyCap) keyCap.classList.add("active");
 
     applyPitchBend();
-}
-
-function releaseVoice(voice, releaseTime) {
-    if (!voice || !voice.gainNode) return;
-    try {
-        voice.gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
-        voice.gainNode.gain.setValueAtTime(voice.gainNode.gain.value, audioCtx.currentTime);
-        voice.gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + releaseTime);
-
-        setTimeout(() => {
-            try {
-                if (voice.osc1) voice.osc1.stop();
-                if (voice.osc2) voice.osc2.stop();
-                if (voice.oscSub) voice.oscSub.stop();
-                if (voice.vibrato) {
-                    voice.vibrato.stop();
-                    voice.vibrato.disconnect();
-                }
-                if (voice.osc1) voice.osc1.disconnect();
-                if (voice.osc2) voice.osc2.disconnect();
-                if (voice.oscSub) voice.oscSub.disconnect();
-                voice.gainNode.disconnect();
-            } catch (e) { }
-        }, releaseTime * 1000 + 100);
-    } catch (e) { }
-}
-
-function handleKeyUp(key) {
-    if (isLeadKey(key)) {
-        const voicesToStop = activeLeadVoices.filter(v => v.key === key || v.key.startsWith(`${key}_harm_`));
-        const releaseTime = document.getElementById("korg-knob-release") ? parseFloat(document.getElementById("korg-knob-release").value) : 0.25;
-
-        voicesToStop.forEach(voice => {
-            const idx = activeLeadVoices.indexOf(voice);
-            if (idx !== -1) activeLeadVoices.splice(idx, 1);
-            releaseVoice(voice, releaseTime);
-        });
-    } else if (isBassKey(key)) {
-        const voicesToStop = activeBassVoices.filter(v => v.key === key || v.key.startsWith(`${key}_harm_`));
-        const bassReleaseTime = 0.2;
-
-        voicesToStop.forEach(voice => {
-            const idx = activeBassVoices.indexOf(voice);
-            if (idx !== -1) activeBassVoices.splice(idx, 1);
-            releaseVoice(voice, bassReleaseTime);
-        });
-    }
-
-    const keyCap = document.getElementById(`key-${key}`);
-    if (keyCap) keyCap.classList.remove("active");
 }
 
 function stopVoice(voice) {
@@ -1220,6 +4031,36 @@ function applyPitchBend() {
 // KEYBOARD SHORTCUTS AND EVENT HANDLERS
 window.addEventListener("keydown", (e) => {
     if (e.repeat) return;
+
+    // Panic Killswitch: Escape key silences all ringing audio immediately
+    if (e.code === "Escape") {
+        panicAllNotes();
+        return;
+    }
+
+    // Quick Slot Switching: Alt + 1..5 switches between the 5 active sound modules
+    if (e.altKey && !e.ctrlKey && !e.metaKey) {
+        if (e.code === "Digit1") { e.preventDefault(); setSoundBank(0); return; }
+        if (e.code === "Digit2") { e.preventDefault(); setSoundBank(1); return; }
+        if (e.code === "Digit3") { e.preventDefault(); setSoundBank(2); return; }
+        if (e.code === "Digit4") { e.preventDefault(); setSoundBank(3); return; }
+        if (e.code === "Digit5") { e.preventDefault(); setSoundBank(4); return; }
+    }
+
+    // Panic Killswitch: Escape key silences all ringing audio immediately
+    if (e.code === "Escape") {
+        panicAllNotes();
+        return;
+    }
+
+    // Quick Slot Switching: Alt + 1..5 switches between the 5 active sound modules
+    if (e.altKey && !e.ctrlKey && !e.metaKey) {
+        if (e.code === "Digit1") { e.preventDefault(); setSoundBank(0); return; }
+        if (e.code === "Digit2") { e.preventDefault(); setSoundBank(1); return; }
+        if (e.code === "Digit3") { e.preventDefault(); setSoundBank(2); return; }
+        if (e.code === "Digit4") { e.preventDefault(); setSoundBank(3); return; }
+        if (e.code === "Digit5") { e.preventDefault(); setSoundBank(4); return; }
+    }
 
     if (activeRebindTarget) {
         e.preventDefault();
@@ -1616,6 +4457,117 @@ function applyTremolo() {
     }
 }
 
+
+function makeDistortionCurve(amount) {
+    const k = typeof amount === 'number' ? amount : 50;
+    const n_samples = 44100;
+    const curve = new Float32Array(n_samples);
+    const deg = Math.PI / 180;
+    for (let i = 0; i < n_samples; ++i) {
+        const x = (i * 2) / n_samples - 1;
+        curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+    }
+    return curve;
+}
+
+function createReverbImpulse(context, duration = 2.5, decay = 2.0) {
+    const sampleRate = context.sampleRate || 44100;
+    const length = Math.floor(sampleRate * duration);
+    const impulse = context.createBuffer(2, length, sampleRate);
+    const left = impulse.getChannelData(0);
+    const right = impulse.getChannelData(1);
+
+    for (let i = 0; i < length; i++) {
+        const noise = Math.random() * 2 - 1;
+        const val = noise * Math.pow(1 - i / length, decay);
+        left[i] = val;
+        right[i] = val;
+    }
+    return impulse;
+}
+
+function createBitcrusherNode(context) {
+    const bufferSize = 256; // Ultra-low latency ~5.8ms
+    let bits = 8;
+    let normfreq = 0.4;
+    let phaser = 0;
+    let last = 0;
+
+    const node = context.createScriptProcessor(bufferSize, 1, 1);
+    node.onaudioprocess = function(e) {
+        const input = e.inputBuffer.getChannelData(0);
+        const output = e.outputBuffer.getChannelData(0);
+        const step = Math.pow(0.5, bits);
+
+        for (let i = 0; i < bufferSize; i++) {
+            phaser += normfreq;
+            if (phaser >= 1.0) {
+                phaser -= 1.0;
+                last = step * Math.floor(input[i] / step + 0.5);
+            }
+            output[i] = last;
+        }
+    };
+
+    node.setBits = function(b) { bits = Math.max(2, Math.min(16, b)); };
+    node.setCrush = function(pct) {
+        normfreq = Math.max(0.02, Math.min(1.0, (pct || 40) / 100));
+    };
+
+    return node;
+}
+
+function initAudio() {
+    if (audioCtx) return;
+
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContext({ latencyHint: 'interactive' });
+
+    masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(getAudioTaperGain(appSettings.synthVolume !== undefined ? appSettings.synthVolume : 75, 1.0), audioCtx.currentTime);
+
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 512;
+
+    // Master safety dynamics compressor (brickwall limiter) to prevent harsh clipping
+    masterLimiter = audioCtx.createDynamicsCompressor();
+    masterLimiter.threshold.setValueAtTime(-1.0, audioCtx.currentTime);
+    masterLimiter.knee.setValueAtTime(0.0, audioCtx.currentTime);
+    masterLimiter.ratio.setValueAtTime(20.0, audioCtx.currentTime);
+    masterLimiter.attack.setValueAtTime(0.001, audioCtx.currentTime);
+    masterLimiter.release.setValueAtTime(0.05, audioCtx.currentTime);
+
+    tremoloNode = audioCtx.createGain();
+    tremoloNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
+    tremoloNode.connect(masterGain);
+
+    masterGain.connect(analyser);
+    analyser.connect(masterLimiter);
+    masterLimiter.connect(audioCtx.destination);
+
+    // 1. MODULAR LEAD FX CHAIN SETUP
+    leadVoiceBus = audioCtx.createGain();
+    leadMasterGain = audioCtx.createGain();
+    const leadInitGain = appSettings.leadMute ? 0.0 : getAudioTaperGain(appSettings.leadVolume !== undefined ? appSettings.leadVolume : 85, 1.2);
+    leadMasterGain.gain.setValueAtTime(leadInitGain, audioCtx.currentTime);
+
+    initInstrumentPedalChain("lead", audioCtx, leadVoiceBus, leadMasterGain);
+    leadMasterGain.connect(tremoloNode);
+
+    // 2. MODULAR BASS FX CHAIN SETUP
+    bassVoiceBus = audioCtx.createGain();
+    bassMasterGain = audioCtx.createGain();
+    const bassInitGain = appSettings.bassMute ? 0.0 : getAudioTaperGain(appSettings.bassVolume !== undefined ? appSettings.bassVolume : 85, 1.2);
+    bassMasterGain.gain.setValueAtTime(bassInitGain, audioCtx.currentTime);
+
+    initInstrumentPedalChain("bass", audioCtx, bassVoiceBus, bassMasterGain);
+    bassMasterGain.connect(tremoloNode);
+
+    startArpClock();
+    startVisualizer();
+}
+
+
 // OSCILLOSCOPE GRAPHICS
 function startVisualizer() {
     const canvas = document.getElementById("audio-visualizer");
@@ -1914,278 +4866,2457 @@ if (synthVolSlider) {
     });
 }
 
-// ==========================================
-// DUAL INSTRUMENT MINI PEDALBOARD CONTROLLERS
-// ==========================================
 
-// Lead Pedal Toggles
-function toggleLeadDistortion() {
+// ====================================================
+// MODULAR PEDAL ENGINE: SLOTS, DSP & EVENT ROUTING
+// ====================================================
+/**
+ * ShallotWHAM Modular Pedal Engine & DSP Factory
+ * 26 High-Fidelity Swappable DSP Cartridges across 5 Pedal Chassis
+ */
+
+const CARTRIDGE_CATALOG = {
+    // CHASSIS 0: DRIVE / FUZZ / PREAMP / CRUNCH
+    "ds1": {
+        id: "ds1", chassis: 0, name: "DS-1 DIST", color: "#f97316",
+        desc: "Classic orange hard-clip distortion with tone shaping",
+        knobs: [
+            { id: "dist", label: "DIST", min: 1, max: 100, default: 50, step: 1, unit: "%" },
+            { id: "tone", label: "TONE", min: 400, max: 8000, default: 2500, step: 50, unit: "Hz" },
+            { id: "level", label: "LVL", min: 0, max: 100, default: 65, step: 1, unit: "%" }
+        ]
+    },
+    "proco-rat": {
+        id: "proco-rat", chassis: 0, name: "PROCO RAT", color: "#e2e8f0",
+        desc: "Squelchy silicon clipping with inverted lowpass filter",
+        knobs: [
+            { id: "dist", label: "DIST", min: 1, max: 100, default: 55, step: 1, unit: "%" },
+            { id: "filter", label: "FILTER", min: 500, max: 7000, default: 2200, step: 50, unit: "Hz" },
+            { id: "level", label: "VOL", min: 0, max: 100, default: 70, step: 1, unit: "%" }
+        ]
+    },
+    "big-muff": {
+        id: "big-muff", chassis: 0, name: "BIG MUFF", color: "#a855f7",
+        desc: "Massive sustained fuzz with scooped midrange",
+        knobs: [
+            { id: "sustain", label: "SUSTAIN", min: 1, max: 100, default: 70, step: 1, unit: "%" },
+            { id: "tone", label: "TONE", min: 300, max: 6000, default: 1800, step: 50, unit: "Hz" },
+            { id: "volume", label: "VOL", min: 0, max: 100, default: 75, step: 1, unit: "%" }
+        ]
+    },
+    "tube-screamer": {
+        id: "tube-screamer", chassis: 0, name: "TUBE SCREAM", color: "#22c55e",
+        desc: "Mid-boost analog overdrive with asymmetrical clipping",
+        knobs: [
+            { id: "drive", label: "DRIVE", min: 1, max: 100, default: 45, step: 1, unit: "%" },
+            { id: "tone", label: "TONE", min: 500, max: 5000, default: 2000, step: 50, unit: "Hz" },
+            { id: "level", label: "LVL", min: 0, max: 100, default: 70, step: 1, unit: "%" }
+        ]
+    },
+    "french-preamp": {
+        id: "french-preamp", chassis: 0, name: "FRENCH PRE", color: "#eab308",
+        desc: "French touch analog console pre-amp saturation",
+        knobs: [
+            { id: "drive", label: "DRIVE", min: 1, max: 100, default: 60, step: 1, unit: "%" },
+            { id: "warmth", label: "WARMTH", min: 1, max: 100, default: 65, step: 1, unit: "%" },
+            { id: "output", label: "OUT", min: 0, max: 100, default: 75, step: 1, unit: "%" }
+        ]
+    },
+    "decimator": {
+        id: "decimator", chassis: 0, name: "DECIMATOR", color: "#06b6d4",
+        desc: "Sample-rate decimation downsampler and bit quantizer",
+        knobs: [
+            { id: "bits", label: "BITS", min: 2, max: 16, default: 8, step: 1, unit: "b" },
+            { id: "rate", label: "CRUSH", min: 2, max: 100, default: 40, step: 1, unit: "%" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 60, step: 1, unit: "%" }
+        ]
+    },
+
+    // CHASSIS 1: MODULATION
+    "small-stone": {
+        id: "small-stone", chassis: 1, name: "SMALL STONE", color: "#ec4899",
+        desc: "4-stage all-pass vintage analog phaser",
+        knobs: [
+            { id: "rate", label: "RATE", min: 0.1, max: 8.0, default: 0.6, step: 0.1, unit: "Hz" },
+            { id: "depth", label: "DEPTH", min: 1, max: 100, default: 75, step: 1, unit: "%" },
+            { id: "feedback", label: "COLOR", min: 0, max: 90, default: 40, step: 1, unit: "%" }
+        ]
+    },
+    "dimension-chorus": {
+        id: "dimension-chorus", chassis: 1, name: "DIMENSION D", color: "#3b82f6",
+        desc: "Lush 80s BBD spatial widening chorus",
+        knobs: [
+            { id: "mode", label: "MODE", min: 1, max: 4, default: 3, step: 1, unit: "" },
+            { id: "width", label: "WIDTH", min: 10, max: 100, default: 75, step: 1, unit: "%" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 55, step: 1, unit: "%" }
+        ]
+    },
+    "flanger": {
+        id: "flanger", chassis: 1, name: "BBD FLANGER", color: "#14b8a6",
+        desc: "Metallic comb-filtering jet-plane sweeps",
+        knobs: [
+            { id: "speed", label: "SPEED", min: 0.1, max: 5.0, default: 0.6, step: 0.1, unit: "Hz" },
+            { id: "depth", label: "DEPTH", min: 1, max: 100, default: 70, step: 1, unit: "%" },
+            { id: "regen", label: "REGEN", min: 0, max: 95, default: 50, step: 1, unit: "%" }
+        ]
+    },
+    "optical-tremolo": {
+        id: "optical-tremolo", chassis: 1, name: "OPTIC TREM", color: "#f59e0b",
+        desc: "Vintage optical photocell amplitude tremolo",
+        knobs: [
+            { id: "rate", label: "RATE", min: 0.5, max: 12.0, default: 4.0, step: 0.2, unit: "Hz" },
+            { id: "depth", label: "DEPTH", min: 0, max: 100, default: 60, step: 1, unit: "%" },
+            { id: "shape", label: "SQUARE", min: 0, max: 1, default: 0, step: 1, unit: "" }
+        ]
+    },
+    "ring-mod": {
+        id: "ring-mod", chassis: 1, name: "RING MOD", color: "#ef4444",
+        desc: "High-frequency carrier bell multiplier",
+        knobs: [
+            { id: "carrier", label: "FREQ", min: 40, max: 2000, default: 440, step: 10, unit: "Hz" },
+            { id: "lfo", label: "LFO", min: 0.1, max: 10.0, default: 2.5, step: 0.1, unit: "Hz" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 45, step: 1, unit: "%" }
+        ]
+    },
+
+    // CHASSIS 2: FILTER & DYNAMICS & HARMONIZER
+    "ps6": {
+        id: "ps6", chassis: 2, name: "PS-6 HARM", color: "#6366f1",
+        desc: "Intelligent diatonic harmonizer & pitch shifter",
+        knobs: [
+            { id: "interval", label: "INTERVAL", min: 0, max: 4, default: 0, step: 1, unit: "int" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 50, step: 1, unit: "%" }
+        ]
+    },
+    "sidechain-pumper": {
+        id: "sidechain-pumper", chassis: 2, name: "SC PUMPER", color: "#f43f5e",
+        desc: "Rhythmic French touch ducking sidechain compressor",
+        knobs: [
+            { id: "depth", label: "PUMP", min: 0, max: 100, default: 80, step: 1, unit: "%" },
+            { id: "rate", label: "SYNC", min: 1, max: 8, default: 4, step: 1, unit: "div" },
+            { id: "release", label: "REL", min: 0.05, max: 0.8, default: 0.25, step: 0.01, unit: "s" }
+        ]
+    },
+    "mutron-wah": {
+        id: "mutron-wah", chassis: 2, name: "MUTRON WAH", color: "#84cc16",
+        desc: "Dynamic envelope-follower funk filter",
+        knobs: [
+            { id: "peak", label: "PEAK", min: 1, max: 100, default: 70, step: 1, unit: "%" },
+            { id: "drive", label: "DRIVE", min: 1, max: 100, default: 50, step: 1, unit: "%" },
+            { id: "range", label: "RANGE", min: 200, max: 5000, default: 1800, step: 50, unit: "Hz" }
+        ]
+    },
+    "formant-filter": {
+        id: "formant-filter", chassis: 2, name: "TALKBOX", color: "#d946ef",
+        desc: "Vowel formant vocal tract resonator",
+        knobs: [
+            { id: "vowel", label: "VOWEL", min: 1, max: 5, default: 2, step: 1, unit: "" },
+            { id: "reso", label: "RESO", min: 1, max: 100, default: 65, step: 1, unit: "%" },
+            { id: "glide", label: "GLIDE", min: 0, max: 100, default: 30, step: 1, unit: "%" }
+        ]
+    },
+    "sid-resonator": {
+        id: "sid-resonator", chassis: 2, name: "SID ACID", color: "#10b981",
+        desc: "Aggressive C64 SID 6581 acid ladder filter",
+        knobs: [
+            { id: "cutoff", label: "CUTOFF", min: 200, max: 6000, default: 2200, step: 50, unit: "Hz" },
+            { id: "squelch", label: "SQUELCH", min: 1, max: 100, default: 75, step: 1, unit: "%" },
+            { id: "decay", label: "DECAY", min: 0.05, max: 1.0, default: 0.25, step: 0.01, unit: "s" }
+        ]
+    },
+
+    // CHASSIS 3: TIME & DELAY
+    "space-echo": {
+        id: "space-echo", chassis: 3, name: "SPACE ECHO", color: "#0ea5e9",
+        desc: "Tape delay with tape saturation, flutter & warm damping",
+        knobs: [
+            { id: "time", label: "TIME", min: 50, max: 900, default: 360, step: 10, unit: "ms" },
+            { id: "intensity", label: "FDBK", min: 0, max: 90, default: 45, step: 1, unit: "%" },
+            { id: "flutter", label: "FLUTTER", min: 0, max: 100, default: 40, step: 1, unit: "%" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 45, step: 1, unit: "%" }
+        ]
+    },
+    "ping-pong": {
+        id: "ping-pong", chassis: 3, name: "PING PONG", color: "#8b5cf6",
+        desc: "Alternating stereo bounce ping-pong echoes",
+        knobs: [
+            { id: "time", label: "TIME", min: 60, max: 800, default: 320, step: 10, unit: "ms" },
+            { id: "feedback", label: "FDBK", min: 0, max: 85, default: 45, step: 1, unit: "%" },
+            { id: "width", label: "WIDTH", min: 10, max: 100, default: 80, step: 1, unit: "%" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 40, step: 1, unit: "%" }
+        ]
+    },
+    "analog-delay": {
+        id: "analog-delay", chassis: 3, name: "BBD DELAY", color: "#f97316",
+        desc: "Warm dark bucket-brigade analog delay",
+        knobs: [
+            { id: "time", label: "TIME", min: 40, max: 700, default: 260, step: 10, unit: "ms" },
+            { id: "feedback", label: "FDBK", min: 0, max: 85, default: 35, step: 1, unit: "%" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 35, step: 1, unit: "%" }
+        ]
+    },
+    "delay": {
+        id: "delay", chassis: 3, name: "STD DELAY", color: "#00e5ff",
+        desc: "Standard digital stereo delay",
+        knobs: [
+            { id: "time", label: "TIME", min: 50, max: 1000, default: 380, step: 10, unit: "ms" },
+            { id: "feedback", label: "FDBK", min: 0, max: 80, default: 40, step: 1, unit: "%" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 45, step: 1, unit: "%" }
+        ]
+    },
+    "glitch-delay": {
+        id: "glitch-delay", chassis: 3, name: "GLITCH DLY", color: "#ef4444",
+        desc: "Granular buffer stutter and fragment loop repeats",
+        knobs: [
+            { id: "size", label: "SIZE", min: 20, max: 400, default: 120, step: 5, unit: "ms" },
+            { id: "feedback", label: "FDBK", min: 0, max: 90, default: 50, step: 1, unit: "%" },
+            { id: "jitter", label: "JITTER", min: 0, max: 100, default: 55, step: 1, unit: "%" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 45, step: 1, unit: "%" }
+        ]
+    },
+
+    // CHASSIS 4: SPACE & REVERB
+    "cathedral-reverb": {
+        id: "cathedral-reverb", chassis: 4, name: "CATHEDRAL", color: "#a855f7",
+        desc: "Massive 4.5 second cathedral ambient hall",
+        knobs: [
+            { id: "decay", label: "DECAY", min: 1.0, max: 8.0, default: 4.2, step: 0.1, unit: "s" },
+            { id: "damping", label: "DAMP", min: 10, max: 90, default: 30, step: 1, unit: "%" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 55, step: 1, unit: "%" }
+        ]
+    },
+    "gated-plate": {
+        id: "gated-plate", chassis: 4, name: "GATED PLATE", color: "#ec4899",
+        desc: "80s punchy gated plate reverb for synths",
+        knobs: [
+            { id: "size", label: "SIZE", min: 10, max: 100, default: 60, step: 1, unit: "%" },
+            { id: "gate", label: "GATE", min: 10, max: 100, default: 55, step: 1, unit: "%" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 45, step: 1, unit: "%" }
+        ]
+    },
+    "spring-reverb": {
+        id: "spring-reverb", chassis: 4, name: "SPRING REV", color: "#eab308",
+        desc: "Vintage dual-spring mechanical reverb tank",
+        knobs: [
+            { id: "tension", label: "BOING", min: 10, max: 100, default: 55, step: 1, unit: "%" },
+            { id: "decay", label: "DECAY", min: 0.5, max: 4.0, default: 1.8, step: 0.1, unit: "s" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 40, step: 1, unit: "%" }
+        ]
+    },
+    "reverb": {
+        id: "reverb", chassis: 4, name: "ROOM REV", color: "#00e5ff",
+        desc: "Standard studio room convolver reverb",
+        knobs: [
+            { id: "decay", label: "DECAY", min: 0.5, max: 5.0, default: 2.2, step: 0.1, unit: "s" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 50, step: 1, unit: "%" }
+        ]
+    },
+    "cosmic-shimmer": {
+        id: "cosmic-shimmer", chassis: 4, name: "SHIMMER", color: "#06b6d4",
+        desc: "Pitch-shifted octave-up celestial shimmer hall",
+        knobs: [
+            { id: "shimmer", label: "SHIMMER", min: 10, max: 100, default: 60, step: 1, unit: "%" },
+            { id: "decay", label: "DECAY", min: 1.0, max: 7.0, default: 3.5, step: 0.1, unit: "s" },
+            { id: "mix", label: "MIX", min: 0, max: 100, default: 50, step: 1, unit: "%" }
+        ]
+    }
+};
+
+/**
+ * DSP Factory: Instantiates Web Audio DSP graph for any cartridge
+ */
+function createPedalDSP(cartridgeId, p = {}, actx = audioCtx) {
+    if (!actx) return null;
+    const cat = CARTRIDGE_CATALOG[cartridgeId];
+    if (!cat) return null;
+
+    // Merge default params
+    const params = {};
+    cat.knobs.forEach(k => {
+        params[k.id] = (p[k.id] !== undefined) ? p[k.id] : k.default;
+    });
+
+    const activeNodes = [];
+    const timers = [];
+
+    switch (cartridgeId) {
+        // ==========================================
+        // CHASSIS 0: DRIVE / FUZZ / PREAMP / CRUNCH
+        // ==========================================
+        case "ds1": {
+            const shaper = actx.createWaveShaper();
+            shaper.curve = makeDistortionCurve(params.dist || 50);
+            shaper.oversample = '4x';
+
+            const filter = actx.createBiquadFilter();
+            filter.type = 'peaking';
+            filter.frequency.setValueAtTime(params.tone || 2500, actx.currentTime);
+            filter.gain.setValueAtTime(2.0, actx.currentTime);
+
+            const lvl = actx.createGain();
+            lvl.gain.setValueAtTime(((params.level || 65) / 100) * 0.85, actx.currentTime);
+
+            shaper.connect(filter);
+            filter.connect(lvl);
+            activeNodes.push(shaper, filter, lvl);
+
+            return {
+                inputNode: shaper,
+                outputNode: lvl,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'dist') shaper.curve = makeDistortionCurve(val);
+                    if (id === 'tone') filter.frequency.setTargetAtTime(val, actx.currentTime, 0.05);
+                    if (id === 'level') lvl.gain.setTargetAtTime((val / 100) * 0.85, actx.currentTime, 0.05);
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "proco-rat": {
+            const preGain = actx.createGain();
+            preGain.gain.setValueAtTime(1.5, actx.currentTime);
+
+            const shaper = actx.createWaveShaper();
+            shaper.curve = makeDistortionCurve((params.dist || 55) * 1.4);
+            shaper.oversample = '4x';
+
+            const filter = actx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(params.filter || 2200, actx.currentTime);
+            filter.Q.setValueAtTime(1.8, actx.currentTime);
+
+            const lvl = actx.createGain();
+            lvl.gain.setValueAtTime(((params.level || 70) / 100) * 0.9, actx.currentTime);
+
+            preGain.connect(shaper);
+            shaper.connect(filter);
+            filter.connect(lvl);
+            activeNodes.push(preGain, shaper, filter, lvl);
+
+            return {
+                inputNode: preGain,
+                outputNode: lvl,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'dist') shaper.curve = makeDistortionCurve(val * 1.4);
+                    if (id === 'filter') filter.frequency.setTargetAtTime(val, actx.currentTime, 0.05);
+                    if (id === 'level') lvl.gain.setTargetAtTime((val / 100) * 0.9, actx.currentTime, 0.05);
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "big-muff": {
+            const shaper = actx.createWaveShaper();
+            shaper.curve = makeDistortionCurve((params.sustain || 70) * 2.0);
+            shaper.oversample = '4x';
+
+            const scoop = actx.createBiquadFilter();
+            scoop.type = 'peaking';
+            scoop.frequency.setValueAtTime(1000, actx.currentTime);
+            scoop.gain.setValueAtTime(-7.0, actx.currentTime);
+            scoop.Q.setValueAtTime(1.2, actx.currentTime);
+
+            const toneFilter = actx.createBiquadFilter();
+            toneFilter.type = 'lowpass';
+            toneFilter.frequency.setValueAtTime(params.tone || 1800, actx.currentTime);
+
+            const vol = actx.createGain();
+            vol.gain.setValueAtTime(((params.volume || 75) / 100) * 0.85, actx.currentTime);
+
+            shaper.connect(scoop);
+            scoop.connect(toneFilter);
+            toneFilter.connect(vol);
+            activeNodes.push(shaper, scoop, toneFilter, vol);
+
+            return {
+                inputNode: shaper,
+                outputNode: vol,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'sustain') shaper.curve = makeDistortionCurve(val * 2.0);
+                    if (id === 'tone') toneFilter.frequency.setTargetAtTime(val, actx.currentTime, 0.05);
+                    if (id === 'volume') vol.gain.setTargetAtTime((val / 100) * 0.85, actx.currentTime, 0.05);
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "tube-screamer": {
+            const midHump = actx.createBiquadFilter();
+            midHump.type = 'peaking';
+            midHump.frequency.setValueAtTime(720, actx.currentTime);
+            midHump.gain.setValueAtTime(5.5, actx.currentTime);
+            midHump.Q.setValueAtTime(1.4, actx.currentTime);
+
+            const shaper = actx.createWaveShaper();
+            shaper.curve = makeDistortionCurve((params.drive || 45) * 0.9);
+            shaper.oversample = '4x';
+
+            const tone = actx.createBiquadFilter();
+            tone.type = 'lowpass';
+            tone.frequency.setValueAtTime(params.tone || 2000, actx.currentTime);
+
+            const lvl = actx.createGain();
+            lvl.gain.setValueAtTime(((params.level || 70) / 100) * 0.85, actx.currentTime);
+
+            midHump.connect(shaper);
+            shaper.connect(tone);
+            tone.connect(lvl);
+            activeNodes.push(midHump, shaper, tone, lvl);
+
+            return {
+                inputNode: midHump,
+                outputNode: lvl,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'drive') shaper.curve = makeDistortionCurve(val * 0.9);
+                    if (id === 'tone') tone.frequency.setTargetAtTime(val, actx.currentTime, 0.05);
+                    if (id === 'level') lvl.gain.setTargetAtTime((val / 100) * 0.85, actx.currentTime, 0.05);
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "french-preamp": {
+            const warmth = actx.createBiquadFilter();
+            warmth.type = 'lowshelf';
+            warmth.frequency.setValueAtTime(320, actx.currentTime);
+            warmth.gain.setValueAtTime(((params.warmth || 65) / 100) * 8.0, actx.currentTime);
+
+            const shaper = actx.createWaveShaper();
+            shaper.curve = makeDistortionCurve((params.drive || 60) * 0.7);
+            shaper.oversample = '4x';
+
+            const outGain = actx.createGain();
+            outGain.gain.setValueAtTime(((params.output || 75) / 100) * 0.9, actx.currentTime);
+
+            warmth.connect(shaper);
+            shaper.connect(outGain);
+            activeNodes.push(warmth, shaper, outGain);
+
+            return {
+                inputNode: warmth,
+                outputNode: outGain,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'warmth') warmth.gain.setTargetAtTime((val / 100) * 8.0, actx.currentTime, 0.05);
+                    if (id === 'drive') shaper.curve = makeDistortionCurve(val * 0.7);
+                    if (id === 'output') outGain.gain.setTargetAtTime((val / 100) * 0.9, actx.currentTime, 0.05);
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "decimator": {
+            const crusher = createBitcrusherNode(actx);
+            crusher.setBits(params.bits || 8);
+            crusher.setCrush(params.rate || 40);
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+
+            const mixVal = (params.mix || 60) / 100;
+            dry.gain.setValueAtTime(1.0 - mixVal * 0.4, actx.currentTime);
+            wet.gain.setValueAtTime(mixVal, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+
+            inNode.connect(crusher);
+            crusher.connect(wet);
+            wet.connect(outNode);
+            activeNodes.push(inNode, crusher, dry, wet, outNode);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'bits') crusher.setBits(parseInt(val));
+                    if (id === 'rate') crusher.setCrush(parseFloat(val));
+                    if (id === 'mix') {
+                        const m = val / 100;
+                        wet.gain.setTargetAtTime(m, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - m * 0.4, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        // ==========================================
+        // CHASSIS 1: MODULATION
+        // ==========================================
+        case "small-stone": {
+            // 4-stage allpass phaser cascade
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const ap1 = actx.createBiquadFilter(); ap1.type = 'allpass';
+            const ap2 = actx.createBiquadFilter(); ap2.type = 'allpass';
+            const ap3 = actx.createBiquadFilter(); ap3.type = 'allpass';
+            const ap4 = actx.createBiquadFilter(); ap4.type = 'allpass';
+
+            const fdbk = actx.createGain();
+            fdbk.gain.setValueAtTime(((params.feedback || 40) / 100) * 0.8, actx.currentTime);
+
+            const lfo = actx.createOscillator();
+            lfo.type = 'sine';
+            lfo.frequency.setValueAtTime(params.rate || 0.6, actx.currentTime);
+
+            const lfoGain = actx.createGain();
+            lfoGain.gain.setValueAtTime(((params.depth || 75) / 100) * 1200, actx.currentTime);
+
+            [ap1, ap2, ap3, ap4].forEach(ap => {
+                ap.frequency.setValueAtTime(1200, actx.currentTime);
+                lfoGain.connect(ap.frequency);
+            });
+
+            lfo.connect(lfoGain);
+            lfo.start();
+
+            inNode.connect(ap1);
+            ap1.connect(ap2);
+            ap2.connect(ap3);
+            ap3.connect(ap4);
+            ap4.connect(fdbk);
+            fdbk.connect(ap1);
+
+            // Phaser wet + dry sum creates comb notches
+            const dry = actx.createGain(); dry.gain.setValueAtTime(0.7, actx.currentTime);
+            const wet = actx.createGain(); wet.gain.setValueAtTime(0.7, actx.currentTime);
+            inNode.connect(dry);
+            dry.connect(outNode);
+            ap4.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, ap1, ap2, ap3, ap4, fdbk, lfo, lfoGain, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'rate') lfo.frequency.setTargetAtTime(val, actx.currentTime, 0.05);
+                    if (id === 'depth') lfoGain.gain.setTargetAtTime((val / 100) * 1200, actx.currentTime, 0.05);
+                    if (id === 'feedback') fdbk.gain.setTargetAtTime((val / 100) * 0.8, actx.currentTime, 0.05);
+                },
+                cleanup: () => {
+                    try { lfo.stop(); } catch(e){}
+                    activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} });
+                }
+            };
+        }
+
+        case "dimension-chorus": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const delayL = actx.createDelay(0.1);
+            const delayR = actx.createDelay(0.1);
+            delayL.delayTime.setValueAtTime(0.025, actx.currentTime);
+            delayR.delayTime.setValueAtTime(0.032, actx.currentTime);
+
+            const lfo1 = actx.createOscillator();
+            lfo1.type = 'sine';
+            const rateHz = 0.4 + (params.mode || 3) * 0.35;
+            lfo1.frequency.setValueAtTime(rateHz, actx.currentTime);
+
+            const lfo2 = actx.createOscillator();
+            lfo2.type = 'triangle';
+            lfo2.frequency.setValueAtTime(rateHz * 1.15, actx.currentTime);
+
+            const modL = actx.createGain();
+            const modR = actx.createGain();
+            const depthVal = ((params.width || 75) / 100) * 0.0035;
+            modL.gain.setValueAtTime(depthVal, actx.currentTime);
+            modR.gain.setValueAtTime(-depthVal, actx.currentTime);
+
+            lfo1.connect(modL);
+            modL.connect(delayL.delayTime);
+            lfo2.connect(modR);
+            modR.connect(delayR.delayTime);
+
+            lfo1.start();
+            lfo2.start();
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 55) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.3, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.85, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            inNode.connect(delayL);
+            inNode.connect(delayR);
+            delayL.connect(wet);
+            delayR.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, delayL, delayR, lfo1, lfo2, modL, modR, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'mode') {
+                        const newRate = 0.4 + val * 0.35;
+                        lfo1.frequency.setTargetAtTime(newRate, actx.currentTime, 0.05);
+                        lfo2.frequency.setTargetAtTime(newRate * 1.15, actx.currentTime, 0.05);
+                    }
+                    if (id === 'width') {
+                        const d = (val / 100) * 0.0035;
+                        modL.gain.setTargetAtTime(d, actx.currentTime, 0.05);
+                        modR.gain.setTargetAtTime(-d, actx.currentTime, 0.05);
+                    }
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.85, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.3, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => {
+                    try { lfo1.stop(); lfo2.stop(); } catch(e){}
+                    activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} });
+                }
+            };
+        }
+
+        case "flanger": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const delay = actx.createDelay(0.05);
+            delay.delayTime.setValueAtTime(0.005, actx.currentTime);
+
+            const fdbk = actx.createGain();
+            fdbk.gain.setValueAtTime(((params.regen || 50) / 100) * 0.9, actx.currentTime);
+
+            const lfo = actx.createOscillator();
+            lfo.type = 'sine';
+            lfo.frequency.setValueAtTime(params.speed || 0.6, actx.currentTime);
+
+            const lfoDepth = actx.createGain();
+            lfoDepth.gain.setValueAtTime(((params.depth || 70) / 100) * 0.0038, actx.currentTime);
+
+            lfo.connect(lfoDepth);
+            lfoDepth.connect(delay.delayTime);
+            lfo.start();
+
+            inNode.connect(delay);
+            delay.connect(fdbk);
+            fdbk.connect(delay);
+
+            const dry = actx.createGain(); dry.gain.setValueAtTime(0.7, actx.currentTime);
+            const wet = actx.createGain(); wet.gain.setValueAtTime(0.7, actx.currentTime);
+            inNode.connect(dry);
+            dry.connect(outNode);
+            delay.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, delay, fdbk, lfo, lfoDepth, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'speed') lfo.frequency.setTargetAtTime(val, actx.currentTime, 0.05);
+                    if (id === 'depth') lfoDepth.gain.setTargetAtTime((val / 100) * 0.0038, actx.currentTime, 0.05);
+                    if (id === 'regen') fdbk.gain.setTargetAtTime((val / 100) * 0.9, actx.currentTime, 0.05);
+                },
+                cleanup: () => {
+                    try { lfo.stop(); } catch(e){}
+                    activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} });
+                }
+            };
+        }
+
+        case "optical-tremolo": {
+            const inNode = actx.createGain();
+            const tremoloGain = actx.createGain();
+            tremoloGain.gain.setValueAtTime(1.0, actx.currentTime);
+
+            const lfo = actx.createOscillator();
+            lfo.type = (params.shape === 1) ? 'square' : 'sine';
+            lfo.frequency.setValueAtTime(params.rate || 4.0, actx.currentTime);
+
+            const lfoGain = actx.createGain();
+            const depthFraction = ((params.depth || 60) / 100) * 0.48;
+            lfoGain.gain.setValueAtTime(depthFraction, actx.currentTime);
+
+            lfo.connect(lfoGain);
+            lfoGain.connect(tremoloGain.gain);
+            lfo.start();
+
+            inNode.connect(tremoloGain);
+            activeNodes.push(inNode, tremoloGain, lfo, lfoGain);
+
+            return {
+                inputNode: inNode,
+                outputNode: tremoloGain,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'rate') lfo.frequency.setTargetAtTime(val, actx.currentTime, 0.05);
+                    if (id === 'depth') lfoGain.gain.setTargetAtTime((val / 100) * 0.48, actx.currentTime, 0.05);
+                    if (id === 'shape') lfo.type = (val === 1 || val === "1") ? 'square' : 'sine';
+                },
+                cleanup: () => {
+                    try { lfo.stop(); } catch(e){}
+                    activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} });
+                }
+            };
+        }
+
+        case "ring-mod": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const multGain = actx.createGain();
+            multGain.gain.setValueAtTime(0.0, actx.currentTime);
+
+            const carrier = actx.createOscillator();
+            carrier.type = 'sine';
+            carrier.frequency.setValueAtTime(params.carrier || 440, actx.currentTime);
+
+            const lfo = actx.createOscillator();
+            lfo.type = 'sine';
+            lfo.frequency.setValueAtTime(params.lfo || 2.5, actx.currentTime);
+
+            const lfoDepth = actx.createGain();
+            lfoDepth.gain.setValueAtTime(25, actx.currentTime);
+
+            lfo.connect(lfoDepth);
+            lfoDepth.connect(carrier.frequency);
+
+            carrier.connect(multGain.gain);
+            carrier.start();
+            lfo.start();
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 45) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.4, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.9, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            inNode.connect(multGain);
+            multGain.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, multGain, carrier, lfo, lfoDepth, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'carrier') carrier.frequency.setTargetAtTime(val, actx.currentTime, 0.05);
+                    if (id === 'lfo') lfo.frequency.setTargetAtTime(val, actx.currentTime, 0.05);
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.9, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.4, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => {
+                    try { carrier.stop(); lfo.stop(); } catch(e){}
+                    activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} });
+                }
+            };
+        }
+
+        // ==========================================
+        // CHASSIS 2: FILTER / DYNAMICS / HARMONIZER
+        // ==========================================
+        case "ps6": {
+            // PS-6 Harmonizer pass-through node (harmonies are spawned in the synth voice engine)
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const filter = actx.createBiquadFilter();
+            filter.type = 'highshelf';
+            filter.frequency.setValueAtTime(3000, actx.currentTime);
+            filter.gain.setValueAtTime(1.5, actx.currentTime);
+
+            inNode.connect(filter);
+            filter.connect(outNode);
+            activeNodes.push(inNode, filter, outNode);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "sidechain-pumper": {
+            const inNode = actx.createGain();
+            const pumpGain = actx.createGain();
+            pumpGain.gain.setValueAtTime(1.0, actx.currentTime);
+
+            const lfo = actx.createOscillator();
+            lfo.type = 'sawtooth'; // ramp down & release
+            const bpmSyncHz = 2.0 * ((params.rate || 4) / 4); // quarter notes
+            lfo.frequency.setValueAtTime(bpmSyncHz, actx.currentTime);
+
+            const lfoGain = actx.createGain();
+            const pumpDepth = ((params.depth || 80) / 100) * 0.45;
+            lfoGain.gain.setValueAtTime(pumpDepth, actx.currentTime);
+
+            lfo.connect(lfoGain);
+            lfoGain.connect(pumpGain.gain);
+            lfo.start();
+
+            inNode.connect(pumpGain);
+            activeNodes.push(inNode, pumpGain, lfo, lfoGain);
+
+            return {
+                inputNode: inNode,
+                outputNode: pumpGain,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'depth') lfoGain.gain.setTargetAtTime((val / 100) * 0.45, actx.currentTime, 0.05);
+                    if (id === 'rate') lfo.frequency.setTargetAtTime(2.0 * (val / 4), actx.currentTime, 0.05);
+                },
+                cleanup: () => {
+                    try { lfo.stop(); } catch(e){}
+                    activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} });
+                }
+            };
+        }
+
+        case "mutron-wah": {
+            const inNode = actx.createGain();
+            const filter = actx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(params.range || 1800, actx.currentTime);
+            filter.Q.setValueAtTime(((params.peak || 70) / 100) * 12.0 + 1.0, actx.currentTime);
+
+            const lfo = actx.createOscillator();
+            lfo.type = 'sine';
+            lfo.frequency.setValueAtTime(1.8, actx.currentTime);
+
+            const lfoGain = actx.createGain();
+            lfoGain.gain.setValueAtTime(((params.drive || 50) / 100) * 900, actx.currentTime);
+
+            lfo.connect(lfoGain);
+            lfoGain.connect(filter.frequency);
+            lfo.start();
+
+            const dry = actx.createGain(); dry.gain.setValueAtTime(0.4, actx.currentTime);
+            const wet = actx.createGain(); wet.gain.setValueAtTime(0.85, actx.currentTime);
+            const outNode = actx.createGain();
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            inNode.connect(filter);
+            filter.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, filter, lfo, lfoGain, dry, wet, outNode);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'range') filter.frequency.setTargetAtTime(val, actx.currentTime, 0.05);
+                    if (id === 'peak') filter.Q.setTargetAtTime((val / 100) * 12.0 + 1.0, actx.currentTime, 0.05);
+                    if (id === 'drive') lfoGain.gain.setTargetAtTime((val / 100) * 900, actx.currentTime, 0.05);
+                },
+                cleanup: () => {
+                    try { lfo.stop(); } catch(e){}
+                    activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} });
+                }
+            };
+        }
+
+        case "formant-filter": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+
+            // Vowels: 1: A (800, 1200), 2: E (400, 2000), 3: I (250, 2400), 4: O (450, 800), 5: U (300, 600)
+            const VOWEL_PAIRS = [
+                [800, 1200],
+                [400, 2000],
+                [250, 2400],
+                [450, 800],
+                [300, 600]
+            ];
+            const vIdx = Math.min(4, Math.max(0, (params.vowel || 2) - 1));
+            const [f1Freq, f2Freq] = VOWEL_PAIRS[vIdx];
+
+            const bp1 = actx.createBiquadFilter(); bp1.type = 'bandpass';
+            bp1.frequency.setValueAtTime(f1Freq, actx.currentTime);
+            bp1.Q.setValueAtTime(((params.reso || 65) / 100) * 8.0 + 2.0, actx.currentTime);
+
+            const bp2 = actx.createBiquadFilter(); bp2.type = 'bandpass';
+            bp2.frequency.setValueAtTime(f2Freq, actx.currentTime);
+            bp2.Q.setValueAtTime(((params.reso || 65) / 100) * 8.0 + 2.0, actx.currentTime);
+
+            inNode.connect(bp1);
+            inNode.connect(bp2);
+            bp1.connect(outNode);
+            bp2.connect(outNode);
+
+            activeNodes.push(inNode, bp1, bp2, outNode);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'vowel') {
+                        const pair = VOWEL_PAIRS[Math.min(4, Math.max(0, parseInt(val) - 1))];
+                        bp1.frequency.setTargetAtTime(pair[0], actx.currentTime, 0.08);
+                        bp2.frequency.setTargetAtTime(pair[1], actx.currentTime, 0.08);
+                    }
+                    if (id === 'reso') {
+                        const q = (val / 100) * 8.0 + 2.0;
+                        bp1.Q.setTargetAtTime(q, actx.currentTime, 0.05);
+                        bp2.Q.setTargetAtTime(q, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "sid-resonator": {
+            const inNode = actx.createGain();
+            const filter = actx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(params.cutoff || 2200, actx.currentTime);
+            filter.Q.setValueAtTime(((params.squelch || 75) / 100) * 16.0 + 1.0, actx.currentTime);
+
+            const drive = actx.createWaveShaper();
+            drive.curve = makeDistortionCurve(30);
+            drive.oversample = '2x';
+
+            inNode.connect(filter);
+            filter.connect(drive);
+            activeNodes.push(inNode, filter, drive);
+
+            return {
+                inputNode: inNode,
+                outputNode: drive,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'cutoff') filter.frequency.setTargetAtTime(val, actx.currentTime, 0.05);
+                    if (id === 'squelch') filter.Q.setTargetAtTime((val / 100) * 16.0 + 1.0, actx.currentTime, 0.05);
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        // ==========================================
+        // CHASSIS 3: TIME & DELAY
+        // ==========================================
+        case "space-echo": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const delay = actx.createDelay(2.0);
+            delay.delayTime.setValueAtTime((params.time || 360) / 1000, actx.currentTime);
+
+            const tapeDamp = actx.createBiquadFilter();
+            tapeDamp.type = 'lowpass';
+            tapeDamp.frequency.setValueAtTime(3200, actx.currentTime);
+
+            const tapeSat = actx.createWaveShaper();
+            tapeSat.curve = makeDistortionCurve(18);
+
+            const fdbk = actx.createGain();
+            fdbk.gain.setValueAtTime(((params.intensity || 45) / 100) * 0.88, actx.currentTime);
+
+            // Flutter LFO
+            const flutterLfo = actx.createOscillator();
+            flutterLfo.type = 'sine';
+            flutterLfo.frequency.setValueAtTime(3.8, actx.currentTime);
+            const flutterGain = actx.createGain();
+            flutterGain.gain.setValueAtTime(((params.flutter || 40) / 100) * 0.0018, actx.currentTime);
+
+            flutterLfo.connect(flutterGain);
+            flutterGain.connect(delay.delayTime);
+            flutterLfo.start();
+
+            inNode.connect(delay);
+            delay.connect(tapeDamp);
+            tapeDamp.connect(tapeSat);
+            tapeSat.connect(fdbk);
+            fdbk.connect(delay);
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 45) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.3, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.85, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            tapeSat.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, delay, tapeDamp, tapeSat, fdbk, flutterLfo, flutterGain, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'time') delay.delayTime.setTargetAtTime(val / 1000, actx.currentTime, 0.1);
+                    if (id === 'intensity') fdbk.gain.setTargetAtTime((val / 100) * 0.88, actx.currentTime, 0.05);
+                    if (id === 'flutter') flutterGain.gain.setTargetAtTime((val / 100) * 0.0018, actx.currentTime, 0.05);
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.85, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.3, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => {
+                    try { flutterLfo.stop(); } catch(e){}
+                    activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} });
+                }
+            };
+        }
+
+        case "ping-pong": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const delayL = actx.createDelay(2.0);
+            const delayR = actx.createDelay(2.0);
+            const t = (params.time || 320) / 1000;
+            delayL.delayTime.setValueAtTime(t, actx.currentTime);
+            delayR.delayTime.setValueAtTime(t * 1.5, actx.currentTime);
+
+            const fdbkL = actx.createGain();
+            const fdbkR = actx.createGain();
+            const fdbkVal = ((params.feedback || 45) / 100) * 0.82;
+            fdbkL.gain.setValueAtTime(fdbkVal, actx.currentTime);
+            fdbkR.gain.setValueAtTime(fdbkVal, actx.currentTime);
+
+            // Cross ping-pong bounce
+            inNode.connect(delayL);
+            delayL.connect(fdbkL);
+            fdbkL.connect(delayR);
+
+            delayR.connect(fdbkR);
+            fdbkR.connect(delayL);
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 40) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.3, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.85, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            delayL.connect(wet);
+            delayR.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, delayL, delayR, fdbkL, fdbkR, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'time') {
+                        const sec = val / 1000;
+                        delayL.delayTime.setTargetAtTime(sec, actx.currentTime, 0.1);
+                        delayR.delayTime.setTargetAtTime(sec * 1.5, actx.currentTime, 0.1);
+                    }
+                    if (id === 'feedback') {
+                        const f = (val / 100) * 0.82;
+                        fdbkL.gain.setTargetAtTime(f, actx.currentTime, 0.05);
+                        fdbkR.gain.setTargetAtTime(f, actx.currentTime, 0.05);
+                    }
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.85, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.3, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "analog-delay": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const delay = actx.createDelay(2.0);
+            delay.delayTime.setValueAtTime((params.time || 260) / 1000, actx.currentTime);
+
+            // BBD High roll-off filter
+            const bbdFilter = actx.createBiquadFilter();
+            bbdFilter.type = 'lowpass';
+            bbdFilter.frequency.setValueAtTime(2200, actx.currentTime);
+
+            const fdbk = actx.createGain();
+            fdbk.gain.setValueAtTime(((params.feedback || 35) / 100) * 0.85, actx.currentTime);
+
+            inNode.connect(delay);
+            delay.connect(bbdFilter);
+            bbdFilter.connect(fdbk);
+            fdbk.connect(delay);
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 35) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.3, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.85, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            bbdFilter.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, delay, bbdFilter, fdbk, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'time') delay.delayTime.setTargetAtTime(val / 1000, actx.currentTime, 0.1);
+                    if (id === 'feedback') fdbk.gain.setTargetAtTime((val / 100) * 0.85, actx.currentTime, 0.05);
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.85, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.3, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "delay": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const delay = actx.createDelay(2.0);
+            delay.delayTime.setValueAtTime((params.time || 380) / 1000, actx.currentTime);
+
+            const fdbk = actx.createGain();
+            fdbk.gain.setValueAtTime(((params.feedback || 40) / 100) * 0.82, actx.currentTime);
+
+            inNode.connect(delay);
+            delay.connect(fdbk);
+            fdbk.connect(delay);
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 45) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.3, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.85, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            delay.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, delay, fdbk, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'time') delay.delayTime.setTargetAtTime(val / 1000, actx.currentTime, 0.1);
+                    if (id === 'feedback') fdbk.gain.setTargetAtTime((val / 100) * 0.82, actx.currentTime, 0.05);
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.85, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.3, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "glitch-delay": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const delay = actx.createDelay(1.0);
+            delay.delayTime.setValueAtTime((params.size || 120) / 1000, actx.currentTime);
+
+            const fdbk = actx.createGain();
+            fdbk.gain.setValueAtTime(((params.feedback || 50) / 100) * 0.88, actx.currentTime);
+
+            const jitterLfo = actx.createOscillator();
+            jitterLfo.type = 'square';
+            jitterLfo.frequency.setValueAtTime(8.0, actx.currentTime);
+
+            const jitterDepth = actx.createGain();
+            jitterDepth.gain.setValueAtTime(((params.jitter || 55) / 100) * 0.02, actx.currentTime);
+
+            jitterLfo.connect(jitterDepth);
+            jitterDepth.connect(delay.delayTime);
+            jitterLfo.start();
+
+            inNode.connect(delay);
+            delay.connect(fdbk);
+            fdbk.connect(delay);
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 45) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.3, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.85, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            delay.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, delay, fdbk, jitterLfo, jitterDepth, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'size') delay.delayTime.setTargetAtTime(val / 1000, actx.currentTime, 0.05);
+                    if (id === 'feedback') fdbk.gain.setTargetAtTime((val / 100) * 0.88, actx.currentTime, 0.05);
+                    if (id === 'jitter') jitterDepth.gain.setTargetAtTime((val / 100) * 0.02, actx.currentTime, 0.05);
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.85, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.3, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => {
+                    try { jitterLfo.stop(); } catch(e){}
+                    activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} });
+                }
+            };
+        }
+
+        // ==========================================
+        // CHASSIS 4: SPACE & REVERB
+        // ==========================================
+        case "cathedral-reverb": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const conv = actx.createConvolver();
+            conv.buffer = createReverbImpulse(actx, params.decay || 4.2, 1.8);
+
+            const damp = actx.createBiquadFilter();
+            damp.type = 'lowpass';
+            const dampFreq = 9000 - ((params.damping || 30) / 100) * 6000;
+            damp.frequency.setValueAtTime(dampFreq, actx.currentTime);
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 55) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.4, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.8, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            inNode.connect(conv);
+            conv.connect(damp);
+            damp.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, conv, damp, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'decay') conv.buffer = createReverbImpulse(actx, val, 1.8);
+                    if (id === 'damping') damp.frequency.setTargetAtTime(9000 - (val / 100) * 6000, actx.currentTime, 0.05);
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.8, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.4, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "gated-plate": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const conv = actx.createConvolver();
+            conv.buffer = createReverbImpulse(actx, 1.2, 3.5);
+
+            const gateFilter = actx.createBiquadFilter();
+            gateFilter.type = 'highpass';
+            gateFilter.frequency.setValueAtTime(180, actx.currentTime);
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 45) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.3, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.8, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            inNode.connect(conv);
+            conv.connect(gateFilter);
+            gateFilter.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, conv, gateFilter, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.8, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.3, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "spring-reverb": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const conv = actx.createConvolver();
+            conv.buffer = createSpringReverbImpulse(actx, params.decay || 1.8, 2.5, (params.tension || 55) / 100);
+
+            const tone = actx.createBiquadFilter();
+            tone.type = 'peaking';
+            tone.frequency.setValueAtTime(2800, actx.currentTime);
+            tone.gain.setValueAtTime(3.5, actx.currentTime);
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 40) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.3, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.8, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            inNode.connect(conv);
+            conv.connect(tone);
+            tone.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, conv, tone, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'decay' || id === 'tension') {
+                        conv.buffer = createSpringReverbImpulse(actx, params.decay || 1.8, 2.5, (params.tension || 55) / 100);
+                    }
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.8, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.3, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "reverb": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const conv = actx.createConvolver();
+            conv.buffer = createReverbImpulse(actx, params.decay || 2.2, 2.0);
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 50) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.3, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.75, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            inNode.connect(conv);
+            conv.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, conv, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'decay') conv.buffer = createReverbImpulse(actx, val, 2.0);
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.75, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.3, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        case "cosmic-shimmer": {
+            const inNode = actx.createGain();
+            const outNode = actx.createGain();
+            const conv = actx.createConvolver();
+            conv.buffer = createReverbImpulse(actx, params.decay || 3.5, 1.6);
+
+            const shimmerFilter = actx.createBiquadFilter();
+            shimmerFilter.type = 'highshelf';
+            shimmerFilter.frequency.setValueAtTime(3500, actx.currentTime);
+            shimmerFilter.gain.setValueAtTime(((params.shimmer || 60) / 100) * 9.0, actx.currentTime);
+
+            const dry = actx.createGain();
+            const wet = actx.createGain();
+            const m = (params.mix || 50) / 100;
+            dry.gain.setValueAtTime(1.0 - m * 0.3, actx.currentTime);
+            wet.gain.setValueAtTime(m * 0.8, actx.currentTime);
+
+            inNode.connect(dry);
+            dry.connect(outNode);
+            inNode.connect(conv);
+            conv.connect(shimmerFilter);
+            shimmerFilter.connect(wet);
+            wet.connect(outNode);
+
+            activeNodes.push(inNode, outNode, conv, shimmerFilter, dry, wet);
+
+            return {
+                inputNode: inNode,
+                outputNode: outNode,
+                updateParam: (id, val) => {
+                    params[id] = val;
+                    if (id === 'decay') conv.buffer = createReverbImpulse(actx, val, 1.6);
+                    if (id === 'shimmer') shimmerFilter.gain.setTargetAtTime((val / 100) * 9.0, actx.currentTime, 0.05);
+                    if (id === 'mix') {
+                        const mix = val / 100;
+                        wet.gain.setTargetAtTime(mix * 0.8, actx.currentTime, 0.05);
+                        dry.gain.setTargetAtTime(1.0 - mix * 0.3, actx.currentTime, 0.05);
+                    }
+                },
+                cleanup: () => { activeNodes.forEach(n => { try { n.disconnect(); } catch(e){} }); }
+            };
+        }
+
+        default:
+            return null;
+    }
+}
+
+/**
+ * Creates metallic spring dispersion impulse
+ */
+function createSpringReverbImpulse(context, duration = 1.8, decay = 2.5, tension = 0.5) {
+    const sampleRate = context.sampleRate || 44100;
+    const length = Math.floor(sampleRate * duration);
+    const impulse = context.createBuffer(2, length, sampleRate);
+    const left = impulse.getChannelData(0);
+    const right = impulse.getChannelData(1);
+
+    const chirpFreq = 80 + tension * 120;
+    for (let i = 0; i < length; i++) {
+        const t = i / sampleRate;
+        const env = Math.pow(1 - i / length, decay);
+        // Multi-reflection chirp for spring "boing"
+        const chirp = Math.sin(2 * Math.PI * chirpFreq * Math.sqrt(t + 0.001) * 30);
+        const noise = Math.random() * 2 - 1;
+        const val = (noise * 0.6 + chirp * 0.4) * env;
+        left[i] = val;
+        right[i] = (noise * 0.6 - chirp * 0.4) * env;
+    }
+    return impulse;
+}
+
+
+
+let leadPedalSlots = [
+    { instrument: "lead", slotIdx: 0, chassis: 0, cartridgeId: "tube-screamer", active: false, params: { drive: 45, tone: 2000, level: 70 }, dsp: null, slotInput: null, slotOutput: null, dryGain: null, wetGain: null },
+    { instrument: "lead", slotIdx: 1, chassis: 1, cartridgeId: "dimension-chorus", active: false, params: { mode: 3, width: 75, mix: 55 }, dsp: null, slotInput: null, slotOutput: null, dryGain: null, wetGain: null },
+    { instrument: "lead", slotIdx: 2, chassis: 2, cartridgeId: "ps6", active: false, params: { interval: 0, mix: 50 }, dsp: null, slotInput: null, slotOutput: null, dryGain: null, wetGain: null },
+    { instrument: "lead", slotIdx: 3, chassis: 3, cartridgeId: "space-echo", active: false, params: { time: 360, intensity: 45, flutter: 40, mix: 45 }, dsp: null, slotInput: null, slotOutput: null, dryGain: null, wetGain: null },
+    { instrument: "lead", slotIdx: 4, chassis: 4, cartridgeId: "cathedral-reverb", active: false, params: { decay: 4.2, damping: 30, mix: 55 }, dsp: null, slotInput: null, slotOutput: null, dryGain: null, wetGain: null }
+];
+
+let bassPedalSlots = [
+    { instrument: "bass", slotIdx: 0, chassis: 0, cartridgeId: "french-preamp", active: false, params: { drive: 60, warmth: 65, output: 75 }, dsp: null, slotInput: null, slotOutput: null, dryGain: null, wetGain: null },
+    { instrument: "bass", slotIdx: 1, chassis: 1, cartridgeId: "small-stone", active: false, params: { rate: 0.6, depth: 75, feedback: 40 }, dsp: null, slotInput: null, slotOutput: null, dryGain: null, wetGain: null },
+    { instrument: "bass", slotIdx: 2, chassis: 2, cartridgeId: "mutron-wah", active: false, params: { peak: 70, drive: 50, range: 1800 }, dsp: null, slotInput: null, slotOutput: null, dryGain: null, wetGain: null },
+    { instrument: "bass", slotIdx: 3, chassis: 3, cartridgeId: "analog-delay", active: false, params: { time: 260, feedback: 35, mix: 35 }, dsp: null, slotInput: null, slotOutput: null, dryGain: null, wetGain: null },
+    { instrument: "bass", slotIdx: 4, chassis: 4, cartridgeId: "reverb", active: false, params: { decay: 2.2, mix: 50 }, dsp: null, slotInput: null, slotOutput: null, dryGain: null, wetGain: null }
+];
+
+function isMixBasedCartridge(cartId) {
+    const cat = CARTRIDGE_CATALOG[cartId];
+    if (!cat) return false;
+    return cat.knobs.some(k => k.id === 'mix');
+}
+
+function initInstrumentPedalChain(instrument, actx, voiceBus, masterBus) {
+    const slots = (instrument === "lead") ? leadPedalSlots : bassPedalSlots;
+
+    slots.forEach((slot, idx) => {
+        // Create slot input & output isolation nodes
+        slot.slotInput = actx.createGain();
+        slot.slotOutput = actx.createGain();
+        slot.dryGain = actx.createGain();
+        slot.wetGain = actx.createGain();
+
+        const isBypassed = !!appSettings.masterFXBypass;
+        const active = !isBypassed && slot.active;
+        const mixBased = isMixBasedCartridge(slot.cartridgeId);
+
+        slot.dryGain.gain.setValueAtTime(active ? (mixBased ? 1.0 : 0.0) : 1.0, actx.currentTime);
+        slot.wetGain.gain.setValueAtTime(active ? 1.0 : 0.0, actx.currentTime);
+
+        slot.slotInput.connect(slot.dryGain);
+        slot.dryGain.connect(slot.slotOutput);
+
+        // Instantiate DSP
+        if (slot.dsp) {
+            try { slot.dsp.cleanup(); } catch(e){}
+        }
+        slot.dsp = createPedalDSP(slot.cartridgeId, slot.params, actx);
+        if (slot.dsp) {
+            slot.slotInput.connect(slot.dsp.inputNode);
+            slot.dsp.outputNode.connect(slot.wetGain);
+            slot.wetGain.connect(slot.slotOutput);
+        }
+
+        // Chain connection
+        if (idx === 0) {
+            voiceBus.connect(slot.slotInput);
+        } else {
+            slots[idx - 1].slotOutput.connect(slot.slotInput);
+        }
+    });
+
+    // Connect final slot output to master gain
+    slots[4].slotOutput.connect(masterBus);
+}
+
+function loadPedalCartridge(instrument, slotIdx, cartridgeId, initialParams = {}, shouldSave = true) {
+    const slots = (instrument === "lead") ? leadPedalSlots : bassPedalSlots;
+    const slot = slots[slotIdx];
+    if (!slot) return;
+
+    const cat = CARTRIDGE_CATALOG[cartridgeId];
+    if (!cat) return;
+
+    // Cleanup current DSP
+    if (slot.dsp) {
+        try {
+            if (slot.slotInput && slot.dsp.inputNode) slot.slotInput.disconnect(slot.dsp.inputNode);
+            if (slot.wetGain && slot.dsp.outputNode) slot.dsp.outputNode.disconnect(slot.wetGain);
+            slot.dsp.cleanup();
+        } catch(e) {}
+        slot.dsp = null;
+    }
+
+    slot.cartridgeId = cartridgeId;
+    slot.params = {};
+    cat.knobs.forEach(k => {
+        slot.params[k.id] = (initialParams[k.id] !== undefined) ? initialParams[k.id] : k.default;
+    });
+
+    if (audioCtx && slot.slotInput && slot.wetGain) {
+        slot.dsp = createPedalDSP(cartridgeId, slot.params, audioCtx);
+        if (slot.dsp) {
+            slot.slotInput.connect(slot.dsp.inputNode);
+            slot.dsp.outputNode.connect(slot.wetGain);
+        }
+    }
+
+    renderPedalSlotUI(instrument, slotIdx);
+
+    // Sync legacy settings flags for harmonizer
+    if (slotIdx === 2) {
+        if (instrument === "lead") appSettings.leadPS6Active = (slot.cartridgeId === "ps6" && slot.active);
+        else appSettings.bassPS6Active = (slot.cartridgeId === "ps6" && slot.active);
+    }
+
+    if (shouldSave) saveSettings();
+}
+
+function togglePedalSlot(instrument, slotIdx) {
     initAudio();
-    appSettings.leadDS1Active = !appSettings.leadDS1Active;
-    if (leadDS1DryGain) leadDS1DryGain.gain.setTargetAtTime(appSettings.leadDS1Active ? 0.0 : 1.0, audioCtx.currentTime, 0.01);
-    if (leadDS1WetGain) leadDS1WetGain.gain.setTargetAtTime(appSettings.leadDS1Active ? 1.0 : 0.0, audioCtx.currentTime, 0.01);
-    syncUIFromSettings();
+    const slots = (instrument === "lead") ? leadPedalSlots : bassPedalSlots;
+    const slot = slots[slotIdx];
+    if (!slot) return;
+
+    slot.active = !slot.active;
+    const isBypassed = !!appSettings.masterFXBypass;
+    const active = !isBypassed && slot.active;
+    const mixBased = isMixBasedCartridge(slot.cartridgeId);
+
+    if (slot.wetGain && slot.dryGain && audioCtx) {
+        slot.dryGain.gain.setTargetAtTime(active ? (mixBased ? 1.0 : 0.0) : 1.0, audioCtx.currentTime, 0.01);
+        slot.wetGain.gain.setTargetAtTime(active ? 1.0 : 0.0, audioCtx.currentTime, 0.01);
+    }
+
+    // Sync legacy settings flags
+    if (slotIdx === 0 && slot.cartridgeId === "ds1") {
+        if (instrument === "lead") appSettings.leadDS1Active = slot.active;
+        else appSettings.bassDS1Active = slot.active;
+    } else if (slotIdx === 2 && slot.cartridgeId === "ps6") {
+        if (instrument === "lead") appSettings.leadPS6Active = slot.active;
+        else appSettings.bassPS6Active = slot.active;
+    }
+
+    updatePedalSlotStateUI(instrument, slotIdx);
     saveSettings();
 }
 
-function toggleLeadHarmonizer() {
+function updatePedalParam(instrument, slotIdx, paramId, value) {
     initAudio();
-    appSettings.leadPS6Active = !appSettings.leadPS6Active;
-    syncUIFromSettings();
+    const slots = (instrument === "lead") ? leadPedalSlots : bassPedalSlots;
+    const slot = slots[slotIdx];
+    if (!slot) return;
+
+    const num = parseFloat(value);
+    slot.params[paramId] = num;
+
+    if (slot.dsp && typeof slot.dsp.updateParam === "function") {
+        slot.dsp.updateParam(paramId, num);
+    }
+
+    const valEl = document.getElementById(`${instrument}-val-${slotIdx}-${paramId}`);
+    if (valEl) {
+        const cat = CARTRIDGE_CATALOG[slot.cartridgeId];
+        const knob = cat ? cat.knobs.find(k => k.id === paramId) : null;
+        valEl.textContent = `${num}${(knob && knob.unit) ? knob.unit : ''}`;
+    }
+
     saveSettings();
 }
 
-function toggleLeadDelay() {
-    initAudio();
-    appSettings.leadDelayActive = !appSettings.leadDelayActive;
-    if (leadDelayWetGain) leadDelayWetGain.gain.setTargetAtTime(appSettings.leadDelayActive ? (((appSettings.leadDelayMix || 45) / 100) * 0.7) : 0.0, audioCtx.currentTime, 0.01);
-    syncUIFromSettings();
-    saveSettings();
+function onCartridgeSelectChange(instrument, slotIdx, newCartridgeId) {
+    loadPedalCartridge(instrument, slotIdx, newCartridgeId, {}, true);
 }
 
-function toggleLeadReverb() {
-    initAudio();
-    appSettings.leadReverbActive = !appSettings.leadReverbActive;
-    if (leadReverbWetGain) leadReverbWetGain.gain.setTargetAtTime(appSettings.leadReverbActive ? (((appSettings.leadReverbMix || 55) / 100) * 0.8) : 0.0, audioCtx.currentTime, 0.01);
-    syncUIFromSettings();
-    saveSettings();
+function renderPedalSlotUI(instrument, slotIdx) {
+    const slots = (instrument === "lead") ? leadPedalSlots : bassPedalSlots;
+    const slot = slots[slotIdx];
+    if (!slot) return;
+
+    const cat = CARTRIDGE_CATALOG[slot.cartridgeId] || CARTRIDGE_CATALOG["ds1"];
+
+    // 1. Dropdown select
+    const selectEl = document.getElementById(`${instrument}-cartridge-select-${slotIdx}`);
+    if (selectEl) {
+        let optsHtml = "";
+        Object.keys(CARTRIDGE_CATALOG).forEach(k => {
+            const c = CARTRIDGE_CATALOG[k];
+            if (c.chassis === slotIdx) {
+                optsHtml += `<option value="${c.id}" ${c.id === slot.cartridgeId ? 'selected' : ''}>${c.name}</option>`;
+            }
+        });
+        selectEl.innerHTML = optsHtml;
+    }
+
+    // 2. Faceplate color & glow
+    const pedalEl = document.getElementById(`${instrument}-pedal-${slotIdx}`);
+    if (pedalEl && cat.color) {
+        pedalEl.style.setProperty('--pedal-accent', cat.color);
+    }
+
+    // 3. Knobs
+    const bodyEl = document.getElementById(`${instrument}-pedal-body-${slotIdx}`);
+    if (bodyEl) {
+        let knobsHtml = "";
+        cat.knobs.forEach(knob => {
+            const currentVal = (slot.params[knob.id] !== undefined) ? slot.params[knob.id] : knob.default;
+            knobsHtml += `
+                <div class="mini-knob-group">
+                    <div class="mini-knob-header">
+                        <span class="mini-label">${knob.label}</span>
+                        <span class="mini-val" id="${instrument}-val-${slotIdx}-${knob.id}">${currentVal}${knob.unit || ''}</span>
+                    </div>
+                    <input type="range" class="mini-slider" min="${knob.min}" max="${knob.max}" step="${knob.step}" value="${currentVal}"
+                        oninput="updatePedalParam('${instrument}', ${slotIdx}, '${knob.id}', this.value)">
+                </div>
+            `;
+        });
+        bodyEl.innerHTML = knobsHtml;
+    }
+
+    updatePedalSlotStateUI(instrument, slotIdx);
 }
 
-// Bass Pedal Toggles
-function toggleBassDistortion() {
-    initAudio();
-    appSettings.bassDS1Active = !appSettings.bassDS1Active;
-    if (bassDS1DryGain) bassDS1DryGain.gain.setTargetAtTime(appSettings.bassDS1Active ? 0.0 : 1.0, audioCtx.currentTime, 0.01);
-    if (bassDS1WetGain) bassDS1WetGain.gain.setTargetAtTime(appSettings.bassDS1Active ? 1.0 : 0.0, audioCtx.currentTime, 0.01);
-    syncUIFromSettings();
-    saveSettings();
+function updatePedalSlotStateUI(instrument, slotIdx) {
+    const slots = (instrument === "lead") ? leadPedalSlots : bassPedalSlots;
+    const slot = slots[slotIdx];
+    if (!slot) return;
+
+    const led = document.getElementById(`${instrument}-pedal-led-${slotIdx}`);
+    const footswitch = document.getElementById(`${instrument}-pedal-footswitch-${slotIdx}`);
+    const pedal = document.getElementById(`${instrument}-pedal-${slotIdx}`);
+
+    if (led) led.classList.toggle("active", slot.active);
+    if (footswitch) footswitch.classList.toggle("active", slot.active);
+    if (pedal) pedal.classList.toggle("pedal-active", slot.active);
 }
 
-function toggleBassHarmonizer() {
-    initAudio();
-    appSettings.bassPS6Active = !appSettings.bassPS6Active;
-    syncUIFromSettings();
-    saveSettings();
+function renderAllModularPedalsUI() {
+    for (let i = 0; i < 5; i++) {
+        renderPedalSlotUI("lead", i);
+        renderPedalSlotUI("bass", i);
+    }
 }
 
-function toggleBassDelay() {
-    initAudio();
-    appSettings.bassDelayActive = !appSettings.bassDelayActive;
-    if (bassDelayWetGain) bassDelayWetGain.gain.setTargetAtTime(appSettings.bassDelayActive ? (((appSettings.bassDelayMix || 35) / 100) * 0.6) : 0.0, audioCtx.currentTime, 0.01);
-    syncUIFromSettings();
-    saveSettings();
+function syncPedalboardsFromModule(modObj) {
+    if (!modObj || !modObj.pedalboard) return;
+
+    if (Array.isArray(modObj.pedalboard.lead)) {
+        modObj.pedalboard.lead.forEach(p => {
+            if (p.slot >= 0 && p.slot < 5) {
+                const targetSlot = leadPedalSlots[p.slot];
+                targetSlot.active = (p.active !== undefined) ? p.active : false;
+                loadPedalCartridge("lead", p.slot, p.cartridge, p.params || {}, false);
+            }
+        });
+    }
+
+    if (Array.isArray(modObj.pedalboard.bass)) {
+        modObj.pedalboard.bass.forEach(p => {
+            if (p.slot >= 0 && p.slot < 5) {
+                const targetSlot = bassPedalSlots[p.slot];
+                targetSlot.active = (p.active !== undefined) ? p.active : false;
+                loadPedalCartridge("bass", p.slot, p.cartridge, p.params || {}, false);
+            }
+        });
+    }
+
+    renderAllModularPedalsUI();
 }
 
-function toggleBassReverb() {
+function toggleMasterFX() {
     initAudio();
-    appSettings.bassReverbActive = !appSettings.bassReverbActive;
-    if (bassReverbWetGain) bassReverbWetGain.gain.setTargetAtTime(appSettings.bassReverbActive ? (((appSettings.bassReverbMix || 40) / 100) * 0.6) : 0.0, audioCtx.currentTime, 0.01);
+    appSettings.masterFXBypass = !appSettings.masterFXBypass;
+    const isBypassed = !!appSettings.masterFXBypass;
+
+    [leadPedalSlots, bassPedalSlots].forEach(slots => {
+        slots.forEach(slot => {
+            const active = !isBypassed && slot.active;
+            const mixBased = isMixBasedCartridge(slot.cartridgeId);
+            if (slot.wetGain && slot.dryGain && audioCtx) {
+                slot.dryGain.gain.setTargetAtTime(active ? (mixBased ? 1.0 : 0.0) : 1.0, audioCtx.currentTime, 0.01);
+                slot.wetGain.gain.setTargetAtTime(active ? 1.0 : 0.0, audioCtx.currentTime, 0.01);
+            }
+        });
+    });
+
     syncUIFromSettings();
     saveSettings();
 }
 
 function disableAllEffects() {
-    if (appSettings.leadDS1Active) toggleLeadDistortion();
-    if (appSettings.leadPS6Active) toggleLeadHarmonizer();
-    if (appSettings.leadDelayActive) toggleLeadDelay();
-    if (appSettings.leadReverbActive) toggleLeadReverb();
-    if (appSettings.bassDS1Active) toggleBassDistortion();
-    if (appSettings.bassPS6Active) toggleBassHarmonizer();
-    if (appSettings.bassDelayActive) toggleBassDelay();
-    if (appSettings.bassReverbActive) toggleBassReverb();
+    [leadPedalSlots, bassPedalSlots].forEach(slots => {
+        slots.forEach(slot => {
+            slot.active = false;
+            if (slot.wetGain && slot.dryGain && audioCtx) {
+                slot.dryGain.gain.setTargetAtTime(1.0, audioCtx.currentTime, 0.01);
+                slot.wetGain.gain.setTargetAtTime(0.0, audioCtx.currentTime, 0.01);
+            }
+        });
+    });
+    renderAllModularPedalsUI();
+    saveSettings();
 }
 
-// 1. Lead Mini Pedals Event Wiring
-const leadDs1Toggle = document.getElementById("lead-ds1-toggle");
-if (leadDs1Toggle) leadDs1Toggle.addEventListener("click", () => toggleLeadDistortion());
+// Global window attachments
+window.loadPedalCartridge = loadPedalCartridge;
+window.togglePedalSlot = togglePedalSlot;
+window.updatePedalParam = updatePedalParam;
+window.onCartridgeSelectChange = onCartridgeSelectChange;
+window.toggleMasterFX = toggleMasterFX;
+window.disableAllEffects = disableAllEffects;
 
-const leadDs1Dist = document.getElementById("lead-ds1-dist");
-if (leadDs1Dist) leadDs1Dist.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.leadDS1Dist = val;
-    if (leadDS1DistNode) leadDS1DistNode.curve = makeDistortionCurve(val);
-    saveSettings();
-});
 
-const leadDs1Tone = document.getElementById("lead-ds1-tone");
-if (leadDs1Tone) leadDs1Tone.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.leadDS1Tone = val;
-    if (leadDS1ToneFilter) leadDS1ToneFilter.frequency.setTargetAtTime(val, audioCtx.currentTime, 0.05);
-    saveSettings();
-});
-
-const leadDs1Level = document.getElementById("lead-ds1-level");
-if (leadDs1Level) leadDs1Level.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.leadDS1Level = val;
-    if (leadDS1LevelGain) leadDS1LevelGain.gain.setTargetAtTime((val / 100) * 0.8, audioCtx.currentTime, 0.05);
-    saveSettings();
-});
-
-const leadPs6Toggle = document.getElementById("lead-ps6-toggle");
-if (leadPs6Toggle) leadPs6Toggle.addEventListener("click", () => toggleLeadHarmonizer());
-
-const leadPs6Key = document.getElementById("lead-ps6-key");
-if (leadPs6Key) leadPs6Key.addEventListener("change", (e) => {
-    appSettings.leadPS6Key = e.target.value;
+// Arpeggiator Selects & Latch Event Wiring
+const leadArpMode = document.getElementById("lead-arp-mode");
+if (leadArpMode) leadArpMode.addEventListener("change", (e) => {
+    appSettings.leadArpMode = e.target.value;
     e.target.blur();
     saveSettings();
 });
 
-const leadPs6Scale = document.getElementById("lead-ps6-scale");
-if (leadPs6Scale) leadPs6Scale.addEventListener("change", (e) => {
-    appSettings.leadPS6Scale = e.target.value;
+const leadArpLatch = document.getElementById("lead-arp-latch");
+if (leadArpLatch) leadArpLatch.addEventListener("click", () => {
+    appSettings.leadArpLatch = !appSettings.leadArpLatch;
+    if (!appSettings.leadArpLatch) {
+        activeLeadVoices.forEach(v => stopVoice(v));
+        activeLeadVoices = [];
+    }
+    syncUIFromSettings();
+    saveSettings();
+});
+
+const bassArpMode = document.getElementById("bass-arp-mode");
+if (bassArpMode) bassArpMode.addEventListener("change", (e) => {
+    appSettings.bassArpMode = e.target.value;
     e.target.blur();
     saveSettings();
 });
 
-const leadPs6Interval = document.getElementById("lead-ps6-interval");
-if (leadPs6Interval) leadPs6Interval.addEventListener("change", (e) => {
-    appSettings.leadPS6Interval = e.target.value;
-    e.target.blur();
+const bassArpLatch = document.getElementById("bass-arp-latch");
+if (bassArpLatch) bassArpLatch.addEventListener("click", () => {
+    appSettings.bassArpLatch = !appSettings.bassArpLatch;
+    if (!appSettings.bassArpLatch) {
+        activeBassVoices.forEach(v => stopVoice(v));
+        activeBassVoices = [];
+    }
+    syncUIFromSettings();
     saveSettings();
 });
 
-const leadPs6Mix = document.getElementById("lead-ps6-mix");
-if (leadPs6Mix) leadPs6Mix.addEventListener("input", (e) => {
-    appSettings.leadPS6Mix = parseFloat(e.target.value);
+// Master FX Toggle
+const btnMasterFx = document.getElementById("btn-master-fx-toggle");
+if (btnMasterFx) btnMasterFx.addEventListener("click", () => toggleMasterFX());
+
+// Arpeggiator Engine
+let arpIntervalId = null;
+let leadArpIndex = 0;
+let bassArpIndex = 0;
+let arpTickCount = 0;
+
+const CHIP_60HZ_STEPS = [0, 3, 7, 12];
+const ARPEGGIO_16TH_STEPS = [0, 3, 7, 12, 7, 3];
+const ARPEGGIO_32ND_STEPS = [0, 4, 7, 12, 7, 4];
+const OCT_HOP_STEPS = [0, 12, 24, 12];
+
+function startArpClock() {
+    if (arpIntervalId) return;
+    arpIntervalId = setInterval(onArpTick, 16.66);
+}
+
+function onArpTick() {
+    arpTickCount++;
+    const leadMode = appSettings.leadArpMode || "off";
+    const bassMode = appSettings.bassArpMode || "off";
+
+    if (leadMode === "off" && bassMode === "off") return;
+    if (!audioCtx || audioCtx.state !== "running") return;
+
+    // Lead Arpeggiator
+    if (leadMode !== "off" && activeLeadVoices.length > 0) {
+        let shouldStep = false;
+        let steps = CHIP_60HZ_STEPS;
+
+        if (leadMode === "chip60") {
+            shouldStep = true;
+            steps = CHIP_60HZ_STEPS;
+        } else if (leadMode === "32nd") {
+            shouldStep = (arpTickCount % 4 === 0);
+            steps = ARPEGGIO_32ND_STEPS;
+        } else if (leadMode === "16th") {
+            shouldStep = (arpTickCount % 8 === 0);
+            steps = ARPEGGIO_16TH_STEPS;
+        } else if (leadMode === "octhop") {
+            shouldStep = (arpTickCount % 6 === 0);
+            steps = OCT_HOP_STEPS;
+        } else if (leadMode === "random") {
+            shouldStep = (arpTickCount % 4 === 0);
+        }
+
+        if (shouldStep) {
+            leadArpIndex = (leadArpIndex + 1) % steps.length;
+            const semitoneOffset = leadMode === "random"
+                ? [0, 3, 5, 7, 10, 12][Math.floor(Math.random() * 6)]
+                : steps[leadArpIndex];
+            const ratio = Math.pow(2, semitoneOffset / 12);
+
+            activeLeadVoices.forEach(voice => {
+                if (voice.osc1 && voice.baseFreq) {
+                    voice.osc1.frequency.setValueAtTime(voice.baseFreq * ratio, audioCtx.currentTime);
+                }
+                if (voice.osc2 && voice.baseFreq) {
+                    voice.osc2.frequency.setValueAtTime(voice.baseFreq * ratio * (voice.osc2DetuneRatio || 1.004), audioCtx.currentTime);
+                }
+            });
+        }
+    }
+
+    // Bass Arpeggiator
+    if (bassMode !== "off" && activeBassVoices.length > 0) {
+        let shouldStep = false;
+        let steps = CHIP_60HZ_STEPS;
+
+        if (bassMode === "chip60") {
+            shouldStep = true;
+            steps = CHIP_60HZ_STEPS;
+        } else if (bassMode === "16th") {
+            shouldStep = (arpTickCount % 8 === 0);
+            steps = [0, 7, 12, 7];
+        } else if (bassMode === "32nd") {
+            shouldStep = (arpTickCount % 4 === 0);
+            steps = [0, 12, 0, 12];
+        } else if (bassMode === "octhop") {
+            shouldStep = (arpTickCount % 6 === 0);
+            steps = [0, 12, 0, -12];
+        }
+
+        if (shouldStep) {
+            bassArpIndex = (bassArpIndex + 1) % steps.length;
+            const semitoneOffset = steps[bassArpIndex];
+            const ratio = Math.pow(2, semitoneOffset / 12);
+
+            activeBassVoices.forEach(voice => {
+                if (voice.osc1 && voice.baseFreq) {
+                    voice.osc1.frequency.setValueAtTime(voice.baseFreq * ratio, audioCtx.currentTime);
+                }
+                if (voice.oscSub && voice.baseFreq) {
+                    voice.oscSub.frequency.setValueAtTime((voice.baseFreq / 2) * ratio, audioCtx.currentTime);
+                }
+            });
+        }
+    }
+}
+
+let activeImportTargetSlot = 0;
+
+function updateModuleSlotTabs() {
+    for (let i = 0; i < 5; i++) {
+        const mod = LOADED_MODULE_SLOTS[i];
+        if (!mod) continue;
+        const labelEl = document.getElementById(`tab-label-${i}`);
+        if (labelEl) {
+            labelEl.textContent = mod.name;
+        }
+        const tabEl = document.getElementById(`slot-tab-${i}`);
+        if (tabEl) {
+            tabEl.title = `Slot ${i + 1}: ${mod.name} [Alt+${i + 1}]`;
+        }
+    }
+}
+
+function setSoundBank(bankIdx) {
+    if (bankIdx < 0 || bankIdx >= LOADED_MODULE_SLOTS.length) bankIdx = 0;
+    appSettings.soundBank = bankIdx;
+    LEAD_PRESETS = LOADED_MODULE_SLOTS[bankIdx].leads;
+    BASS_PRESETS = LOADED_MODULE_SLOTS[bankIdx].basses;
+
+    appSettings.leadPreset = 0;
+    appSettings.bassPreset = 0;
+
+    updateModuleSlotTabs();
+
+    // Update bank tabs UI
+    document.querySelectorAll(".bank-tab").forEach(tab => {
+        if (parseInt(tab.getAttribute("data-bank-idx")) === bankIdx) {
+            tab.classList.add("active");
+        } else {
+            tab.classList.remove("active");
+        }
+    });
+
+    // Refresh Lead preset button labels
+    const leadBtns = document.querySelectorAll(".lead-preset-btn");
+    LEAD_PRESETS.forEach((preset, idx) => {
+        if (leadBtns[idx]) {
+            leadBtns[idx].textContent = preset.label || preset.name.substring(0, 10);
+            leadBtns[idx].title = preset.name;
+        }
+    });
+
+    // Refresh Bass preset button labels
+    const bassBtns = document.querySelectorAll(".bass-preset-btn");
+    BASS_PRESETS.forEach((preset, idx) => {
+        if (bassBtns[idx]) {
+            bassBtns[idx].textContent = preset.label || preset.name.substring(0, 10);
+            bassBtns[idx].title = preset.name;
+        }
+    });
+
+    // If preset contains chiptune arp/crush defaults, apply them
+    const activeLead = LEAD_PRESETS[0];
+    if (activeLead && activeLead.arp) {
+        appSettings.leadArpMode = activeLead.arp;
+    }
+
+    updateLeadUI();
+    updateBassUI();
+    if (typeof syncPedalboardsFromModule === "function") {
+        syncPedalboardsFromModule(LOADED_MODULE_SLOTS[bankIdx]);
+    }
+    syncUIFromSettings();
     saveSettings();
-});
+}
 
-const leadDelayToggle = document.getElementById("lead-delay-toggle");
-if (leadDelayToggle) leadDelayToggle.addEventListener("click", () => toggleLeadDelay());
+// Global Panic Killswitch: Instantly silences all ringing notes and resets voice pool
+function panicAllNotes() {
+    try {
+        activeLeadVoices.forEach(v => {
+            try {
+                if (v.gainNode) {
+                    v.gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+                    v.gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                    v.gainNode.disconnect();
+                }
+                if (v.osc1) v.osc1.stop();
+                if (v.osc2) v.osc2.stop();
+                if (v.vibrato) v.vibrato.stop();
+            } catch (e) {}
+        });
+        activeBassVoices.forEach(v => {
+            try {
+                if (v.gainNode) {
+                    v.gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+                    v.gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                    v.gainNode.disconnect();
+                }
+                if (v.osc1) v.osc1.stop();
+                if (v.osc2) v.osc2.stop();
+                if (v.oscSub) v.oscSub.stop();
+            } catch (e) {}
+        });
+        activeLeadVoices = [];
+        activeBassVoices = [];
+        document.querySelectorAll(".key-cap").forEach(k => k.classList.remove("active"));
+        updatePolyphonyCounter();
+    } catch (e) {
+        console.warn("Panic execution error", e);
+    }
+}
 
-const leadDelayTime = document.getElementById("lead-delay-time");
-if (leadDelayTime) leadDelayTime.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.leadDelayTime = val;
-    if (leadDelayNode) leadDelayNode.delayTime.setTargetAtTime(val / 1000, audioCtx.currentTime, 0.1);
+function saveUserPatch() {
+    const activeSlot = appSettings.soundBank || 0;
+    const targetIdx = appSettings.leadPreset || 0;
+    const currentName = (LEAD_PRESETS[targetIdx] && LEAD_PRESETS[targetIdx].name) ? LEAD_PRESETS[targetIdx].name : `PATCH ${targetIdx + 1}`;
+    const patchName = prompt(`Enter a name for this custom patch (Slot ${activeSlot + 1}):`, currentName);
+    if (!patchName) return;
+
+    LOADED_MODULE_SLOTS[activeSlot].leads[targetIdx] = {
+        name: patchName.toUpperCase(),
+        label: patchName.toUpperCase().substring(0, 10),
+        osc1: "sawtooth",
+        osc2: "square",
+        osc2Detune: 1.01,
+        filterType: "lowpass",
+        cutoff: appSettings.leadCutoff || 3500,
+        reso: appSettings.leadResonance || 1.5,
+        attack: appSettings.leadAttack || 0.01,
+        release: appSettings.leadRelease || 0.25,
+        arp: appSettings.leadArpMode || "off"
+    };
+
     saveSettings();
-});
+    setSoundBank(activeSlot);
+    alert(`Patch "${patchName}" saved into Slot ${activeSlot + 1} Preset ${targetIdx + 1}!`);
+}
 
-const leadDelayFdbk = document.getElementById("lead-delay-fdbk");
-if (leadDelayFdbk) leadDelayFdbk.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.leadDelayFeedback = val;
-    if (leadDelayFeedbackNode) leadDelayFeedbackNode.gain.setTargetAtTime((val / 100) * 0.85, audioCtx.currentTime, 0.05);
+function exportActiveModuleFile() {
+    exportModuleSlot(appSettings.soundBank || 0);
+}
+
+function exportModuleSlot(slotIdx) {
+    const mod = LOADED_MODULE_SLOTS[slotIdx];
+    if (!mod) return;
+    const exportData = {
+        format: "ShallotWHAM-Module",
+        version: "1.0.0",
+        id: mod.id || `custom-module-${slotIdx + 1}`,
+        name: mod.name || `MODULE ${slotIdx + 1}`,
+        subtitle: mod.subtitle || "ShallotWHAM Sound Module",
+        author: mod.author || "User",
+        description: mod.description || "ShallotWHAM Synthesizer Sound Module",
+        themeGlow: mod.themeGlow || "#00e5ff",
+        leads: mod.leads,
+        basses: mod.basses,
+        exportedAt: new Date().toISOString()
+    };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+    const safeName = (mod.name || "module").toLowerCase().replace(/[^a-z0-9]/g, "_");
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `${safeName}.swm`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
+
+function exportSoundBanks() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+        app: "ShallotWHAM",
+        version: "1.3.0",
+        format: "ShallotWHAM-Module-Bundle",
+        loadedSlots: LOADED_MODULE_SLOTS,
+        appSettings: appSettings
+    }, null, 2));
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "shallotwham_all_modules.swm");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
+
+function importSoundBanks(jsonData) {
+    try {
+        const parsed = JSON.parse(jsonData);
+        if (parsed.loadedSlots && Array.isArray(parsed.loadedSlots)) {
+            parsed.loadedSlots.forEach((slotData, idx) => {
+                if (idx < 5 && slotData.leads && slotData.basses) {
+                    LOADED_MODULE_SLOTS[idx] = slotData;
+                }
+            });
+            updateModuleSlotTabs();
+            setSoundBank(appSettings.soundBank || 0);
+            saveSettings();
+            return true;
+        }
+    } catch (e) {
+        console.error("Import error", e);
+    }
+    return false;
+}
+
+function importModuleFile(file, targetSlot = 0) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.leads && data.basses) {
+                const modId = data.id || ('custom-' + Date.now());
+                const importedMod = {
+                    format: "ShallotWHAM-Module",
+                    version: data.version || "1.0.0",
+                    id: modId,
+                    name: data.name || "IMPORTED BANK",
+                    subtitle: data.subtitle || data.description || "Custom Sound Module",
+                    author: data.author || "User",
+                    description: data.description || "",
+                    themeGlow: data.themeGlow || "#00e5ff",
+                    category: data.category || "Custom",
+                    tags: data.tags || ["custom"],
+                    leads: data.leads,
+                    basses: data.basses
+                };
+
+                registerModule(importedMod, true);
+                LOADED_MODULE_SLOTS[targetSlot] = cloneModule(importedMod);
+
+                updateModuleSlotTabs();
+                if (appSettings.soundBank === targetSlot) {
+                    setSoundBank(targetSlot);
+                }
+                saveSettings();
+                renderModuleManagerGrid();
+
+                alert(`Successfully imported module "${importedMod.name}" into Slot ${targetSlot + 1} and saved to Vault!`);
+            } else if (data.loadedSlots) {
+                importSoundBanks(e.target.result);
+                renderModuleManagerGrid();
+                alert("Successfully imported complete module collection!");
+            } else {
+                alert("Invalid .swm module file. Required 'leads' and 'basses' preset arrays.");
+            }
+        } catch (err) {
+            alert("Error parsing .swm module JSON file: " + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+function triggerImportModule() {
+    activeImportTargetSlot = appSettings.soundBank || 0;
+    const input = document.getElementById("module-file-input");
+    if (input) input.click();
+}
+
+function loadModuleFileForSlot(slotIdx) {
+    activeImportTargetSlot = slotIdx;
+    const input = document.getElementById("module-file-input");
+    if (input) input.click();
+}
+
+function handleModalFileSelect(event) {
+    if (event.target.files && event.target.files[0]) {
+        importModuleFile(event.target.files[0], activeImportTargetSlot);
+        event.target.value = "";
+    }
+}
+
+function openModuleManager() {
+    const modal = document.getElementById("module-manager-modal");
+    if (modal) {
+        modal.classList.add("active");
+        renderModuleManagerGrid();
+    }
+}
+
+function closeModuleManager() {
+    const modal = document.getElementById("module-manager-modal");
+    if (modal) modal.classList.remove("active");
+}
+
+let currentVaultFilter = "";
+
+function filterVaultCards(query) {
+    currentVaultFilter = (query || "").trim().toLowerCase();
+    renderModuleVault();
+}
+
+function renderModuleManagerGrid() {
+    const grid = document.getElementById("module-manager-grid");
+    if (!grid) return;
+
+    grid.innerHTML = "";
+    const allModuleKeys = Object.keys(MODULE_LIBRARY);
+
+    LOADED_MODULE_SLOTS.forEach((mod, idx) => {
+        const row = document.createElement("div");
+        row.className = "slot-config-card";
+        const isCurrentSlot = (idx === (appSettings.soundBank || 0));
+
+        let selectOptionsHtml = "";
+        allModuleKeys.forEach(key => {
+            const libMod = MODULE_LIBRARY[key];
+            const isSelected = (mod.id === libMod.id);
+            selectOptionsHtml += `<option value="${libMod.id}" ${isSelected ? 'selected' : ''}>${libMod.name} (${libMod.author || 'Library'})</option>`;
+        });
+
+        row.innerHTML = `
+            <span class="slot-badge" style="color: ${mod.themeGlow || 'var(--accent-blue)'}">SLOT ${idx + 1}${isCurrentSlot ? ' ★' : ''}</span>
+            <div class="slot-info">
+                <span class="slot-loaded-name">${mod.name}</span>
+                <span class="slot-loaded-desc">${mod.subtitle || mod.description || '8 Leads / 8 Basses'}</span>
+            </div>
+            <div class="slot-actions">
+                <select class="slot-module-select cyber-select" onchange="changeSlotModule(${idx}, this.value)">
+                    ${selectOptionsHtml}
+                </select>
+                <button class="cyber-btn-mini" onclick="loadModuleFileForSlot(${idx})" title="Load .swm file into Slot ${idx + 1}">📂 LOAD .SWM</button>
+                <button class="cyber-btn-mini" onclick="exportModuleSlot(${idx})" title="Export Slot ${idx + 1} as .swm file">💾 EXPORT</button>
+            </div>
+        `;
+        grid.appendChild(row);
+    });
+
+    renderModuleVault();
+}
+
+function renderModuleVault() {
+    const vaultGrid = document.getElementById("module-vault-grid");
+    const vaultCountEl = document.getElementById("vault-count");
+    if (!vaultGrid) return;
+
+    const allKeys = Object.keys(MODULE_LIBRARY);
+    if (vaultCountEl) vaultCountEl.textContent = allKeys.length;
+
+    vaultGrid.innerHTML = "";
+
+    const filteredKeys = allKeys.filter(k => {
+        if (!currentVaultFilter) return true;
+        const m = MODULE_LIBRARY[k];
+        const text = `${m.name} ${m.subtitle || ''} ${m.description || ''} ${m.author || ''} ${(m.tags || []).join(' ')}`.toLowerCase();
+        return text.includes(currentVaultFilter);
+    });
+
+    if (filteredKeys.length === 0) {
+        vaultGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">No sound banks found matching "${currentVaultFilter}".</div>`;
+        return;
+    }
+
+    filteredKeys.forEach(k => {
+        const m = MODULE_LIBRARY[k];
+        const card = document.createElement("div");
+        card.className = "vault-card";
+
+        // Check which active slots currently contain this module
+        const activeSlotIndices = [];
+        LOADED_MODULE_SLOTS.forEach((slotMod, sIdx) => {
+            if (slotMod && slotMod.id === m.id) activeSlotIndices.push(sIdx);
+        });
+
+        let slotButtonsHtml = "";
+        for (let s = 0; s < 5; s++) {
+            const isSlotActive = activeSlotIndices.includes(s);
+            slotButtonsHtml += `
+                <button class="vault-slot-btn ${isSlotActive ? 'active-slot' : ''}" 
+                        title="${isSlotActive ? `Currently active in Slot ${s + 1}` : `Slot into Slot ${s + 1}`}" 
+                        onclick="quickAssignModuleToSlot('${m.id}', ${s})">
+                    ${s + 1}${isSlotActive ? '★' : ''}
+                </button>
+            `;
+        }
+
+        const tagsHtml = (m.tags || []).slice(0, 4).map(t => `<span class="vault-tag">#${t}</span>`).join("");
+
+        card.innerHTML = `
+            <div class="vault-card-header">
+                <span class="vault-card-title" style="color: ${m.themeGlow || 'var(--text-main)'}">
+                    ${m.name}
+                </span>
+                <span class="vault-category-badge">${m.category || 'Sound Bank'}</span>
+            </div>
+            <div class="vault-card-desc">${m.subtitle || m.description || '8 Leads, 8 Basses'}</div>
+            <div class="vault-card-tags">${tagsHtml}</div>
+            <div class="vault-slot-actions">
+                <span class="vault-slot-label">SLOT INTO:</span>
+                <div class="vault-slot-btn-group">
+                    ${slotButtonsHtml}
+                </div>
+                <button class="vault-card-export" title="Export .swm file" onclick="exportModuleById('${m.id}')">💾 .SWM</button>
+            </div>
+        `;
+        vaultGrid.appendChild(card);
+    });
+}
+
+function quickAssignModuleToSlot(moduleId, slotIdx) {
+    if (MODULE_LIBRARY[moduleId]) {
+        LOADED_MODULE_SLOTS[slotIdx] = cloneModule(MODULE_LIBRARY[moduleId]);
+        updateModuleSlotTabs();
+        if (appSettings.soundBank === slotIdx) {
+            setSoundBank(slotIdx);
+        }
+        saveSettings();
+        renderModuleManagerGrid();
+    }
+}
+
+function exportModuleById(moduleId) {
+    const mod = MODULE_LIBRARY[moduleId];
+    if (!mod) return;
+    const exportData = {
+        format: "ShallotWHAM-Module",
+        version: mod.version || "1.0.0",
+        id: mod.id,
+        name: mod.name,
+        subtitle: mod.subtitle || "",
+        author: mod.author || "Shallot",
+        description: mod.description || "",
+        themeGlow: mod.themeGlow || "#00e5ff",
+        category: mod.category || "Sound Bank",
+        tags: mod.tags || [],
+        leads: mod.leads,
+        basses: mod.basses,
+        exportedAt: new Date().toISOString()
+    };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+    const safeName = (mod.name || "module").toLowerCase().replace(/[^a-z0-9]/g, "_");
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `${safeName}.swm`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
+
+function changeSlotModule(slotIdx, moduleId) {
+    if (MODULE_LIBRARY[moduleId]) {
+        LOADED_MODULE_SLOTS[slotIdx] = cloneModule(MODULE_LIBRARY[moduleId]);
+    }
+    updateModuleSlotTabs();
+    if (appSettings.soundBank === slotIdx) {
+        setSoundBank(slotIdx);
+    }
     saveSettings();
-});
+    renderModuleManagerGrid();
+}
 
-const leadDelayMix = document.getElementById("lead-delay-mix");
-if (leadDelayMix) leadDelayMix.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.leadDelayMix = val;
-    if (leadDelayWetGain && appSettings.leadDelayActive) leadDelayWetGain.gain.setTargetAtTime((val / 100) * 0.7, audioCtx.currentTime, 0.05);
+function resetSlotsToDefault() {
+    if (!confirm("Reset all 5 module slots to the factory default modules (Synthwave, Crystal Castles, 8-Bit Arcade, Sad Robot, User Patches)?")) return;
+    DEFAULT_SLOT_MODULE_KEYS.forEach((modKey, idx) => {
+        if (MODULE_LIBRARY[modKey]) {
+            LOADED_MODULE_SLOTS[idx] = cloneModule(MODULE_LIBRARY[modKey]);
+        }
+    });
+    updateModuleSlotTabs();
+    setSoundBank(0);
     saveSettings();
-});
+    renderModuleManagerGrid();
+}
 
-const leadReverbToggle = document.getElementById("lead-reverb-toggle");
-if (leadReverbToggle) leadReverbToggle.addEventListener("click", () => toggleLeadReverb());
+function setupDragAndDrop() {
+    const dropzone = document.getElementById("module-dropzone");
+    if (dropzone) {
+        dropzone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropzone.classList.add("drag-over");
+        });
+        dropzone.addEventListener("dragleave", () => {
+            dropzone.classList.remove("drag-over");
+        });
+        dropzone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropzone.classList.remove("drag-over");
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                importModuleFile(e.dataTransfer.files[0], activeImportTargetSlot || 0);
+            }
+        });
+    }
 
-const leadReverbMix = document.getElementById("lead-reverb-mix");
-if (leadReverbMix) leadReverbMix.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.leadReverbMix = val;
-    if (leadReverbWetGain && appSettings.leadReverbActive) leadReverbWetGain.gain.setTargetAtTime((val / 100) * 0.8, audioCtx.currentTime, 0.05);
-    saveSettings();
-});
+    window.addEventListener("dragover", (e) => e.preventDefault());
+    window.addEventListener("drop", (e) => {
+        if (e.target.closest("#module-dropzone")) return;
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            const file = e.dataTransfer.files[0];
+            if (file.name.endsWith(".swm") || file.name.endsWith(".json")) {
+                e.preventDefault();
+                importModuleFile(file, appSettings.soundBank || 0);
+            }
+        }
+    });
+}
 
-// 2. Bass Mini Pedals Event Wiring
-const bassDs1Toggle = document.getElementById("bass-ds1-toggle");
-if (bassDs1Toggle) bassDs1Toggle.addEventListener("click", () => toggleBassDistortion());
+function initSoundBankControls() {
+    document.querySelectorAll(".bank-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            const bankIdx = parseInt(tab.getAttribute("data-bank-idx"));
+            setSoundBank(bankIdx);
+        });
+    });
 
-const bassDs1Dist = document.getElementById("bass-ds1-dist");
-if (bassDs1Dist) bassDs1Dist.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.bassDS1Dist = val;
-    if (bassDS1DistNode) bassDS1DistNode.curve = makeDistortionCurve(val * 0.8);
-    saveSettings();
-});
+    const btnSavePatch = document.getElementById("btn-save-patch");
+    if (btnSavePatch) btnSavePatch.addEventListener("click", () => saveUserPatch());
 
-const bassDs1Tone = document.getElementById("bass-ds1-tone");
-if (bassDs1Tone) bassDs1Tone.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.bassDS1Tone = val;
-    if (bassDS1ToneFilter) bassDS1ToneFilter.frequency.setTargetAtTime(val, audioCtx.currentTime, 0.05);
-    saveSettings();
-});
+    const btnExportBank = document.getElementById("btn-export-bank");
+    if (btnExportBank) btnExportBank.addEventListener("click", () => exportActiveModuleFile());
 
-const bassDs1Level = document.getElementById("bass-ds1-level");
-if (bassDs1Level) bassDs1Level.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.bassDS1Level = val;
-    if (bassDS1LevelGain) bassDS1LevelGain.gain.setTargetAtTime((val / 100) * 0.85, audioCtx.currentTime, 0.05);
-    saveSettings();
-});
+    const btnImportBank = document.getElementById("btn-import-bank");
+    const fileImportInput = document.getElementById("import-bank-file");
+    if (btnImportBank && fileImportInput) {
+        btnImportBank.addEventListener("click", () => {
+            activeImportTargetSlot = appSettings.soundBank || 0;
+            fileImportInput.click();
+        });
+        fileImportInput.addEventListener("change", (e) => {
+            if (e.target.files && e.target.files[0]) {
+                importModuleFile(e.target.files[0], activeImportTargetSlot);
+                e.target.value = "";
+            }
+        });
+    }
 
-const bassPs6Toggle = document.getElementById("bass-ps6-toggle");
-if (bassPs6Toggle) bassPs6Toggle.addEventListener("click", () => toggleBassHarmonizer());
+    setupDragAndDrop();
+}
 
-const bassPs6Key = document.getElementById("bass-ps6-key");
-if (bassPs6Key) bassPs6Key.addEventListener("change", (e) => {
-    appSettings.bassPS6Key = e.target.value;
-    e.target.blur();
-    saveSettings();
-});
+// Attach global methods to window for direct HTML event access
+window.setSoundBank = setSoundBank;
+window.panicAllNotes = panicAllNotes;
+window.saveUserPatch = saveUserPatch;
+window.exportSoundBanks = exportSoundBanks;
+window.importSoundBanks = importSoundBanks;
+window.exportModuleSlot = exportModuleSlot;
+window.exportActiveModuleFile = exportActiveModuleFile;
+window.triggerImportModule = triggerImportModule;
+window.loadModuleFileForSlot = loadModuleFileForSlot;
+window.openModuleManager = openModuleManager;
+window.closeModuleManager = closeModuleManager;
+window.changeSlotModule = changeSlotModule;
+window.handleModalFileSelect = handleModalFileSelect;
+window.resetSlotsToDefault = resetSlotsToDefault;
+window.quickAssignModuleToSlot = quickAssignModuleToSlot;
+window.filterVaultCards = filterVaultCards;
 
-const bassPs6Scale = document.getElementById("bass-ps6-scale");
-if (bassPs6Scale) bassPs6Scale.addEventListener("change", (e) => {
-    appSettings.bassPS6Scale = e.target.value;
-    e.target.blur();
-    saveSettings();
-});
-
-const bassPs6Interval = document.getElementById("bass-ps6-interval");
-if (bassPs6Interval) bassPs6Interval.addEventListener("change", (e) => {
-    appSettings.bassPS6Interval = e.target.value;
-    e.target.blur();
-    saveSettings();
-});
-
-const bassPs6Mix = document.getElementById("bass-ps6-mix");
-if (bassPs6Mix) bassPs6Mix.addEventListener("input", (e) => {
-    appSettings.bassPS6Mix = parseFloat(e.target.value);
-    saveSettings();
-});
-
-const bassDelayToggle = document.getElementById("bass-delay-toggle");
-if (bassDelayToggle) bassDelayToggle.addEventListener("click", () => toggleBassDelay());
-
-const bassDelayTime = document.getElementById("bass-delay-time");
-if (bassDelayTime) bassDelayTime.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.bassDelayTime = val;
-    if (bassDelayNode) bassDelayNode.delayTime.setTargetAtTime(val / 1000, audioCtx.currentTime, 0.1);
-    saveSettings();
-});
-
-const bassDelayFdbk = document.getElementById("bass-delay-fdbk");
-if (bassDelayFdbk) bassDelayFdbk.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.bassDelayFeedback = val;
-    if (bassDelayFeedbackNode) bassDelayFeedbackNode.gain.setTargetAtTime((val / 100) * 0.75, audioCtx.currentTime, 0.05);
-    saveSettings();
-});
-
-const bassDelayMix = document.getElementById("bass-delay-mix");
-if (bassDelayMix) bassDelayMix.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.bassDelayMix = val;
-    if (bassDelayWetGain && appSettings.bassDelayActive) bassDelayWetGain.gain.setTargetAtTime((val / 100) * 0.6, audioCtx.currentTime, 0.05);
-    saveSettings();
-});
-
-const bassReverbToggle = document.getElementById("bass-reverb-toggle");
-if (bassReverbToggle) bassReverbToggle.addEventListener("click", () => toggleBassReverb());
-
-const bassReverbMix = document.getElementById("bass-reverb-mix");
-if (bassReverbMix) bassReverbMix.addEventListener("input", (e) => {
-    const val = parseFloat(e.target.value);
-    appSettings.bassReverbMix = val;
-    if (bassReverbWetGain && appSettings.bassReverbActive) bassReverbWetGain.gain.setTargetAtTime((val / 100) * 0.6, audioCtx.currentTime, 0.05);
-    saveSettings();
-});
 
 // Global Click Listeners for Rebinding
 function startRebinding(target, btnId) {
@@ -2279,18 +7410,27 @@ function updateKeybindLabels() {
     if (fxDlyEl) fxDlyEl.textContent = cleanKey(keybinds.leadDelay);
 }
 
-// Global click audio activator
-window.addEventListener("click", () => {
+// Global audio pre-warming activator on any user interaction (click, touch, keydown)
+const preWarmAudio = () => {
     initAudio();
     if (audioCtx && audioCtx.state === "suspended") {
         audioCtx.resume();
     }
     scanGamepads();
-});
+};
+window.addEventListener("click", preWarmAudio, { passive: true });
+window.addEventListener("touchstart", preWarmAudio, { passive: true });
+window.addEventListener("keydown", (e) => {
+    // Only pre-warm if not in an input
+    if (e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT" && e.target.tagName !== "TEXTAREA") {
+        preWarmAudio();
+    }
+}, { passive: true });
 
 // Initialize on page load
 loadSettings();
 initLeadControls();
+initSoundBankControls();
 updateKeybindLabels();
 updateLeadOctaveIndicators();
 updateBassOctaveIndicators();

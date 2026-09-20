@@ -1,0 +1,330 @@
+{
+  "format": "ShallotWHAM-Module",
+  "version": "1.0.0",
+  "id": "depeche-mode",
+  "name": "DEPECHE MODE",
+  "subtitle": "Dark 80s Synthpop, Industrial & Gothic Electro",
+  "author": "Shallot & Antigravity IDE",
+  "description": "Dark, brooding synthpop inspired by Depeche Mode (Violator, Black Celebration, Music for the Masses): heavy analog brass, metallic chimes, and punchy synth bass.",
+  "themeGlow": "#ec4899",
+  "category": "Synthpop / New Wave",
+  "tags": [
+    "depeche-mode",
+    "synthpop",
+    "darkwave",
+    "new-wave",
+    "80s",
+    "violator"
+  ],
+  "leads": [
+    {
+      "name": "ENJOY THE SILENCE",
+      "label": "ENJOY SILNC",
+      "osc1": "sawtooth",
+      "osc2": "sawtooth",
+      "osc2Detune": 1.006,
+      "filterType": "lowpass",
+      "cutoff": 4600,
+      "reso": 2.5,
+      "attack": 0.01,
+      "release": 0.4
+    },
+    {
+      "name": "PERSONAL JESUS",
+      "label": "PERS JESUS",
+      "osc1": "sawtooth",
+      "osc2": "square",
+      "osc2Detune": 1.01,
+      "filterType": "lowpass",
+      "cutoff": 3800,
+      "reso": 3.8,
+      "attack": 0.005,
+      "release": 0.25
+    },
+    {
+      "name": "STRANGELOVE BELL",
+      "label": "STRANGELOVE",
+      "osc1": "sine",
+      "osc2": "triangle",
+      "osc2Detune": 2.5,
+      "filterType": "lowpass",
+      "cutoff": 7000,
+      "reso": 2.8,
+      "attack": 0.001,
+      "release": 0.5
+    },
+    {
+      "name": "BLACK CELEBRATION",
+      "label": "BLACK CELEB",
+      "osc1": "sawtooth",
+      "osc2": "sawtooth",
+      "osc2Detune": 1.018,
+      "filterType": "bandpass",
+      "cutoff": 2200,
+      "reso": 6,
+      "attack": 0.04,
+      "release": 0.6
+    },
+    {
+      "name": "POLICY OF TRUTH",
+      "label": "POLICY LEAD",
+      "osc1": "square",
+      "osc2": "sawtooth",
+      "osc2Detune": 0.994,
+      "filterType": "lowpass",
+      "cutoff": 4200,
+      "reso": 3.2,
+      "attack": 0.015,
+      "release": 0.3
+    },
+    {
+      "name": "NEVER LET ME DOWN",
+      "label": "NEVER DOWN",
+      "osc1": "sawtooth",
+      "osc2": "sawtooth",
+      "osc2Detune": 1.009,
+      "filterType": "lowpass",
+      "cutoff": 5200,
+      "reso": 3,
+      "attack": 0.008,
+      "release": 0.35
+    },
+    {
+      "name": "HALO CHOIR SAW",
+      "label": "HALO CHOIR",
+      "osc1": "sawtooth",
+      "osc2": "sine",
+      "osc2Detune": 1.003,
+      "filterType": "bandpass",
+      "cutoff": 2800,
+      "reso": 5,
+      "attack": 0.05,
+      "release": 0.7
+    },
+    {
+      "name": "MASTER & SERVANT",
+      "label": "MASTER SRV",
+      "osc1": "square",
+      "osc2": "square",
+      "osc2Detune": 1.015,
+      "filterType": "lowpass",
+      "cutoff": 6500,
+      "reso": 4.5,
+      "attack": 0.002,
+      "release": 0.2
+    }
+  ],
+  "basses": [
+    {
+      "name": "POLICY TRUTH BASS",
+      "label": "POLICY BASS",
+      "oscType": "sawtooth",
+      "subType": "sine",
+      "subOctave": -1,
+      "cutoff": 1400,
+      "reso": 5,
+      "envMod": 2200,
+      "decay": 0.3,
+      "attack": 0.004,
+      "subMix": 0.7
+    },
+    {
+      "name": "WALKING SUB",
+      "label": "WALKING SUB",
+      "oscType": "sine",
+      "subType": "sine",
+      "subOctave": -1,
+      "cutoff": 450,
+      "reso": 1,
+      "envMod": 350,
+      "decay": 0.48,
+      "attack": 0.01,
+      "subMix": 0.9
+    },
+    {
+      "name": "VIOLATOR ACID",
+      "label": "VIOLATOR",
+      "oscType": "sawtooth",
+      "subType": "square",
+      "subOctave": -1,
+      "cutoff": 1900,
+      "reso": 7.5,
+      "envMod": 3200,
+      "decay": 0.25,
+      "attack": 0.002,
+      "subMix": 0.5
+    },
+    {
+      "name": "BLASPHEMOUS SUB",
+      "label": "BLASPHEMOUS",
+      "oscType": "triangle",
+      "subType": "sine",
+      "subOctave": -1,
+      "cutoff": 850,
+      "reso": 3,
+      "envMod": 1100,
+      "decay": 0.4,
+      "attack": 0.008,
+      "subMix": 0.8
+    },
+    {
+      "name": "WORLD IN MY EYES",
+      "label": "WORLD EYES",
+      "oscType": "square",
+      "subType": "sawtooth",
+      "subOctave": -1,
+      "cutoff": 1700,
+      "reso": 4.8,
+      "envMod": 2000,
+      "decay": 0.28,
+      "attack": 0.003,
+      "subMix": 0.6
+    },
+    {
+      "name": "QUESTION OF TIME",
+      "label": "QUEST TIME",
+      "oscType": "square",
+      "subType": "square",
+      "subOctave": -1,
+      "cutoff": 2200,
+      "reso": 5.5,
+      "envMod": 2600,
+      "decay": 0.2,
+      "attack": 0.002,
+      "subMix": 0.65
+    },
+    {
+      "name": "STRIPPED HEAVY SAW",
+      "label": "STRIPPED",
+      "oscType": "sawtooth",
+      "subType": "sawtooth",
+      "subOctave": -1,
+      "cutoff": 1300,
+      "reso": 4.2,
+      "envMod": 1700,
+      "decay": 0.36,
+      "attack": 0.006,
+      "subMix": 0.55
+    },
+    {
+      "name": "BEHIND THE WHEEL",
+      "label": "BEHIND WHL",
+      "oscType": "sawtooth",
+      "subType": "triangle",
+      "subOctave": -1,
+      "pitchDrop": true,
+      "cutoff": 1100,
+      "reso": 6,
+      "envMod": 2400,
+      "decay": 0.38,
+      "attack": 0.004,
+      "subMix": 0.7
+    }
+  ],
+  "pedalboard": {
+    "lead": [
+      {
+        "slot": 0,
+        "cartridge": "proco-rat",
+        "active": true,
+        "params": {
+          "dist": 50,
+          "filter": 2200,
+          "level": 70
+        }
+      },
+      {
+        "slot": 1,
+        "cartridge": "dimension-chorus",
+        "active": true,
+        "params": {
+          "mode": 3,
+          "width": 80,
+          "mix": 60
+        }
+      },
+      {
+        "slot": 2,
+        "cartridge": "mutron-wah",
+        "active": false,
+        "params": {
+          "peak": 65,
+          "drive": 45,
+          "mode": "bp"
+        }
+      },
+      {
+        "slot": 3,
+        "cartridge": "analog-delay",
+        "active": true,
+        "params": {
+          "time": 320,
+          "feedback": 40,
+          "mix": 40
+        }
+      },
+      {
+        "slot": 4,
+        "cartridge": "gated-plate",
+        "active": true,
+        "params": {
+          "size": 65,
+          "gate": 55,
+          "mix": 50
+        }
+      }
+    ],
+    "bass": [
+      {
+        "slot": 0,
+        "cartridge": "ds1",
+        "active": true,
+        "params": {
+          "dist": 45,
+          "tone": 1100,
+          "level": 75
+        }
+      },
+      {
+        "slot": 1,
+        "cartridge": "dimension-chorus",
+        "active": false,
+        "params": {
+          "mode": 2,
+          "width": 60,
+          "mix": 45
+        }
+      },
+      {
+        "slot": 2,
+        "cartridge": "sid-resonator",
+        "active": true,
+        "params": {
+          "cutoff": 1700,
+          "squelch": 70,
+          "decay": 0.28
+        }
+      },
+      {
+        "slot": 3,
+        "cartridge": "analog-delay",
+        "active": false,
+        "params": {
+          "time": 240,
+          "feedback": 25,
+          "mix": 25
+        }
+      },
+      {
+        "slot": 4,
+        "cartridge": "gated-plate",
+        "active": true,
+        "params": {
+          "size": 50,
+          "gate": 65,
+          "mix": 40
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,331 @@
+{
+  "format": "ShallotWHAM-Module",
+  "version": "1.0.0",
+  "id": "pornophonique-sad-robot",
+  "name": "SAD ROBOT",
+  "subtitle": "Pornophonique Chiptune / C64 SID & LSDJ",
+  "author": "Shallot & Antigravity IDE",
+  "description": "Authentic bitpop & chiptune synthesis inspired by Pornophonique's legendary 'Sad Robot' (8-bit lagerfeuer album). Featuring bittersweet SID 6581 leads, 60Hz Game Boy pulse arpeggios, acoustic-chip plucks, and robotic vocal formants.",
+  "themeGlow": "#e056fd",
+  "leads": [
+    {
+      "name": "SAD ROBOT SOLO",
+      "label": "SAD ROBOT",
+      "osc1": "sawtooth",
+      "osc2": "triangle",
+      "osc2Detune": 1.004,
+      "filterType": "lowpass",
+      "cutoff": 3800,
+      "reso": 3.8,
+      "attack": 0.015,
+      "release": 0.38,
+      "vibrato": true
+    },
+    {
+      "name": "LSDJ CRYING ARP",
+      "label": "LSDJ CRY",
+      "osc1": "square",
+      "osc2": "square",
+      "osc2Detune": 2.001,
+      "filterType": "lowpass",
+      "cutoff": 6800,
+      "reso": 3,
+      "attack": 0.001,
+      "release": 0.18,
+      "arp": "chip60"
+    },
+    {
+      "name": "LAGERFEUER PLUCK",
+      "label": "LAGERFEUER",
+      "osc1": "triangle",
+      "osc2": "square",
+      "osc2Detune": 1.008,
+      "filterType": "lowpass",
+      "cutoff": 5600,
+      "reso": 4.5,
+      "attack": 0.002,
+      "release": 0.2,
+      "pluck": true,
+      "decay": 0.16
+    },
+    {
+      "name": "ROBOT FORMANT",
+      "label": "ROBOT FORM",
+      "osc1": "sawtooth",
+      "osc2": "square",
+      "osc2Detune": 0.996,
+      "filterType": "bandpass",
+      "cutoff": 2100,
+      "reso": 7,
+      "attack": 0.01,
+      "release": 0.28
+    },
+    {
+      "name": "LONELY PULSE",
+      "label": "LONELY PLS",
+      "osc1": "square",
+      "osc2": "sine",
+      "osc2Detune": 1.002,
+      "filterType": "lowpass",
+      "cutoff": 2800,
+      "reso": 1.8,
+      "attack": 0.02,
+      "release": 0.45
+    },
+    {
+      "name": "C64 DIRTY CRUNCH",
+      "label": "C64 CRUNCH",
+      "osc1": "sawtooth",
+      "osc2": "square",
+      "osc2Detune": 1.022,
+      "filterType": "lowpass",
+      "cutoff": 5400,
+      "reso": 5.2,
+      "attack": 0.002,
+      "release": 0.22,
+      "bitcrush": true
+    },
+    {
+      "name": "SAD BENT CHIRP",
+      "label": "BENT CHIRP",
+      "osc1": "square",
+      "osc2": "square",
+      "osc2Detune": 1.006,
+      "filterType": "lowpass",
+      "cutoff": 4600,
+      "reso": 4,
+      "attack": 0.001,
+      "release": 0.15,
+      "pitchDrop": true
+    },
+    {
+      "name": "SID OCTAVE HOP",
+      "label": "SID OCT HOP",
+      "osc1": "triangle",
+      "osc2": "square",
+      "osc2Detune": 2,
+      "filterType": "bandpass",
+      "cutoff": 4200,
+      "reso": 4.8,
+      "attack": 0.002,
+      "release": 0.22,
+      "arp": "octave"
+    }
+  ],
+  "basses": [
+    {
+      "name": "GAME BOY WAVE SUB",
+      "label": "GB SUB",
+      "oscType": "square",
+      "subType": "triangle",
+      "subOctave": -1,
+      "cutoff": 1100,
+      "reso": 3.2,
+      "envMod": 750,
+      "decay": 0.35,
+      "attack": 0.002,
+      "subMix": 0.85
+    },
+    {
+      "name": "CAMPFIRE BASS",
+      "label": "CAMPFIRE",
+      "oscType": "triangle",
+      "subType": "sine",
+      "subOctave": -1,
+      "cutoff": 850,
+      "reso": 2,
+      "envMod": 900,
+      "decay": 0.42,
+      "attack": 0.005,
+      "subMix": 0.7
+    },
+    {
+      "name": "SID ACID 6581",
+      "label": "SID 6581",
+      "oscType": "sawtooth",
+      "subType": "square",
+      "subOctave": -1,
+      "cutoff": 1800,
+      "reso": 7.5,
+      "envMod": 3200,
+      "decay": 0.24,
+      "attack": 0.002,
+      "subMix": 0.5
+    },
+    {
+      "name": "ROBOT HEARTBEAT",
+      "label": "HEARTBEAT",
+      "oscType": "sine",
+      "subType": "sine",
+      "subOctave": -1,
+      "pitchDrop": true,
+      "cutoff": 450,
+      "reso": 1.8,
+      "envMod": 600,
+      "decay": 0.5,
+      "attack": 0.008,
+      "subMix": 0.9
+    },
+    {
+      "name": "NOISE CHIP PERC",
+      "label": "NOISE PERC",
+      "oscType": "square",
+      "subType": "square",
+      "subOctave": -1,
+      "cutoff": 2600,
+      "reso": 5.5,
+      "envMod": 3800,
+      "decay": 0.14,
+      "attack": 0.001,
+      "subMix": 0.6
+    },
+    {
+      "name": "8-BIT REESE",
+      "label": "8-BIT REESE",
+      "oscType": "square",
+      "subType": "square",
+      "subOctave": -1,
+      "detune": 1.018,
+      "cutoff": 1400,
+      "reso": 3.8,
+      "envMod": 1600,
+      "decay": 0.45,
+      "attack": 0.01,
+      "subMix": 0.65
+    },
+    {
+      "name": "MELANCHOLY ACID",
+      "label": "MELAN ACID",
+      "oscType": "sawtooth",
+      "subType": "sawtooth",
+      "subOctave": -1,
+      "cutoff": 2200,
+      "reso": 6.8,
+      "envMod": 2600,
+      "decay": 0.48,
+      "attack": 0.004,
+      "subMix": 0.55
+    },
+    {
+      "name": "POWER DOWN DROP",
+      "label": "POWER DOWN",
+      "oscType": "sine",
+      "subType": "square",
+      "subOctave": -1,
+      "pitchDrop": true,
+      "cutoff": 500,
+      "reso": 2.5,
+      "envMod": 1000,
+      "decay": 0.75,
+      "attack": 0.005,
+      "subMix": 0.95
+    }
+  ],
+  "pedalboard": {
+    "lead": [
+      {
+        "slot": 0,
+        "cartridge": "tube-screamer",
+        "active": true,
+        "params": {
+          "drive": 40,
+          "tone": 55,
+          "level": 70
+        }
+      },
+      {
+        "slot": 1,
+        "cartridge": "optical-tremolo",
+        "active": true,
+        "params": {
+          "rate": 4.5,
+          "depth": 60,
+          "shape": "sine"
+        }
+      },
+      {
+        "slot": 2,
+        "cartridge": "mutron-wah",
+        "active": false,
+        "params": {
+          "peak": 70,
+          "drive": 50,
+          "mode": "lp"
+        }
+      },
+      {
+        "slot": 3,
+        "cartridge": "space-echo",
+        "active": true,
+        "params": {
+          "time": 360,
+          "intensity": 45,
+          "flutter": 35,
+          "mix": 45
+        }
+      },
+      {
+        "slot": 4,
+        "cartridge": "spring-reverb",
+        "active": true,
+        "params": {
+          "tension": 50,
+          "decay": 2,
+          "mix": 45
+        }
+      }
+    ],
+    "bass": [
+      {
+        "slot": 0,
+        "cartridge": "ds1",
+        "active": false,
+        "params": {
+          "dist": 40,
+          "tone": 1200,
+          "level": 70
+        }
+      },
+      {
+        "slot": 1,
+        "cartridge": "optical-tremolo",
+        "active": false,
+        "params": {
+          "rate": 3,
+          "depth": 40,
+          "shape": "sine"
+        }
+      },
+      {
+        "slot": 2,
+        "cartridge": "sid-resonator",
+        "active": true,
+        "params": {
+          "cutoff": 1600,
+          "squelch": 75,
+          "decay": 0.25
+        }
+      },
+      {
+        "slot": 3,
+        "cartridge": "analog-delay",
+        "active": false,
+        "params": {
+          "time": 260,
+          "feedback": 25,
+          "mix": 30
+        }
+      },
+      {
+        "slot": 4,
+        "cartridge": "spring-reverb",
+        "active": false,
+        "params": {
+          "tension": 45,
+          "decay": 1.6,
+          "mix": 30
+        }
+      }
+    ]
+  }
+}

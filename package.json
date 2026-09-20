@@ -1,6 +1,6 @@
 {
   "name": "shallotwham",
-  "version": "1.0.0",
+  "version": "1.4.0",
   "description": "ShallotWHAM Dual-Engine Synth & Whammy Station",
   "main": "main.js",
   "scripts": {
@@ -24,7 +24,10 @@
       "main.js",
       "index.html",
       "style.css",
-      "app.js"
+      "shallot-theme.css",
+      "shallot-theme.json",
+      "app.js",
+      "modules/**/*"
     ],
     "portable": {
       "artifactName": "ShallotWHAM.exe"
