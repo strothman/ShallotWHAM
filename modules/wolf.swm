@@ -1,0 +1,445 @@
+{
+  "format": "ShallotWHAM-Module",
+  "version": "2.0.0",
+  "id": "wolf",
+  "name": "WOLF",
+  "subtitle": "The Matter • Faded Paper Figures",
+  "author": "Shallot",
+  "category": "Electronic",
+  "description": "Studio-grade indie-electronic sound bank faithfully inspired by the sonic palette of 'The Matter' (2012) by Faded Paper Figures. Features anthemic dual-saw hooks, razor-sharp 16th-note plucks, crystalline shimmer chimes, aggressive biting pulse leads, driving staccato basslines, and rich analog sub grooves.",
+  "themeGlow": "#38bdf8",
+  "tags": [
+    "wolf",
+    "the-matter",
+    "faded-paper-figures",
+    "indietronica",
+    "synth-pop",
+    "electro-pop",
+    "shimmer-pop",
+    "indie-dance"
+  ],
+  "leads": [
+    {
+      "name": "SAN NARCISO LEAD",
+      "label": "SAN NARCISO",
+      "osc1": "sawtooth",
+      "osc2": "square",
+      "osc2Octave": 1,
+      "osc2Detune": 1.008,
+      "oscMix": 0.55,
+      "filterType": "lowpass",
+      "cutoff": 4800,
+      "reso": 3.8,
+      "filterEnv": {
+        "attack": 0.002,
+        "decay": 0.22,
+        "sustain": 0.45,
+        "amount": 3200
+      },
+      "attack": 0.003,
+      "decay": 0.35,
+      "sustain": 0.65,
+      "release": 0.28,
+      "volume": 0.82
+    },
+    {
+      "name": "PILEDRIVE BITE",
+      "label": "PILEDRIVE",
+      "osc1": "square",
+      "osc2": "sawtooth",
+      "osc2Octave": 0,
+      "osc2Detune": 1.018,
+      "oscMix": 0.65,
+      "noiseMix": 0.06,
+      "filterType": "lowpass",
+      "cutoff": 5800,
+      "reso": 5.5,
+      "filterEnv": {
+        "attack": 0.001,
+        "decay": 0.18,
+        "sustain": 0.3,
+        "amount": 4200
+      },
+      "attack": 0.001,
+      "decay": 0.22,
+      "sustain": 0.5,
+      "release": 0.18,
+      "volume": 0.78
+    },
+    {
+      "name": "INFO RUNS PLUCK",
+      "label": "INFO RUNS",
+      "osc1": "square",
+      "osc2": "triangle",
+      "osc2Octave": 1,
+      "osc2Detune": 1.004,
+      "oscMix": 0.5,
+      "filterType": "bandpass",
+      "cutoff": 3600,
+      "reso": 4.8,
+      "filterEnv": {
+        "attack": 0.001,
+        "decay": 0.14,
+        "sustain": 0.15,
+        "amount": 3000
+      },
+      "attack": 0.001,
+      "decay": 0.16,
+      "sustain": 0.2,
+      "release": 0.15,
+      "volume": 0.85
+    },
+    {
+      "name": "HOLY SMOKE CHIME",
+      "label": "HOLY SMOKE",
+      "osc1": "sine",
+      "osc2": "triangle",
+      "osc2Octave": 2,
+      "osc2Detune": 1.002,
+      "oscMix": 0.45,
+      "filterType": "lowpass",
+      "cutoff": 6200,
+      "reso": 2.2,
+      "filterEnv": {
+        "attack": 0.004,
+        "decay": 0.65,
+        "sustain": 0.35,
+        "amount": 2400
+      },
+      "attack": 0.004,
+      "decay": 0.7,
+      "sustain": 0.3,
+      "release": 0.6,
+      "vibrato": {
+        "rate": 5.2,
+        "depth": 3.5
+      },
+      "volume": 0.88
+    },
+    {
+      "name": "MY MAGELLAN SAW",
+      "label": "MAGELLAN",
+      "osc1": "sawtooth",
+      "osc2": "sawtooth",
+      "osc2Octave": 0,
+      "osc2Detune": 1.012,
+      "oscMix": 0.5,
+      "filterType": "lowpass",
+      "cutoff": 3800,
+      "reso": 2.8,
+      "filterEnv": {
+        "attack": 0.02,
+        "decay": 0.45,
+        "sustain": 0.6,
+        "amount": 2600
+      },
+      "attack": 0.02,
+      "decay": 0.5,
+      "sustain": 0.75,
+      "release": 0.45,
+      "vibrato": {
+        "rate": 5.6,
+        "depth": 4.8
+      },
+      "volume": 0.8
+    },
+    {
+      "name": "FIRST SON PROPHET",
+      "label": "FIRST SON",
+      "osc1": "sawtooth",
+      "osc2": "triangle",
+      "osc2Octave": -1,
+      "osc2Detune": 1.006,
+      "oscMix": 0.45,
+      "filterType": "lowpass",
+      "cutoff": 3200,
+      "reso": 3.2,
+      "filterEnv": {
+        "attack": 0.035,
+        "decay": 0.38,
+        "sustain": 0.55,
+        "amount": 2500
+      },
+      "attack": 0.03,
+      "decay": 0.4,
+      "sustain": 0.7,
+      "release": 0.35,
+      "vibrato": {
+        "rate": 4.8,
+        "depth": 3.0
+      },
+      "volume": 0.82
+    },
+    {
+      "name": "AVIDA DISCO LEAD",
+      "label": "AVIDA LEAD",
+      "osc1": "square",
+      "osc2": "square",
+      "osc2Octave": 1,
+      "osc2Detune": 1.014,
+      "oscMix": 0.5,
+      "filterType": "lowpass",
+      "cutoff": 5100,
+      "reso": 6.2,
+      "filterEnv": {
+        "attack": 0.002,
+        "decay": 0.2,
+        "sustain": 0.35,
+        "amount": 3800
+      },
+      "attack": 0.002,
+      "decay": 0.25,
+      "sustain": 0.45,
+      "release": 0.22,
+      "volume": 0.78
+    },
+    {
+      "name": "PANTECHNE GLITCH",
+      "label": "PANTECHNE",
+      "osc1": "sawtooth",
+      "osc2": "square",
+      "osc2Octave": 1,
+      "osc2Detune": 1.025,
+      "oscMix": 0.55,
+      "noiseMix": 0.1,
+      "filterType": "bandpass",
+      "cutoff": 4200,
+      "reso": 6.8,
+      "filterEnv": {
+        "attack": 0.001,
+        "decay": 0.15,
+        "sustain": 0.25,
+        "amount": 4500
+      },
+      "attack": 0.001,
+      "decay": 0.2,
+      "sustain": 0.4,
+      "release": 0.2,
+      "volume": 0.8
+    }
+  ],
+  "basses": [
+    {
+      "name": "SAN NARCISO BASS",
+      "label": "NARCISO BASS",
+      "oscType": "sawtooth",
+      "subType": "square",
+      "subOctave": -1,
+      "subMix": 0.65,
+      "detune": 1.012,
+      "cutoff": 1400,
+      "reso": 5.2,
+      "envMod": 2600,
+      "decay": 0.24,
+      "attack": 0.002,
+      "volume": 0.88
+    },
+    {
+      "name": "PILEDRIVE PUNCH",
+      "label": "PILE PUNCH",
+      "oscType": "square",
+      "subType": "sawtooth",
+      "subOctave": -1,
+      "subMix": 0.7,
+      "detune": 1.018,
+      "cutoff": 1850,
+      "reso": 6.5,
+      "envMod": 3200,
+      "decay": 0.26,
+      "attack": 0.001,
+      "volume": 0.85
+    },
+    {
+      "name": "CIRCUIT RUNS SUB",
+      "label": "CIRCUIT RUNS",
+      "oscType": "triangle",
+      "subType": "square",
+      "subOctave": -1,
+      "subMix": 0.75,
+      "cutoff": 950,
+      "reso": 4.0,
+      "envMod": 1800,
+      "decay": 0.2,
+      "attack": 0.003,
+      "volume": 0.92
+    },
+    {
+      "name": "RELATIVELY GROOVE",
+      "label": "RELATIVELY",
+      "oscType": "sawtooth",
+      "subType": "sine",
+      "subOctave": -1,
+      "subMix": 0.55,
+      "detune": 1.008,
+      "cutoff": 1250,
+      "reso": 4.8,
+      "envMod": 2200,
+      "decay": 0.32,
+      "attack": 0.004,
+      "volume": 0.88
+    },
+    {
+      "name": "POINTING MOON SUB",
+      "label": "MOON SUB",
+      "oscType": "sine",
+      "subType": "sine",
+      "subOctave": -1,
+      "subMix": 0.85,
+      "cutoff": 450,
+      "reso": 2.0,
+      "envMod": 650,
+      "decay": 0.55,
+      "attack": 0.008,
+      "volume": 0.96
+    },
+    {
+      "name": "AVIDA DISCO SQUELCH",
+      "label": "AVIDA SQUELC",
+      "oscType": "sawtooth",
+      "subType": "square",
+      "subOctave": -1,
+      "subMix": 0.6,
+      "cutoff": 1600,
+      "reso": 8.5,
+      "envMod": 3800,
+      "decay": 0.22,
+      "attack": 0.002,
+      "volume": 0.84
+    },
+    {
+      "name": "HOLY SMOKE GROWL",
+      "label": "SMOKE GROWL",
+      "oscType": "sawtooth",
+      "subType": "triangle",
+      "subOctave": -2,
+      "subMix": 0.6,
+      "detune": 1.022,
+      "cutoff": 1100,
+      "reso": 5.5,
+      "envMod": 2400,
+      "decay": 0.38,
+      "attack": 0.003,
+      "volume": 0.86
+    },
+    {
+      "name": "DRIVER 16TH PULSE",
+      "label": "DRIVER PULSE",
+      "oscType": "square",
+      "subType": "square",
+      "subOctave": -1,
+      "subMix": 0.65,
+      "cutoff": 1500,
+      "reso": 5.0,
+      "envMod": 2800,
+      "decay": 0.18,
+      "attack": 0.002,
+      "volume": 0.86
+    }
+  ],
+  "pedalboard": {
+    "lead": [
+      {
+        "slot": 0,
+        "cartridge": "french-preamp",
+        "active": true,
+        "params": {
+          "drive": 40,
+          "warmth": 70,
+          "output": 75
+        }
+      },
+      {
+        "slot": 1,
+        "cartridge": "dimension-chorus",
+        "active": true,
+        "params": {
+          "mode": 3,
+          "width": 75,
+          "mix": 50
+        }
+      },
+      {
+        "slot": 2,
+        "cartridge": "sidechain-pumper",
+        "active": true,
+        "params": {
+          "depth": 65,
+          "rate": 4,
+          "release": 0.22
+        }
+      },
+      {
+        "slot": 3,
+        "cartridge": "space-echo",
+        "active": true,
+        "params": {
+          "time": 340,
+          "intensity": 45,
+          "flutter": 35,
+          "mix": 40
+        }
+      },
+      {
+        "slot": 4,
+        "cartridge": "cosmic-shimmer",
+        "active": true,
+        "params": {
+          "shimmer": 50,
+          "decay": 3.2,
+          "mix": 42
+        }
+      }
+    ],
+    "bass": [
+      {
+        "slot": 0,
+        "cartridge": "tube-screamer",
+        "active": true,
+        "params": {
+          "drive": 35,
+          "tone": 1800,
+          "level": 75
+        }
+      },
+      {
+        "slot": 1,
+        "cartridge": "dimension-chorus",
+        "active": false,
+        "params": {
+          "mode": 2,
+          "width": 60,
+          "mix": 35
+        }
+      },
+      {
+        "slot": 2,
+        "cartridge": "sidechain-pumper",
+        "active": true,
+        "params": {
+          "depth": 75,
+          "rate": 4,
+          "release": 0.25
+        }
+      },
+      {
+        "slot": 3,
+        "cartridge": "analog-delay",
+        "active": false,
+        "params": {
+          "time": 240,
+          "feedback": 30,
+          "mix": 25
+        }
+      },
+      {
+        "slot": 4,
+        "cartridge": "reverb",
+        "active": false,
+        "params": {
+          "decay": 1.5,
+          "mix": 25
+        }
+      }
+    ]
+  }
+}

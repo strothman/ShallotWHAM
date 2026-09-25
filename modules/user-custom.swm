@@ -1,214 +1,283 @@
 {
   "format": "ShallotWHAM-Module",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "id": "user-custom",
   "name": "USER PATCHES",
-  "subtitle": "Custom User Synthesizer Patches",
+  "subtitle": "Custom User Sound Bank",
   "author": "User",
-  "description": "Custom user patch bank. Save, tweak, customize, and export your personal signature lead and bass presets.",
-  "themeGlow": "#f39c12",
+  "category": "Custom",
+  "description": "Balanced custom sound template ready for user sound design experimentation, live tweaking, and patch saving.",
+  "themeGlow": "#f59e0b",
+  "tags": [
+    "custom",
+    "user",
+    "template"
+  ],
   "leads": [
     {
-      "name": "USER LEAD 1",
-      "label": "USER 1",
+      "name": "INIT LEAD SAW",
+      "label": "INIT SAW",
       "osc1": "sawtooth",
-      "osc2": "square",
-      "osc2Detune": 1.01,
+      "osc2": "sawtooth",
+      "osc2Octave": 0,
+      "osc2Detune": 1.006,
+      "oscMix": 0.5,
       "filterType": "lowpass",
-      "cutoff": 3500,
+      "cutoff": 3800,
       "reso": 2,
+      "filterEnv": {
+        "attack": 0.01,
+        "decay": 0.28,
+        "sustain": 0.4,
+        "amount": 2500
+      },
       "attack": 0.01,
-      "release": 0.25
+      "release": 0.28,
+      "volume": 0.85
     },
     {
-      "name": "USER LEAD 2",
-      "label": "USER 2",
-      "osc1": "sawtooth",
-      "osc2": "square",
-      "osc2Detune": 1.01,
+      "name": "CUSTOM SQUARE",
+      "label": "USER SQUARE",
+      "osc1": "square",
+      "osc2": "triangle",
+      "osc2Octave": 0,
+      "osc2Detune": 1.004,
+      "oscMix": 0.5,
       "filterType": "lowpass",
-      "cutoff": 3500,
-      "reso": 2,
-      "attack": 0.01,
-      "release": 0.25
+      "cutoff": 5500,
+      "reso": 2.5,
+      "attack": 0.005,
+      "release": 0.2,
+      "volume": 0.82
     },
     {
-      "name": "USER LEAD 3",
-      "label": "USER 3",
+      "name": "CUSTOM BRASS",
+      "label": "USER BRASS",
       "osc1": "sawtooth",
-      "osc2": "square",
-      "osc2Detune": 1.01,
+      "osc2": "sawtooth",
+      "osc2Octave": 0,
+      "osc2Detune": 0.993,
+      "oscMix": 0.5,
       "filterType": "lowpass",
-      "cutoff": 3500,
-      "reso": 2,
-      "attack": 0.01,
-      "release": 0.25
+      "cutoff": 3200,
+      "reso": 3.5,
+      "filterEnv": {
+        "attack": 0.04,
+        "decay": 0.38,
+        "sustain": 0.45,
+        "amount": 2400
+      },
+      "attack": 0.04,
+      "release": 0.4,
+      "volume": 0.82
     },
     {
-      "name": "USER LEAD 4",
-      "label": "USER 4",
-      "osc1": "sawtooth",
-      "osc2": "square",
-      "osc2Detune": 1.01,
+      "name": "CUSTOM PLUCK",
+      "label": "USER PLUCK",
+      "osc1": "triangle",
+      "osc2": "sine",
+      "osc2Octave": 1,
+      "osc2Detune": 1.005,
+      "oscMix": 0.5,
       "filterType": "lowpass",
-      "cutoff": 3500,
-      "reso": 2,
-      "attack": 0.01,
-      "release": 0.25
+      "cutoff": 5000,
+      "reso": 3,
+      "filterEnv": {
+        "attack": 0.002,
+        "decay": 0.15,
+        "sustain": 0.05,
+        "amount": 4000
+      },
+      "attack": 0.002,
+      "release": 0.18,
+      "volume": 0.88
     },
     {
-      "name": "USER LEAD 5",
-      "label": "USER 5",
+      "name": "CUSTOM VOCO",
+      "label": "USER VOCO",
       "osc1": "sawtooth",
-      "osc2": "square",
-      "osc2Detune": 1.01,
-      "filterType": "lowpass",
-      "cutoff": 3500,
-      "reso": 2,
-      "attack": 0.01,
-      "release": 0.25
+      "osc2": "sawtooth",
+      "osc2Octave": 0,
+      "osc2Detune": 1.003,
+      "oscMix": 0.5,
+      "filterType": "bandpass",
+      "cutoff": 2200,
+      "reso": 6,
+      "attack": 0.015,
+      "release": 0.25,
+      "volume": 0.8
     },
     {
-      "name": "USER LEAD 6",
-      "label": "USER 6",
-      "osc1": "sawtooth",
-      "osc2": "square",
-      "osc2Detune": 1.01,
+      "name": "CUSTOM SINE",
+      "label": "USER SINE",
+      "osc1": "sine",
+      "osc2": "sine",
+      "osc2Octave": 1,
+      "osc2Detune": 1.002,
+      "oscMix": 0.4,
       "filterType": "lowpass",
-      "cutoff": 3500,
-      "reso": 2,
-      "attack": 0.01,
-      "release": 0.25
+      "cutoff": 6500,
+      "reso": 1,
+      "attack": 0.02,
+      "release": 0.35,
+      "vibrato": {
+        "rate": 5.5,
+        "depth": 6
+      },
+      "volume": 0.92
     },
     {
-      "name": "USER LEAD 7",
-      "label": "USER 7",
-      "osc1": "sawtooth",
+      "name": "CUSTOM CHIP",
+      "label": "USER CHIP",
+      "osc1": "square",
       "osc2": "square",
-      "osc2Detune": 1.01,
+      "osc2Octave": 1,
+      "osc2Detune": 1.001,
+      "oscMix": 0.5,
       "filterType": "lowpass",
-      "cutoff": 3500,
+      "cutoff": 8000,
       "reso": 2,
-      "attack": 0.01,
-      "release": 0.25
+      "attack": 0.001,
+      "release": 0.12,
+      "volume": 0.8
     },
     {
-      "name": "USER LEAD 8",
-      "label": "USER 8",
+      "name": "CUSTOM HOOVER",
+      "label": "USER HOOVER",
       "osc1": "sawtooth",
-      "osc2": "square",
-      "osc2Detune": 1.01,
+      "osc2": "sawtooth",
+      "osc2Octave": 0,
+      "osc2Detune": 1.018,
+      "oscMix": 0.5,
       "filterType": "lowpass",
-      "cutoff": 3500,
-      "reso": 2,
-      "attack": 0.01,
-      "release": 0.25
+      "cutoff": 4000,
+      "reso": 4,
+      "filterEnv": {
+        "attack": 0.02,
+        "decay": 0.4,
+        "sustain": 0.5,
+        "amount": 2600
+      },
+      "attack": 0.02,
+      "release": 0.35,
+      "volume": 0.82
     }
   ],
   "basses": [
     {
-      "name": "USER BASS 1",
-      "label": "USER 1",
+      "name": "INIT ACID BASS",
+      "label": "INIT ACID",
       "oscType": "sawtooth",
       "subType": "square",
       "subOctave": -1,
-      "cutoff": 1200,
-      "reso": 5,
-      "envMod": 2000,
-      "decay": 0.3,
-      "attack": 0.005,
-      "subMix": 0.5
+      "subMix": 0.45,
+      "cutoff": 1300,
+      "reso": 7,
+      "envMod": 2800,
+      "decay": 0.26,
+      "attack": 0.004,
+      "volume": 0.85
     },
     {
-      "name": "USER BASS 2",
-      "label": "USER 2",
-      "oscType": "sawtooth",
-      "subType": "square",
+      "name": "INIT SUB BASS",
+      "label": "INIT SUB",
+      "oscType": "sine",
+      "subType": "sine",
       "subOctave": -1,
-      "cutoff": 1200,
-      "reso": 5,
-      "envMod": 2000,
-      "decay": 0.3,
-      "attack": 0.005,
-      "subMix": 0.5
+      "subMix": 0.85,
+      "cutoff": 480,
+      "reso": 1.2,
+      "envMod": 400,
+      "decay": 0.5,
+      "attack": 0.01,
+      "volume": 0.95
     },
     {
-      "name": "USER BASS 3",
-      "label": "USER 3",
+      "name": "CUSTOM REESE",
+      "label": "USER REESE",
       "oscType": "sawtooth",
-      "subType": "square",
+      "subType": "sawtooth",
       "subOctave": -1,
-      "cutoff": 1200,
-      "reso": 5,
-      "envMod": 2000,
-      "decay": 0.3,
-      "attack": 0.005,
-      "subMix": 0.5
+      "subMix": 0.55,
+      "detune": 1.016,
+      "cutoff": 1600,
+      "reso": 3.5,
+      "envMod": 1600,
+      "decay": 0.45,
+      "attack": 0.01,
+      "volume": 0.85
     },
     {
-      "name": "USER BASS 4",
-      "label": "USER 4",
-      "oscType": "sawtooth",
+      "name": "CUSTOM FM PUNCH",
+      "label": "USER FM",
+      "oscType": "triangle",
       "subType": "square",
       "subOctave": -1,
-      "cutoff": 1200,
-      "reso": 5,
-      "envMod": 2000,
-      "decay": 0.3,
-      "attack": 0.005,
-      "subMix": 0.5
+      "subMix": 0.45,
+      "cutoff": 2200,
+      "reso": 4.5,
+      "envMod": 3000,
+      "decay": 0.2,
+      "attack": 0.002,
+      "volume": 0.88
     },
     {
-      "name": "USER BASS 5",
-      "label": "USER 5",
-      "oscType": "sawtooth",
-      "subType": "square",
+      "name": "CUSTOM SLAP",
+      "label": "USER SLAP",
+      "oscType": "square",
+      "subType": "triangle",
       "subOctave": -1,
-      "cutoff": 1200,
+      "subMix": 0.4,
+      "cutoff": 1800,
       "reso": 5,
-      "envMod": 2000,
-      "decay": 0.3,
-      "attack": 0.005,
-      "subMix": 0.5
+      "envMod": 2500,
+      "decay": 0.18,
+      "attack": 0.003,
+      "volume": 0.82
     },
     {
-      "name": "USER BASS 6",
-      "label": "USER 6",
+      "name": "CUSTOM MOOG",
+      "label": "USER MOOG",
       "oscType": "sawtooth",
-      "subType": "square",
+      "subType": "triangle",
       "subOctave": -1,
-      "cutoff": 1200,
-      "reso": 5,
-      "envMod": 2000,
-      "decay": 0.3,
-      "attack": 0.005,
-      "subMix": 0.5
+      "subMix": 0.6,
+      "cutoff": 950,
+      "reso": 3.2,
+      "envMod": 1200,
+      "decay": 0.4,
+      "attack": 0.01,
+      "volume": 0.88
     },
     {
-      "name": "USER BASS 7",
-      "label": "USER 7",
+      "name": "CUSTOM 80s",
+      "label": "USER 80s",
       "oscType": "sawtooth",
-      "subType": "square",
+      "subType": "sawtooth",
       "subOctave": -1,
-      "cutoff": 1200,
-      "reso": 5,
-      "envMod": 2000,
-      "decay": 0.3,
-      "attack": 0.005,
-      "subMix": 0.5
+      "subMix": 0.5,
+      "detune": 1.008,
+      "cutoff": 1500,
+      "reso": 2.8,
+      "envMod": 1800,
+      "decay": 0.35,
+      "attack": 0.008,
+      "volume": 0.86
     },
     {
-      "name": "USER BASS 8",
-      "label": "USER 8",
-      "oscType": "sawtooth",
-      "subType": "square",
+      "name": "CUSTOM DROP",
+      "label": "USER DROP",
+      "oscType": "sine",
+      "subType": "sine",
       "subOctave": -1,
-      "cutoff": 1200,
-      "reso": 5,
-      "envMod": 2000,
-      "decay": 0.3,
-      "attack": 0.005,
-      "subMix": 0.5
+      "subMix": 0.85,
+      "pitchDrop": true,
+      "cutoff": 600,
+      "reso": 2,
+      "envMod": 900,
+      "decay": 0.65,
+      "attack": 0.01,
+      "volume": 0.95
     }
   ],
   "pedalboard": {
@@ -216,21 +285,21 @@
       {
         "slot": 0,
         "cartridge": "ds1",
-        "active": false,
+        "active": true,
         "params": {
-          "dist": 50,
-          "tone": 2500,
+          "dist": 45,
+          "tone": 2400,
           "level": 65
         }
       },
       {
         "slot": 1,
-        "cartridge": "decimator",
-        "active": false,
+        "cartridge": "dimension-chorus",
+        "active": true,
         "params": {
-          "bits": 8,
-          "rate": 40,
-          "mix": 60
+          "mode": 3,
+          "width": 75,
+          "mix": 50
         }
       },
       {
@@ -249,18 +318,18 @@
         "cartridge": "delay",
         "active": false,
         "params": {
-          "time": 380,
-          "feedback": 40,
-          "mix": 45
+          "time": 360,
+          "feedback": 35,
+          "mix": 40
         }
       },
       {
         "slot": 4,
         "cartridge": "reverb",
-        "active": false,
+        "active": true,
         "params": {
-          "mix": 55,
-          "decay": 2.5
+          "decay": 2.2,
+          "mix": 45
         }
       }
     ],
@@ -268,42 +337,41 @@
       {
         "slot": 0,
         "cartridge": "ds1",
-        "active": false,
+        "active": true,
         "params": {
-          "dist": 45,
-          "tone": 900,
+          "dist": 40,
+          "tone": 1000,
           "level": 70
         }
       },
       {
         "slot": 1,
-        "cartridge": "decimator",
+        "cartridge": "dimension-chorus",
         "active": false,
         "params": {
-          "bits": 8,
-          "rate": 35,
-          "mix": 50
+          "mode": 2,
+          "width": 50,
+          "mix": 35
         }
       },
       {
         "slot": 2,
-        "cartridge": "ps6",
-        "active": false,
+        "cartridge": "sidechain-pumper",
+        "active": true,
         "params": {
-          "key": "C",
-          "scale": "minor",
-          "interval": "oct-down",
-          "mix": 60
+          "depth": 70,
+          "rate": 4,
+          "release": 0.3
         }
       },
       {
         "slot": 3,
-        "cartridge": "delay",
+        "cartridge": "analog-delay",
         "active": false,
         "params": {
-          "time": 280,
-          "feedback": 30,
-          "mix": 35
+          "time": 240,
+          "feedback": 25,
+          "mix": 30
         }
       },
       {
@@ -311,8 +379,8 @@
         "cartridge": "reverb",
         "active": false,
         "params": {
-          "mix": 40,
-          "decay": 1.8
+          "decay": 1.6,
+          "mix": 35
         }
       }
     ]

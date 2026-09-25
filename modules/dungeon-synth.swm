@@ -1,226 +1,309 @@
 {
   "format": "ShallotWHAM-Module",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "id": "dungeon-synth",
   "name": "DUNGEON SYNTH",
-  "subtitle": "Medieval Lo-Fi Fantasy, Organs & Flutes",
-  "author": "Shallot & Antigravity IDE",
-  "description": "Atmospheric, nostalgic medieval dungeon synth textures: haunting cathedral organs, misty forest flutes, sorcerer chimes, and deep crypt bass.",
-  "themeGlow": "#a855f7",
-  "category": "Atmospheric / Ambient",
+  "subtitle": "Medieval Lo-Fi Fantasy Atmosphere",
+  "author": "Shallot",
+  "category": "Fantasy",
+  "description": "Atmospheric mossy hall organs, Castlevania gothic organs, ancient wood flutes, sorcerer chimes, and deep cavern crypt basslines.",
+  "themeGlow": "#10b981",
   "tags": [
     "dungeon-synth",
-    "medieval",
     "fantasy",
-    "organ",
-    "lofi",
+    "medieval",
     "ambient",
-    "rpg"
+    "atmospheric",
+    "lo-fi"
   ],
   "leads": [
     {
-      "name": "CASTLEVANIA ORGAN",
-      "label": "CASTLE ORG",
-      "osc1": "square",
-      "osc2": "sawtooth",
-      "osc2Detune": 1.002,
-      "filterType": "lowpass",
-      "cutoff": 4200,
-      "reso": 2,
-      "attack": 0.02,
-      "release": 0.5
-    },
-    {
-      "name": "ANCIENT FLUTE",
-      "label": "ANCIENT FLT",
-      "osc1": "triangle",
-      "osc2": "sine",
-      "osc2Detune": 1.001,
+      "name": "CASTLEVANIA PIPE ORGAN",
+      "label": "CASTLE ORGAN",
+      "osc1": "sawtooth",
+      "osc2": "square",
+      "osc2Octave": 1,
+      "osc2Detune": 1.006,
+      "oscMix": 0.5,
       "filterType": "lowpass",
       "cutoff": 3800,
+      "reso": 2.5,
+      "filterEnv": {
+        "attack": 0.03,
+        "decay": 0.5,
+        "sustain": 0.6,
+        "amount": 2000
+      },
+      "attack": 0.03,
+      "release": 0.6,
+      "volume": 0.85
+    },
+    {
+      "name": "ANCIENT WOOD FLUTE",
+      "label": "WOOD FLUTE",
+      "osc1": "triangle",
+      "osc2": "sine",
+      "osc2Octave": 1,
+      "osc2Detune": 1.002,
+      "oscMix": 0.45,
+      "noiseMix": 0.05,
+      "filterType": "lowpass",
+      "cutoff": 4500,
       "reso": 1.8,
       "attack": 0.04,
-      "release": 0.4
-    },
-    {
-      "name": "CRYPT DRONE",
-      "label": "CRYPT DRONE",
-      "osc1": "sawtooth",
-      "osc2": "sawtooth",
-      "osc2Detune": 1.007,
-      "filterType": "bandpass",
-      "cutoff": 1800,
-      "reso": 4.5,
-      "attack": 0.08,
-      "release": 0.8
-    },
-    {
-      "name": "FORGOTTEN BELL",
-      "label": "LOST BELL",
-      "osc1": "sine",
-      "osc2": "triangle",
-      "osc2Detune": 2.76,
-      "filterType": "lowpass",
-      "cutoff": 7500,
-      "reso": 3,
-      "attack": 0.001,
-      "release": 0.7
-    },
-    {
-      "name": "MEDIEVAL REED",
-      "label": "MEDIEVAL RD",
-      "osc1": "square",
-      "osc2": "square",
-      "osc2Detune": 1.004,
-      "filterType": "bandpass",
-      "cutoff": 2600,
-      "reso": 5,
-      "attack": 0.03,
-      "release": 0.35
-    },
-    {
-      "name": "CASTLE ECHO PLUCK",
-      "label": "CASTLE PLK",
-      "osc1": "triangle",
-      "osc2": "sawtooth",
-      "osc2Detune": 2,
-      "filterType": "lowpass",
-      "cutoff": 5000,
-      "reso": 2.2,
-      "attack": 0.002,
-      "release": 0.4
-    },
-    {
-      "name": "CAVERN REVERB SAW",
-      "label": "CAVERN SAW",
-      "osc1": "sawtooth",
-      "osc2": "sawtooth",
-      "osc2Detune": 1.012,
-      "filterType": "lowpass",
-      "cutoff": 3200,
-      "reso": 2.8,
-      "attack": 0.03,
-      "release": 0.65
+      "release": 0.35,
+      "vibrato": {
+        "rate": 4.8,
+        "depth": 5.5
+      },
+      "volume": 0.9
     },
     {
       "name": "SORCERER CHIME",
-      "label": "SORCERER",
+      "label": "SORCER CHIME",
       "osc1": "sine",
       "osc2": "triangle",
-      "osc2Detune": 3.5,
+      "osc2Octave": 2,
+      "osc2Detune": 1.004,
+      "oscMix": 0.4,
       "filterType": "lowpass",
-      "cutoff": 8500,
+      "cutoff": 6500,
+      "reso": 3.5,
+      "filterEnv": {
+        "attack": 0.002,
+        "decay": 0.4,
+        "sustain": 0.1,
+        "amount": 3500
+      },
+      "attack": 0.002,
+      "release": 0.5,
+      "volume": 0.88
+    },
+    {
+      "name": "MOSS-COVERED HARP",
+      "label": "MOSSY HARP",
+      "osc1": "triangle",
+      "osc2": "triangle",
+      "osc2Octave": 1,
+      "osc2Detune": 1.003,
+      "oscMix": 0.5,
+      "filterType": "lowpass",
+      "cutoff": 5000,
       "reso": 2,
-      "attack": 0.001,
-      "release": 0.6
+      "filterEnv": {
+        "attack": 0.002,
+        "decay": 0.22,
+        "sustain": 0.05,
+        "amount": 3000
+      },
+      "attack": 0.002,
+      "release": 0.25,
+      "volume": 0.92
+    },
+    {
+      "name": "CATHEDRAL BRASS CHOIR",
+      "label": "CATHEDRAL",
+      "osc1": "sawtooth",
+      "osc2": "sawtooth",
+      "osc2Octave": 0,
+      "osc2Detune": 0.992,
+      "oscMix": 0.5,
+      "filterType": "lowpass",
+      "cutoff": 3200,
+      "reso": 2.8,
+      "filterEnv": {
+        "attack": 0.08,
+        "decay": 0.6,
+        "sustain": 0.55,
+        "amount": 2200
+      },
+      "attack": 0.08,
+      "release": 0.7,
+      "volume": 0.82
+    },
+    {
+      "name": "TAVERN LUTE",
+      "label": "TAVERN LUTE",
+      "osc1": "triangle",
+      "osc2": "square",
+      "osc2Octave": 0,
+      "osc2Detune": 1.004,
+      "oscMix": 0.4,
+      "filterType": "lowpass",
+      "cutoff": 4000,
+      "reso": 3,
+      "filterEnv": {
+        "attack": 0.003,
+        "decay": 0.18,
+        "sustain": 0.08,
+        "amount": 2800
+      },
+      "attack": 0.003,
+      "release": 0.2,
+      "volume": 0.88
+    },
+    {
+      "name": "DARK MONASTERY BELL",
+      "label": "DARK BELL",
+      "osc1": "sine",
+      "osc2": "square",
+      "osc2Octave": 1,
+      "osc2Detune": 1.008,
+      "oscMix": 0.35,
+      "filterType": "lowpass",
+      "cutoff": 5800,
+      "reso": 4,
+      "filterEnv": {
+        "attack": 0.002,
+        "decay": 0.5,
+        "sustain": 0.1,
+        "amount": 4000
+      },
+      "attack": 0.002,
+      "release": 0.6,
+      "volume": 0.88
+    },
+    {
+      "name": "SPELLCASTER STRING",
+      "label": "SPELLCASTER",
+      "osc1": "sawtooth",
+      "osc2": "triangle",
+      "osc2Octave": 0,
+      "osc2Detune": 1.008,
+      "oscMix": 0.5,
+      "filterType": "lowpass",
+      "cutoff": 3600,
+      "reso": 2.2,
+      "filterEnv": {
+        "attack": 0.06,
+        "decay": 0.5,
+        "sustain": 0.5,
+        "amount": 2000
+      },
+      "attack": 0.06,
+      "release": 0.55,
+      "vibrato": {
+        "rate": 5,
+        "depth": 5
+      },
+      "volume": 0.85
     }
   ],
   "basses": [
     {
-      "name": "DUNGEON BASS",
-      "label": "DUNGEON BAS",
-      "oscType": "sawtooth",
-      "subType": "sine",
-      "subOctave": -1,
-      "cutoff": 1000,
-      "reso": 3.5,
-      "envMod": 1400,
-      "decay": 0.42,
-      "attack": 0.01,
-      "subMix": 0.75
-    },
-    {
-      "name": "CASTLE DEEP SAW",
-      "label": "CASTLE BASS",
+      "name": "CRYPT ORGAN PEDAL",
+      "label": "CRYPT PEDAL",
       "oscType": "sawtooth",
       "subType": "triangle",
       "subOctave": -1,
-      "cutoff": 1300,
-      "reso": 4,
-      "envMod": 1600,
-      "decay": 0.36,
-      "attack": 0.008,
-      "subMix": 0.6
+      "subMix": 0.7,
+      "cutoff": 900,
+      "reso": 2.8,
+      "envMod": 1100,
+      "decay": 0.5,
+      "attack": 0.015,
+      "volume": 0.92
     },
     {
-      "name": "OGRE SUB",
-      "label": "OGRE SUB",
+      "name": "DUNGEON CAVERN SUB",
+      "label": "CAVERN SUB",
       "oscType": "sine",
       "subType": "sine",
       "subOctave": -1,
-      "cutoff": 380,
+      "subMix": 0.85,
+      "cutoff": 420,
       "reso": 1,
-      "envMod": 300,
-      "decay": 0.55,
-      "attack": 0.02,
-      "subMix": 0.9
-    },
-    {
-      "name": "CRYPT RUMBLER",
-      "label": "CRYPT RUMBL",
-      "oscType": "square",
-      "subType": "sine",
-      "subOctave": -1,
-      "cutoff": 800,
-      "reso": 5,
-      "envMod": 1100,
-      "decay": 0.45,
-      "attack": 0.015,
-      "subMix": 0.8
-    },
-    {
-      "name": "STONE SQUELCH",
-      "label": "STONE ACID",
-      "oscType": "sawtooth",
-      "subType": "square",
-      "subOctave": -1,
-      "cutoff": 1700,
-      "reso": 7,
-      "envMod": 2600,
-      "decay": 0.28,
-      "attack": 0.005,
-      "subMix": 0.5
-    },
-    {
-      "name": "DRAGON HEARTBEAT",
-      "label": "DRAGON BEAT",
-      "oscType": "triangle",
-      "subType": "sine",
-      "subOctave": -1,
-      "pitchDrop": true,
-      "cutoff": 650,
-      "reso": 2.5,
-      "envMod": 900,
+      "envMod": 350,
       "decay": 0.6,
-      "attack": 0.008,
-      "subMix": 0.85
+      "attack": 0.02,
+      "volume": 0.95
     },
     {
-      "name": "MEDIEVAL DRONE",
-      "label": "MED DRONE",
+      "name": "FOREST SHADOW REESE",
+      "label": "FOREST REESE",
       "oscType": "sawtooth",
       "subType": "sawtooth",
       "subOctave": -1,
-      "cutoff": 950,
-      "reso": 2.5,
-      "envMod": 800,
-      "decay": 0.7,
-      "attack": 0.03,
-      "subMix": 0.7
+      "subMix": 0.55,
+      "detune": 1.012,
+      "cutoff": 1200,
+      "reso": 3.2,
+      "envMod": 1400,
+      "decay": 0.45,
+      "attack": 0.01,
+      "volume": 0.86
     },
     {
-      "name": "TOWER DROP",
-      "label": "TOWER DROP",
+      "name": "WAR DRUM IMPACT",
+      "label": "WAR DRUM",
+      "oscType": "triangle",
+      "subType": "sine",
+      "subOctave": -1,
+      "subMix": 0.8,
+      "pitchDrop": true,
+      "cutoff": 600,
+      "reso": 3.5,
+      "envMod": 1200,
+      "decay": 0.45,
+      "attack": 0.005,
+      "volume": 0.95
+    },
+    {
+      "name": "MEDIEVAL SAW BASS",
+      "label": "MEDIEVAL SAW",
+      "oscType": "sawtooth",
+      "subType": "square",
+      "subOctave": -1,
+      "subMix": 0.45,
+      "cutoff": 1400,
+      "reso": 4.5,
+      "envMod": 2000,
+      "decay": 0.3,
+      "attack": 0.006,
+      "volume": 0.86
+    },
+    {
+      "name": "CASTLE GATE DROP",
+      "label": "GATE DROP",
       "oscType": "sine",
       "subType": "square",
       "subOctave": -1,
+      "subMix": 0.85,
       "pitchDrop": true,
-      "cutoff": 750,
-      "reso": 3,
-      "envMod": 1200,
-      "decay": 0.5,
-      "attack": 0.006,
-      "subMix": 0.8
+      "cutoff": 550,
+      "reso": 2,
+      "envMod": 900,
+      "decay": 0.7,
+      "attack": 0.01,
+      "volume": 0.95
+    },
+    {
+      "name": "GOBLIN ACID",
+      "label": "GOBLIN ACID",
+      "oscType": "sawtooth",
+      "subType": "sawtooth",
+      "subOctave": -1,
+      "subMix": 0.5,
+      "cutoff": 1500,
+      "reso": 6.8,
+      "envMod": 2600,
+      "decay": 0.26,
+      "attack": 0.003,
+      "volume": 0.85
+    },
+    {
+      "name": "SORCERER DEEP DRONE",
+      "label": "SORCER DRONE",
+      "oscType": "triangle",
+      "subType": "sine",
+      "subOctave": -2,
+      "subMix": 0.75,
+      "cutoff": 700,
+      "reso": 2,
+      "envMod": 750,
+      "decay": 0.65,
+      "attack": 0.02,
+      "volume": 0.95
     }
   ],
   "pedalboard": {
@@ -230,29 +313,30 @@
         "cartridge": "tube-screamer",
         "active": false,
         "params": {
-          "drive": 30,
-          "tone": 40,
-          "level": 65
+          "drive": 25,
+          "tone": 1600,
+          "level": 70
         }
       },
       {
         "slot": 1,
-        "cartridge": "flanger",
+        "cartridge": "small-stone",
         "active": false,
         "params": {
-          "speed": 0.4,
-          "depth": 70,
-          "regen": 40
+          "rate": 0.5,
+          "depth": 60,
+          "color": 1
         }
       },
       {
         "slot": 2,
-        "cartridge": "formant-filter",
+        "cartridge": "ps6",
         "active": false,
         "params": {
-          "vowel": 2,
-          "reso": 60,
-          "glide": 30
+          "key": "A",
+          "scale": "minor",
+          "interval": "5th",
+          "mix": 45
         }
       },
       {
@@ -261,9 +345,9 @@
         "active": true,
         "params": {
           "time": 420,
-          "intensity": 50,
-          "flutter": 45,
-          "mix": 50
+          "intensity": 48,
+          "flutter": 40,
+          "mix": 45
         }
       },
       {
@@ -271,52 +355,52 @@
         "cartridge": "cathedral-reverb",
         "active": true,
         "params": {
-          "decay": 4.5,
+          "decay": 4.8,
           "damping": 25,
-          "mix": 65
+          "mix": 55
         }
       }
     ],
     "bass": [
       {
         "slot": 0,
-        "cartridge": "tube-screamer",
+        "cartridge": "big-muff",
         "active": false,
         "params": {
-          "drive": 35,
-          "tone": 30,
-          "level": 70
+          "sustain": 40,
+          "tone": 800,
+          "volume": 70
         }
       },
       {
         "slot": 1,
-        "cartridge": "optical-tremolo",
+        "cartridge": "small-stone",
         "active": false,
         "params": {
-          "rate": 2,
+          "rate": 0.4,
           "depth": 45,
-          "shape": "sine"
+          "color": 0
         }
       },
       {
         "slot": 2,
-        "cartridge": "sid-resonator",
+        "cartridge": "ps6",
         "active": false,
         "params": {
-          "cutoff": 900,
-          "squelch": 50,
-          "decay": 0.4
+          "key": "A",
+          "scale": "minor",
+          "interval": "oct-down",
+          "mix": 50
         }
       },
       {
         "slot": 3,
-        "cartridge": "space-echo",
+        "cartridge": "analog-delay",
         "active": false,
         "params": {
           "time": 300,
-          "intensity": 35,
-          "flutter": 30,
-          "mix": 35
+          "feedback": 30,
+          "mix": 30
         }
       },
       {
@@ -324,9 +408,9 @@
         "cartridge": "cathedral-reverb",
         "active": true,
         "params": {
-          "decay": 3.8,
-          "damping": 30,
-          "mix": 50
+          "decay": 3.5,
+          "damping": 35,
+          "mix": 40
         }
       }
     ]

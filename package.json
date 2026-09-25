@@ -1,10 +1,13 @@
 {
   "name": "shallotwham",
-  "version": "1.4.0",
+  "version": "1.8.0",
   "description": "ShallotWHAM Dual-Engine Synth & Whammy Station",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "test": "node scripts/validate-modules.js && node scripts/test-modular-dsp.js && node scripts/test-keys-audio.js",
+    "validate": "node scripts/validate-modules.js",
+    "remaster": "node scripts/remaster-all-modules.js && node scripts/sync-modules.js",
     "build": "electron-builder --win portable"
   },
   "author": "Shallot",

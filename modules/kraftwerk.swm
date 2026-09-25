@@ -1,276 +1,322 @@
 {
   "format": "ShallotWHAM-Module",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "id": "kraftwerk",
   "name": "KRAFTWERK",
-  "subtitle": "Kling Klang Minimalist Electronic Pioneers",
-  "author": "Shallot & Antigravity IDE",
-  "description": "Pure minimalist German synthesizer craftsmanship: crystal sine tones, robotic computer world blips, trans-europe pulse lines, and analog Kling Klang bass.",
-  "themeGlow": "#00ff66",
-  "category": "Electronic / Krautrock",
+  "subtitle": "Minimalist Kling Klang Robotics",
+  "author": "Shallot",
+  "category": "Electronic",
+  "description": "Pure minimalist electronic precision, Kling Klang laboratory sines, Pocket Calculator blips, and Trans-Europe Express pulse lines.",
+  "themeGlow": "#ef4444",
   "tags": [
     "kraftwerk",
     "kling-klang",
-    "analog",
-    "minimalist",
-    "germany",
-    "synth-pioneer"
+    "minimal",
+    "krautrock",
+    "vocoder"
   ],
   "leads": [
     {
-      "name": "AUTOBAHN SINE",
-      "label": "AUTOBAHN",
+      "name": "KLING KLANG SINE",
+      "label": "KLING KLANG",
       "osc1": "sine",
       "osc2": "sine",
-      "osc2Detune": 1.002,
+      "osc2Octave": 1,
+      "osc2Detune": 1.001,
+      "oscMix": 0.35,
       "filterType": "lowpass",
-      "cutoff": 5000,
-      "reso": 0.8,
-      "attack": 0.04,
-      "release": 0.5
-    },
-    {
-      "name": "COMPUTER WORLD",
-      "label": "COMP WORLD",
-      "osc1": "square",
-      "osc2": "triangle",
-      "osc2Detune": 2,
-      "filterType": "lowpass",
-      "cutoff": 6500,
-      "reso": 2.5,
-      "attack": 0.002,
-      "release": 0.18,
-      "arp": "16th"
-    },
-    {
-      "name": "TRANS-EUROPE PULSE",
-      "label": "TRANS-EUR",
-      "osc1": "square",
-      "osc2": "square",
-      "osc2Detune": 1.006,
-      "filterType": "lowpass",
-      "cutoff": 7200,
-      "reso": 3,
-      "attack": 0.001,
-      "release": 0.2
+      "cutoff": 7500,
+      "reso": 1,
+      "attack": 0.005,
+      "release": 0.25,
+      "volume": 0.95
     },
     {
       "name": "POCKET CALCULATOR",
-      "label": "CALCULATOR",
-      "osc1": "triangle",
+      "label": "POCKET CALC",
+      "osc1": "square",
       "osc2": "sine",
-      "osc2Detune": 3,
+      "osc2Octave": 1,
+      "osc2Detune": 1.002,
+      "oscMix": 0.4,
       "filterType": "lowpass",
-      "cutoff": 8500,
-      "reso": 1.2,
+      "cutoff": 8000,
+      "reso": 2,
       "attack": 0.001,
-      "release": 0.15
+      "release": 0.1,
+      "volume": 0.85
     },
     {
-      "name": "RADIOACTIVITY GLOW",
-      "label": "RADIOACTIV",
+      "name": "COMPUTER WORLD BLIP",
+      "label": "COMP WORLD",
+      "osc1": "triangle",
+      "osc2": "square",
+      "osc2Octave": 1,
+      "osc2Detune": 1.003,
+      "oscMix": 0.35,
+      "filterType": "lowpass",
+      "cutoff": 6500,
+      "reso": 3.5,
+      "filterEnv": {
+        "attack": 0.001,
+        "decay": 0.12,
+        "sustain": 0,
+        "amount": 4000
+      },
+      "attack": 0.001,
+      "release": 0.12,
+      "volume": 0.88
+    },
+    {
+      "name": "ROBOT VOCODER SAW",
+      "label": "ROBOT VOX",
       "osc1": "sawtooth",
-      "osc2": "sine",
-      "osc2Detune": 0.998,
+      "osc2": "sawtooth",
+      "osc2Octave": 0,
+      "osc2Detune": 1.004,
+      "oscMix": 0.5,
       "filterType": "bandpass",
-      "cutoff": 2400,
-      "reso": 5.5,
+      "cutoff": 1900,
+      "reso": 6,
+      "attack": 0.01,
+      "release": 0.2,
+      "volume": 0.82
+    },
+    {
+      "name": "TRANS-EUROPE FLUTE",
+      "label": "TRANS EUROPE",
+      "osc1": "sine",
+      "osc2": "triangle",
+      "osc2Octave": 1,
+      "osc2Detune": 1.002,
+      "oscMix": 0.45,
+      "filterType": "lowpass",
+      "cutoff": 5500,
+      "reso": 1.5,
       "attack": 0.03,
-      "release": 0.6
+      "release": 0.3,
+      "vibrato": {
+        "rate": 5.2,
+        "depth": 4.5
+      },
+      "volume": 0.92
     },
     {
       "name": "THE MODEL SAW",
       "label": "THE MODEL",
       "osc1": "sawtooth",
-      "osc2": "sawtooth",
-      "osc2Detune": 1.004,
-      "filterType": "lowpass",
-      "cutoff": 3800,
-      "reso": 2.2,
-      "attack": 0.01,
-      "release": 0.3
-    },
-    {
-      "name": "KLING KLANG CHIME",
-      "label": "KLING CHIME",
-      "osc1": "triangle",
-      "osc2": "sine",
-      "osc2Detune": 4,
-      "filterType": "lowpass",
-      "cutoff": 9000,
-      "reso": 1.5,
-      "attack": 0.001,
-      "release": 0.4
-    },
-    {
-      "name": "THE MAN MACHINE",
-      "label": "MAN MACHINE",
-      "osc1": "sawtooth",
       "osc2": "square",
-      "osc2Detune": 1.01,
+      "osc2Octave": 0,
+      "osc2Detune": 1.006,
+      "oscMix": 0.5,
       "filterType": "lowpass",
       "cutoff": 4200,
-      "reso": 4,
-      "attack": 0.008,
-      "release": 0.3
+      "reso": 2.5,
+      "filterEnv": {
+        "attack": 0.01,
+        "decay": 0.3,
+        "sustain": 0.4,
+        "amount": 2000
+      },
+      "attack": 0.01,
+      "release": 0.28,
+      "volume": 0.85
+    },
+    {
+      "name": "RADIOACTIVITY TONE",
+      "label": "RADIO TONE",
+      "osc1": "sine",
+      "osc2": "sine",
+      "osc2Octave": 2,
+      "osc2Detune": 1.001,
+      "oscMix": 0.3,
+      "filterType": "lowpass",
+      "cutoff": 6800,
+      "reso": 1.2,
+      "attack": 0.05,
+      "release": 0.5,
+      "volume": 0.95
+    },
+    {
+      "name": "AUTOBAHN BLIP LEAD",
+      "label": "AUTOBAHN BLP",
+      "osc1": "square",
+      "osc2": "triangle",
+      "osc2Octave": 1,
+      "osc2Detune": 1.003,
+      "oscMix": 0.4,
+      "filterType": "lowpass",
+      "cutoff": 7000,
+      "reso": 3,
+      "attack": 0.002,
+      "release": 0.15,
+      "volume": 0.85
     }
   ],
   "basses": [
     {
-      "name": "KLING KLANG BASS",
-      "label": "KLING BASS",
-      "oscType": "square",
-      "subType": "sine",
+      "name": "AUTOBAHN PULSE BASS",
+      "label": "AUTOBAHN BAS",
+      "oscType": "sawtooth",
+      "subType": "square",
       "subOctave": -1,
-      "cutoff": 1200,
-      "reso": 4,
+      "subMix": 0.5,
+      "cutoff": 1400,
+      "reso": 4.5,
       "envMod": 1800,
-      "decay": 0.28,
-      "attack": 0.004,
-      "subMix": 0.7
+      "decay": 0.25,
+      "attack": 0.005,
+      "volume": 0.88
     },
     {
-      "name": "NUMBERS SUB",
-      "label": "NUMBERS SUB",
+      "name": "TRANS-EUROPE BEAT",
+      "label": "TRANS BEAT",
+      "oscType": "square",
+      "subType": "triangle",
+      "subOctave": -1,
+      "subMix": 0.45,
+      "cutoff": 1600,
+      "reso": 5,
+      "envMod": 2200,
+      "decay": 0.2,
+      "attack": 0.002,
+      "volume": 0.85
+    },
+    {
+      "name": "RADIOACTIVITY SUB",
+      "label": "RADIO SUB",
       "oscType": "sine",
       "subType": "sine",
       "subOctave": -1,
-      "cutoff": 500,
+      "subMix": 0.8,
+      "cutoff": 450,
       "reso": 1,
       "envMod": 400,
-      "decay": 0.45,
+      "decay": 0.5,
       "attack": 0.01,
-      "subMix": 0.85
+      "volume": 0.95
     },
     {
-      "name": "NEON LIGHTS",
-      "label": "NEON LIGHTS",
-      "oscType": "sawtooth",
-      "subType": "triangle",
+      "name": "NUMBERS COMPUTER BASS",
+      "label": "NUMBERS BASS",
+      "oscType": "triangle",
+      "subType": "square",
       "subOctave": -1,
-      "cutoff": 1400,
-      "reso": 3,
-      "envMod": 1600,
-      "decay": 0.35,
-      "attack": 0.006,
-      "subMix": 0.6
+      "subMix": 0.55,
+      "cutoff": 1800,
+      "reso": 6,
+      "envMod": 2600,
+      "decay": 0.18,
+      "attack": 0.002,
+      "volume": 0.88
     },
     {
-      "name": "AUTOBAHN DRIVE",
-      "label": "AUTO DRIVE",
+      "name": "MAN MACHINE ANALOG",
+      "label": "MAN MACHINE",
       "oscType": "sawtooth",
       "subType": "sawtooth",
       "subOctave": -1,
-      "cutoff": 1600,
+      "subMix": 0.5,
+      "detune": 1.006,
+      "cutoff": 1300,
       "reso": 3.5,
-      "envMod": 1900,
-      "decay": 0.3,
-      "attack": 0.005,
-      "subMix": 0.5
+      "envMod": 1600,
+      "decay": 0.35,
+      "attack": 0.006,
+      "volume": 0.86
     },
     {
-      "name": "COMPUTER BASS",
-      "label": "COMP BASS",
+      "name": "POCKET ACID CLICK",
+      "label": "POCKET CLICK",
       "oscType": "square",
-      "subType": "square",
-      "subOctave": -1,
-      "cutoff": 1800,
-      "reso": 5,
-      "envMod": 2200,
-      "decay": 0.22,
-      "attack": 0.002,
-      "subMix": 0.65
-    },
-    {
-      "name": "TOUR DE FRANCE",
-      "label": "TOUR BASS",
-      "oscType": "triangle",
       "subType": "sine",
       "subOctave": -1,
-      "cutoff": 900,
-      "reso": 2.5,
-      "envMod": 1100,
-      "decay": 0.38,
-      "attack": 0.008,
-      "subMix": 0.75
+      "subMix": 0.6,
+      "cutoff": 1900,
+      "reso": 7,
+      "envMod": 2800,
+      "decay": 0.15,
+      "attack": 0.001,
+      "volume": 0.82
     },
     {
-      "name": "SPACELAB ACID",
-      "label": "SPACELAB",
+      "name": "TOUR DE FRANCE PUMP",
+      "label": "TOUR DE FRNC",
       "oscType": "sawtooth",
-      "subType": "square",
-      "subOctave": -1,
-      "cutoff": 2000,
-      "reso": 7.5,
-      "envMod": 3000,
-      "decay": 0.24,
-      "attack": 0.002,
-      "subMix": 0.45
-    },
-    {
-      "name": "ELECTRIC CAFE",
-      "label": "ELEC CAFE",
-      "oscType": "sine",
       "subType": "triangle",
       "subOctave": -1,
+      "subMix": 0.5,
+      "cutoff": 1500,
+      "reso": 5.2,
+      "envMod": 2400,
+      "decay": 0.28,
+      "attack": 0.004,
+      "volume": 0.88
+    },
+    {
+      "name": "KLING KLANG SUB DROP",
+      "label": "KLING DROP",
+      "oscType": "sine",
+      "subType": "sine",
+      "subOctave": -1,
+      "subMix": 0.9,
       "pitchDrop": true,
-      "cutoff": 800,
-      "reso": 2,
-      "envMod": 1000,
-      "decay": 0.5,
-      "attack": 0.006,
-      "subMix": 0.8
+      "cutoff": 500,
+      "reso": 1.8,
+      "envMod": 800,
+      "decay": 0.6,
+      "attack": 0.01,
+      "volume": 0.95
     }
   ],
   "pedalboard": {
     "lead": [
       {
         "slot": 0,
-        "cartridge": "ds1",
+        "cartridge": "french-preamp",
         "active": false,
         "params": {
-          "dist": 35,
-          "tone": 3000,
-          "level": 65
+          "drive": 20,
+          "warmth": 60,
+          "output": 70
         }
       },
       {
         "slot": 1,
-        "cartridge": "flanger",
-        "active": true,
+        "cartridge": "optical-tremolo",
+        "active": false,
         "params": {
-          "speed": 0.8,
-          "depth": 75,
-          "regen": 50
+          "rate": 6,
+          "depth": 50,
+          "shape": "square"
         }
       },
       {
         "slot": 2,
         "cartridge": "formant-filter",
-        "active": true,
+        "active": false,
         "params": {
-          "vowel": 3,
-          "reso": 70,
-          "glide": 20
+          "vowel": 1,
+          "reso": 60,
+          "glide": 25
         }
       },
       {
         "slot": 3,
-        "cartridge": "ping-pong",
+        "cartridge": "analog-delay",
         "active": true,
         "params": {
-          "time": 280,
-          "feedback": 50,
-          "mix": 45
+          "time": 260,
+          "feedback": 35,
+          "mix": 40
         }
       },
       {
         "slot": 4,
-        "cartridge": "gated-plate",
+        "cartridge": "reverb",
         "active": false,
         "params": {
-          "size": 55,
-          "gate": 60,
+          "decay": 1.8,
           "mix": 35
         }
       }
@@ -278,52 +324,51 @@
     "bass": [
       {
         "slot": 0,
-        "cartridge": "proco-rat",
+        "cartridge": "tube-screamer",
         "active": false,
         "params": {
-          "dist": 40,
-          "filter": 1600,
-          "level": 70
+          "drive": 25,
+          "tone": 1400,
+          "level": 75
         }
       },
       {
         "slot": 1,
-        "cartridge": "flanger",
+        "cartridge": "optical-tremolo",
         "active": false,
         "params": {
-          "speed": 0.5,
-          "depth": 50,
-          "regen": 30
+          "rate": 4,
+          "depth": 35,
+          "shape": "triangle"
         }
       },
       {
         "slot": 2,
-        "cartridge": "sid-resonator",
+        "cartridge": "sidechain-pumper",
         "active": true,
         "params": {
-          "cutoff": 1400,
-          "squelch": 65,
-          "decay": 0.22
+          "depth": 65,
+          "rate": 4,
+          "release": 0.25
         }
       },
       {
         "slot": 3,
-        "cartridge": "ping-pong",
+        "cartridge": "delay",
         "active": false,
         "params": {
           "time": 240,
-          "feedback": 30,
+          "feedback": 25,
           "mix": 25
         }
       },
       {
         "slot": 4,
-        "cartridge": "gated-plate",
+        "cartridge": "reverb",
         "active": false,
         "params": {
-          "size": 45,
-          "gate": 65,
-          "mix": 30
+          "decay": 1.2,
+          "mix": 20
         }
       }
     ]

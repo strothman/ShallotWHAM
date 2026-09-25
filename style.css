@@ -648,330 +648,359 @@ body {
     justify-content: center;
 }
 
-/* MINI PEDALBOARD RACK */
+/* ==================================================== */
+/* BOUTIQUE MODULAR PEDALBOARD RACK (FLIGHT-CASE SYSTEM) */
+/* ==================================================== */
 .mini-pedal-rack {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 5px;
-    width: 520px;
-    background: rgba(10, 10, 20, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 6px;
-    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    width: 580px;
+    background: linear-gradient(180deg, #12141e 0%, #080910 100%);
+    border: 2px solid #232738;
+    border-radius: 10px;
+    padding: 8px;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04);
     flex-shrink: 0;
+    position: relative;
+    box-sizing: border-box;
 }
 
 .lead-pedal-rack {
-    border-color: rgba(14, 165, 233, 0.3);
+    border-color: rgba(14, 165, 233, 0.35);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 18px rgba(14, 165, 233, 0.12);
 }
 
 .bass-pedal-rack {
-    border-color: rgba(245, 158, 11, 0.3);
+    border-color: rgba(245, 158, 11, 0.35);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 18px rgba(245, 158, 11, 0.12);
 }
 
-/* MINI PEDAL STYLING */
+/* DIE-CAST BOUTIQUE STOMPBOX CHASSIS */
 .mini-pedal {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: #14141e;
-    border: 2px solid #2e2e42;
-    border-radius: 6px;
-    padding: 5px 3px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(180deg, #1c1f2e 0%, #12141f 45%, #0b0c13 100%);
+    border: 1.5px solid #2d3246;
+    border-radius: 8px;
+    padding: 7px 6px 6px 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -2px 4px rgba(0, 0, 0, 0.8);
     position: relative;
-    transition: all 0.2s ease;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 204px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
+/* Corner Hex Screws for authentic hardware feel */
+.mini-pedal::before,
+.mini-pedal::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #cbd5e1 25%, #475569 75%, #0f172a 100%);
+    box-shadow: inset 0 0 1px #fff, 0 1px 1px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+    z-index: 3;
+}
+.mini-pedal::before { top: 3px; left: 4px; }
+.mini-pedal::after { top: 3px; right: 4px; }
+
+/* Dynamic Anodized Metallic Tinting based on Cartridge Color */
 .mini-pedal.modular-pedal {
-    background: linear-gradient(180deg, #181926 0%, #0d0e17 100%);
-    min-width: 82px;
+    background: linear-gradient(175deg, 
+        color-mix(in srgb, var(--pedal-accent, #38bdf8) 22%, #181a26) 0%, 
+        #121420 38%, 
+        #080910 100%);
+    border-color: color-mix(in srgb, var(--pedal-accent, #38bdf8) 40%, #2b3044);
 }
 
+/* Active Stompbox Glow & Bloom Aura */
+.mini-pedal.pedal-active {
+    border-color: var(--pedal-accent, #00e5ff);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8), 
+                0 0 18px color-mix(in srgb, var(--pedal-accent, #00e5ff) 45%, transparent), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.25), 
+                inset 0 0 14px color-mix(in srgb, var(--pedal-accent, #00e5ff) 18%, transparent);
+}
+
+/* 3D DOMED JEWEL LED */
+.mini-pedal-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+    margin-bottom: 5px;
+    position: relative;
+    z-index: 2;
+}
+
+.mini-pedal-led {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #555 10%, #222 70%, #111 100%);
+    border: 1.5px solid #64748b;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mini-pedal-led.active {
+    background: radial-gradient(circle at 35% 30%, #ffffff 0%, var(--pedal-accent, #ff0055) 45%, color-mix(in srgb, var(--pedal-accent, #ff0055) 75%, #000) 100%);
+    border-color: #f8fafc;
+    box-shadow: 0 0 8px var(--pedal-accent, #ff0055), 
+                0 0 16px var(--pedal-accent, #ff0055), 
+                inset 0 1px 1px #fff;
+    filter: drop-shadow(0 0 3px var(--pedal-accent, #ff0055));
+}
+
+/* RECESSED OLED DIGITAL CARTRIDGE SELECTOR */
 .cartridge-select {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.62rem;
-    font-weight: 900;
-    background: rgba(0, 0, 0, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: var(--text-main, #fff);
-    border-radius: 3px;
-    padding: 1px 3px;
+    font-family: 'Share Tech Mono', 'Orbitron', monospace;
+    font-size: 0.52rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    background: #080911 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='4' viewBox='0 0 6 4'%3E%3Cpath fill='%2394a3b8' d='M0 0l3 4 3-4z'/%3E%3C/svg%3E") no-repeat calc(100% - 4px) center;
+    -webkit-appearance: none;
+    appearance: none;
+    border: 1px solid color-mix(in srgb, var(--pedal-accent, #475569) 50%, #202434);
+    color: #f1f5f9;
+    border-radius: 4px;
+    padding: 2px 11px 2px 4px;
     width: 100%;
+    min-width: 0;
     outline: none;
     cursor: pointer;
     text-transform: uppercase;
+    text-overflow: ellipsis;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.05);
     transition: all 0.15s ease;
+    box-sizing: border-box;
 }
 
+.cartridge-select:hover,
 .cartridge-select:focus {
-    border-color: var(--accent-blue, #00e5ff);
-    box-shadow: 0 0 5px rgba(0, 229, 255, 0.4);
+    border-color: var(--pedal-accent, #00e5ff);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--pedal-accent, #00e5ff) 50%, transparent);
 }
 
 .cartridge-select optgroup {
-    background: #11121c;
-    color: #00e5ff;
+    background: #0f111a;
+    color: #38bdf8;
     font-weight: bold;
     font-size: 0.6rem;
 }
 
 .cartridge-select option {
-    background: #0b0c13;
-    color: #eee;
+    background: #090a10;
+    color: #e2e8f0;
     font-size: 0.65rem;
 }
 
-.mini-pedal-ctrl .mini-val {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.58rem;
-    color: var(--text-muted, #aaa);
-    min-width: 20px;
-    text-align: right;
-}
-
-.mini-pedal.pedal-ds1 {
-    background: linear-gradient(180deg, #301602 0%, #170a01 100%);
-    border-color: #d97706;
-}
-
-.mini-pedal.pedal-crush {
-    background: linear-gradient(180deg, #2a0b3d 0%, #12041a 100%);
-    border-color: #a855f7;
-}
-
-.mini-pedal.pedal-ps6 {
-    background: linear-gradient(180deg, #071c3b 0%, #030e1e 100%);
-    border-color: #2563eb;
-}
-
-.mini-pedal.pedal-delay {
-    background: linear-gradient(180deg, #022c22 0%, #01140f 100%);
-    border-color: #059669;
-}
-
-.mini-pedal.pedal-reverb {
-    background: linear-gradient(180deg, #2e083a 0%, #15021c 100%);
-    border-color: #9333ea;
-}
-
-.mini-pedal.bass-theme.pedal-ds1 {
-    background: linear-gradient(180deg, #3f1903 0%, #1b0a01 100%);
-    border-color: #b45309;
-}
-
-.mini-pedal.bass-theme.pedal-crush {
-    background: linear-gradient(180deg, #381204 0%, #160601 100%);
-    border-color: #ea580c;
-}
-
-.mini-pedal.bass-theme.pedal-ps6 {
-    background: linear-gradient(180deg, #181e36 0%, #090c1a 100%);
-    border-color: #3b82f6;
-}
-
-.mini-pedal.bass-theme.pedal-delay {
-    background: linear-gradient(180deg, #13241d 0%, #07110e 100%);
-    border-color: #10b981;
-}
-
-.mini-pedal.bass-theme.pedal-reverb {
-    background: linear-gradient(180deg, #2c122e 0%, #130514 100%);
-    border-color: #a855f7;
-}
-
-.pedal-crush .mini-pedal-led.active {
-    background: #c084fc;
-    border-color: #f3e8ff;
-    box-shadow: 0 0 8px #c084fc;
-}
-
-.bass-theme.pedal-crush .mini-pedal-led.active {
-    background: #f97316;
-    border-color: #ffedd5;
-    box-shadow: 0 0 8px #f97316;
-}
-
-.pedal-crush .cyber-slider-mini::-webkit-slider-thumb {
-    background: #c084fc;
-}
-
-.bass-theme.pedal-crush .cyber-slider-mini::-webkit-slider-thumb {
-    background: #f97316;
-}
-
-.mini-pedal-header {
+/* RECESSED HARDWARE FADER CHANNEL STRIP */
+.mini-pedal-body {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 5px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 3px;
-    margin-bottom: 4px;
+    flex: 1;
+    justify-content: center;
+    padding: 2px 0;
+    min-height: 108px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-.mini-pedal-led {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #333;
-    border: 1px solid #555;
-    transition: all 0.2s ease;
+.mini-knob-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: rgba(6, 7, 12, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    padding: 3px 5px 4px 5px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.85);
+    box-sizing: border-box;
+    width: 100%;
 }
 
-.mini-pedal-led.active {
-    background: #ff0055;
-    border-color: #ff3377;
-    box-shadow: 0 0 8px #ff0055;
+.mini-knob-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1.1;
+    width: 100%;
 }
 
-.pedal-ds1 .mini-pedal-led.active {
-    background: #f97316;
-    border-color: #ffedd5;
-    box-shadow: 0 0 8px #f97316;
-}
-
-.pedal-ps6 .mini-pedal-led.active {
-    background: #38bdf8;
-    border-color: #e0f2fe;
-    box-shadow: 0 0 8px #38bdf8;
-}
-
-.pedal-delay .mini-pedal-led.active {
-    background: #34d399;
-    border-color: #ecfdf5;
-    box-shadow: 0 0 8px #34d399;
-}
-
-.pedal-reverb .mini-pedal-led.active {
-    background: #c084fc;
-    border-color: #faf5ff;
-    box-shadow: 0 0 8px #c084fc;
-}
-
-.mini-pedal-name {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.62rem;
+.mini-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.56rem;
     font-weight: 700;
-    color: #e2e8f0;
     letter-spacing: 0.5px;
+    color: #94a3b8;
+    text-transform: uppercase;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.mini-pedal-body {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-    justify-content: center;
-}
-
-.mini-pedal-ctrl {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 4px;
-}
-
-.mini-pedal-row {
-    display: flex;
-    gap: 3px;
-}
-
-.mini-lbl {
+.mini-val {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.6rem;
-    color: var(--text-muted);
-    min-width: 26px;
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: var(--pedal-accent, #38bdf8);
+    text-shadow: 0 0 5px color-mix(in srgb, var(--pedal-accent, #38bdf8) 60%, transparent);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.cyber-slider-mini {
-    flex: 1;
-    height: 4px;
+/* 100% CONSTRAINED PRECISION HARDWARE FADERS */
+.mini-slider {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 2px 0 0 0 !important;
+    padding: 0 !important;
+    height: 6px;
     -webkit-appearance: none;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-}
-
-.cyber-slider-mini::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #cbd5e1;
-    border: 1px solid #fff;
-    cursor: pointer;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
-}
-
-.pedal-ds1 .cyber-slider-mini::-webkit-slider-thumb {
-    background: #f97316;
-}
-
-.pedal-ps6 .cyber-slider-mini::-webkit-slider-thumb {
-    background: #38bdf8;
-}
-
-.pedal-delay .cyber-slider-mini::-webkit-slider-thumb {
-    background: #34d399;
-}
-
-.pedal-reverb .cyber-slider-mini::-webkit-slider-thumb {
-    background: #c084fc;
-}
-
-.cyber-select-micro {
-    background: #080811;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e2e8f0;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.62rem;
-    padding: 1px 2px;
+    appearance: none;
+    background: #10121c;
+    border: 1px solid #24283b;
     border-radius: 3px;
     outline: none;
     cursor: pointer;
-    flex: 1;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
+.mini-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 12px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 35%, #475569 65%, #1e293b 100%);
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    cursor: ew-resize;
+    position: relative;
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.mini-slider:hover::-webkit-slider-thumb {
+    border-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 1), 0 0 6px var(--pedal-accent, #38bdf8);
+    transform: scale(1.08);
+}
+
+.mini-slider::-moz-range-thumb {
+    width: 16px;
+    height: 12px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 35%, #475569 65%, #1e293b 100%);
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    cursor: ew-resize;
+}
+
+/* HEAVY-DUTY 3PDT CHROME STOMP SWITCH */
 .mini-pedal-footswitch {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
-    border: 1px solid #64748b;
-    border-radius: 4px;
-    color: #f1f5f9;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.62rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 5px 8px;
+    gap: 4px;
+    background: linear-gradient(180deg, #181a26 0%, #0a0b12 100%);
+    border: 1.5px solid #2d3246;
+    border-radius: 6px;
+    padding: 5px 3px 4px 3px;
     margin-top: 5px;
     cursor: pointer;
-    transition: all 0.15s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     user-select: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .mini-pedal-footswitch:hover {
-    background: linear-gradient(180deg, #64748b 0%, #334155 100%);
-    border-color: #94a3b8;
+    border-color: #4b5563;
+    background: linear-gradient(180deg, #222636 0%, #0e1018 100%);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8), 0 0 6px rgba(255, 255, 255, 0.12);
 }
 
 .mini-pedal-footswitch:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    transform: translateY(2px) scale(0.96);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
 }
 
 .mini-pedal-footswitch.active {
-    background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
-    border-color: #38bdf8;
-    color: #fff;
-    box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+    border-color: var(--pedal-accent, #0284c7);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8), 0 0 12px color-mix(in srgb, var(--pedal-accent, #0284c7) 45%, transparent);
+}
+
+/* Circular Chrome Stomp Plunger Assembly */
+.stomp-switch-assembly {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #64748b 0%, #334155 60%, #1e293b 100%);
+    border: 1.5px solid #94a3b8;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+.mini-pedal-footswitch.active .stomp-switch-assembly {
+    border-color: #f8fafc;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.9), 0 0 10px var(--pedal-accent, #38bdf8), inset 0 1px 2px #fff;
+}
+
+.stomp-nut-ring {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #e2e8f0 20%, #94a3b8 70%, #475569 100%);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6), 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.stomp-plunger {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff 0%, #cbd5e1 35%, #64748b 75%, #334155 100%);
+    border: 1px solid #64748b;
+    box-shadow: inset 0 1px 1px #fff, 0 1px 3px rgba(0, 0, 0, 0.8);
+    transition: transform 0.1s ease;
+}
+
+.mini-pedal-footswitch:active .stomp-plunger {
+    transform: scale(0.88);
+}
+
+.stomp-status-label {
+    font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    font-size: 0.52rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: #64748b;
+    text-transform: uppercase;
+    transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.mini-pedal-footswitch.active .stomp-status-label {
+    color: var(--pedal-accent, #38bdf8);
+    text-shadow: 0 0 6px var(--pedal-accent, #38bdf8);
 }
 
 .pedal-bind-tag {

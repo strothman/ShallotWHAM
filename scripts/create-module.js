@@ -1,57 +1,104 @@
 /**
- * ShallotWHAM Sound Module Generator & Validator (.swm)
+ * ShallotWHAM Sound Module Generator & Validator (SWM v2.0)
  * Usage:
  *   node scripts/create-module.js --validate
+ *   node scripts/create-module.js --scaffold <module-id>
  */
 
 const fs = require('fs');
 const path = require('path');
+const { validateModuleFile, runValidation } = require('./validate-modules');
 
 const MODULES_DIR = path.join(__dirname, '..', 'modules');
 
-function validateModule(filePath) {
-    try {
-        const raw = fs.readFileSync(filePath, 'utf8');
-        const data = JSON.parse(raw);
-        const issues = [];
+function createModuleTemplate(id, name) {
+    const cleanId = id.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    const cleanName = (name || cleanId.replace(/-/g, ' ')).toUpperCase();
 
-        if (!data.name) issues.push("Missing 'name'");
-        if (!data.id) issues.push("Missing 'id'");
-        if (!data.leads || !Array.isArray(data.leads)) issues.push("Missing 'leads' array");
-        else if (data.leads.length !== 8) issues.push(`Expected 8 leads, got ${data.leads.length}`);
-        if (!data.basses || !Array.isArray(data.basses)) issues.push("Missing 'basses' array");
-        else if (data.basses.length !== 8) issues.push(`Expected 8 basses, got ${data.basses.length}`);
-
-        if (issues.length > 0) {
-            console.error(`❌ ${path.basename(filePath)}: FAIL - ${issues.join(', ')}`);
-            return false;
+    const template = {
+        format: "ShallotWHAM-Module",
+        version: "2.0.0",
+        id: cleanId,
+        name: cleanName,
+        subtitle: "Studio Sound Module",
+        author: "Shallot",
+        category: "Electronic",
+        description: `Sound module for ShallotWHAM workstation with 8 signature leads and 8 punchy basslines.`,
+        themeGlow: "#00e5ff",
+        tags: ["shallotwham", "synth", cleanId],
+        leads: Array.from({ length: 8 }).map((_, i) => ({
+            name: `${cleanName} LEAD ${i + 1}`,
+            label: `LEAD ${i + 1}`,
+            osc1: i % 2 === 0 ? "sawtooth" : "square",
+            osc2: i % 2 === 0 ? "sawtooth" : "triangle",
+            osc2Octave: 0,
+            osc2Detune: 1.006,
+            oscMix: 0.5,
+            noiseMix: 0.0,
+            filterType: "lowpass",
+            cutoff: 3500,
+            reso: 2.0,
+            filterEnv: { attack: 0.01, decay: 0.25, sustain: 0.4, amount: 2500 },
+            attack: 0.01,
+            decay: 0.3,
+            sustain: 0.7,
+            release: 0.25,
+            volume: 0.8
+        })),
+        basses: Array.from({ length: 8 }).map((_, i) => ({
+            name: `${cleanName} BASS ${i + 1}`,
+            label: `BASS ${i + 1}`,
+            oscType: i % 2 === 0 ? "sawtooth" : "square",
+            subType: "sine",
+            subOctave: -1,
+            subMix: 0.55,
+            cutoff: 1400,
+            reso: 4.5,
+            envMod: 2200,
+            decay: 0.28,
+            attack: 0.005,
+            volume: 0.85
+        })),
+        pedalboard: {
+            lead: [
+                { slot: 0, cartridge: "french-preamp", active: false, params: { drive: 30, warmth: 60, output: 70 } },
+                { slot: 1, cartridge: "dimension-chorus", active: true, params: { mode: 3, width: 75, mix: 50 } },
+                { slot: 2, cartridge: "ps6", active: false, params: { key: "C", scale: "major", interval: "3rd", mix: 50 } },
+                { slot: 3, cartridge: "space-echo", active: true, params: { time: 340, intensity: 40, flutter: 30, mix: 40 } },
+                { slot: 4, cartridge: "reverb", active: false, params: { decay: 2.2, mix: 45 } }
+            ],
+            bass: [
+                { slot: 0, cartridge: "ds1", active: true, params: { dist: 35, tone: 1200, level: 70 } },
+                { slot: 1, cartridge: "dimension-chorus", active: false, params: { mode: 2, width: 60, mix: 40 } },
+                { slot: 2, cartridge: "sidechain-pumper", active: true, params: { depth: 70, rate: 4, release: 0.3 } },
+                { slot: 3, cartridge: "analog-delay", active: false, params: { time: 240, feedback: 25, mix: 30 } },
+                { slot: 4, cartridge: "reverb", active: false, params: { decay: 1.8, mix: 35 } }
+            ]
         }
-        console.log(`✅ ${path.basename(filePath)}: OK (${data.name}) - 8 Leads, 8 Basses`);
-        return true;
-    } catch (err) {
-        console.error(`❌ ${path.basename(filePath)}: JSON parse error - ${err.message}`);
+    };
+
+    const outPath = path.join(MODULES_DIR, `${cleanId}.swm`);
+    if (fs.existsSync(outPath)) {
+        console.error(`❌ Module file already exists: ${outPath}`);
         return false;
     }
-}
-
-function validateAll() {
-    if (!fs.existsSync(MODULES_DIR)) {
-        console.error(`Directory not found: ${MODULES_DIR}`);
-        return;
-    }
-    const files = fs.readdirSync(MODULES_DIR).filter(f => f.endsWith('.swm'));
-    console.log(`Found ${files.length} module files in ${MODULES_DIR}\n`);
-    let allValid = true;
-    files.forEach(f => {
-        const valid = validateModule(path.join(MODULES_DIR, f));
-        if (!valid) allValid = false;
-    });
-    console.log(`\nResult: ${allValid ? "ALL MODULES VALID! ✨" : "SOME MODULES FAILED VALIDATION"}`);
+    fs.writeFileSync(outPath, JSON.stringify(template, null, 2), 'utf8');
+    console.log(`✨ Scaffolded SWM v2.0 module: ${outPath}`);
+    validateModuleFile(outPath);
+    return true;
 }
 
 const args = process.argv.slice(2);
 if (args.includes('--validate') || args.length === 0) {
-    validateAll();
+    runValidation();
+} else if (args.includes('--scaffold')) {
+    const idx = args.indexOf('--scaffold');
+    const id = args[idx + 1];
+    if (!id) {
+        console.error("Usage: node scripts/create-module.js --scaffold <module-id>");
+        process.exit(1);
+    }
+    createModuleTemplate(id, args[idx + 2]);
 } else {
-    console.log("Usage: node scripts/create-module.js --validate");
+    console.log("Usage:\n  node scripts/create-module.js --validate\n  node scripts/create-module.js --scaffold <module-id>");
 }

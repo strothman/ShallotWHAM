@@ -1,11 +1,10 @@
 # 📊 PROJECT STATE & ARCHITECTURE SPECIFICATION
 
 > **Application Name**: **ShallotWHAM**  
-> **Application Name**: **ShallotWHAM**  
-> **Current Version**: `1.5.0`  
+> **Current Version**: `1.8.0`  
 > **Author / Developer**: **Shallot**  
 > **Status**: Stable / Fully Functional  
-> **Last Updated**: 2026-09-20  
+> **Last Updated**: 2026-09-24  
 > **Target Platforms**: Web Browsers (Chrome, Firefox, Safari, Edge) & Windows Desktop (Electron Portable)
 
 ---
@@ -27,7 +26,9 @@ ShallotWHAM/
 ├── shallot-theme.css       # Unified Shallot Plum CSS custom properties & design tokens
 ├── shallot-theme.json      # Structured token specification schema
 ├── THEME.md                # Shallot Plum theme guide and token documentation
-├── modules/                # Proprietary Sound Module files (.swm) - 10 Modules / 160 Presets / 10 Signature Pedalboards
+├── MODULE_STANDARDS.md     # Official ShallotWHAM Sound Module Standards Specification (SWM v2.0)
+├── modules/                # SWM v2.0 Sound Modules - 11 Modules / 176 Presets / 11 Curated Signature Pedalboards
+│   ├── wolf.swm                    # Bank: WOLF ("The Matter" by Faded Paper Figures, signature pedals)
 │   ├── synthwave.swm               # Bank: Synthwave (8 leads, 8 basses, signature pedals)
 │   ├── crystal-castles.swm         # Bank: Crystal Castles (Alice Practice, Crimewave, signature pedals)
 │   ├── 8bit-arcade.swm             # Bank: 8-Bit Arcade (NES, Game Boy, SID 6581, signature pedals)
@@ -38,14 +39,17 @@ ShallotWHAM/
 │   ├── depeche-mode.swm            # Bank: Depeche Mode (Enjoy the Silence, Personal Jesus, signature pedals)
 │   ├── vaporwave-dreams.swm        # Bank: Vaporwave Dreams (DX7 Piano, Mall Chime, Slush Sub, signature pedals)
 │   └── user-custom.swm             # Bank: User Custom Patches
-├── scripts/                # IDE Tooling & DSP Testing
-│   ├── create-module.js            # CLI Module validator and generator
+├── scripts/                # IDE Tooling, Module Standards & DSP Testing
+│   ├── validate-modules.js         # Automated CLI validator enforcing SWM v2.0 module standards
+│   ├── create-module.js            # CLI Module generator and template scaffolder
+│   ├── remaster-all-modules.js     # Sound bank remaster engine applying SWM v2.0 standards
 │   ├── sync-modules.js             # Engine synchronizer compiling .swm files into app.js
+│   ├── test-voice-synthesis.js     # Voice synthesis unit tests and mock audio context runner
 │   ├── modular-pedal-engine.js     # Cartridge catalog (26 cartridges) and DSP node factories
 │   └── test-modular-dsp.js         # Automated test suite for all 26 DSP cartridge branches
-├── app.js                  # Audio engine, low-latency DSP, 10-chassis modular pedalboard, sound module vault
+├── app.js                  # Audio engine, upgraded SWM v2.0 voice synthesis, 10-chassis modular pedalboard
 ├── main.js                 # Electron main process entry point (spawns 1920x1080 desktop window)
-├── package.json            # Node.js dependencies (Electron, electron-builder) and build scripts
+├── package.json            # Node.js dependencies, npm test runner, build scripts
 ├── package-lock.json       # Exact lockfile for deterministic dependency resolution
 ├── start-dev.bat           # Windows batch launcher (browser preview, electron dev, exe packager)
 ├── .gitignore              # Ignores node_modules, build outputs (dist), and local caches
@@ -63,10 +67,10 @@ ShallotWHAM/
 - **5-Slot Loadable Modular Sound Banks**:
   - Slots 1-5 customizable via the Sound Module Manager (`[📂 MODULES]`) or hotkeys `Alt+1` through `Alt+5`.
   - Default Loaded Configuration:
-    - Slot 1: **Synthwave** (`synthwave.swm`)
-    - Slot 2: **Crystal Castles** (`crystal-castles.swm`)
-    - Slot 3: **8-Bit Arcade** (`8bit-arcade.swm`)
-    - Slot 4: **Sad Robot** (`pornophonique-sad-robot.swm` - authentic C64 SID 6581 & Game Boy LSDJ presets)
+    - Slot 1: **WOLF** (`wolf.swm` - authentic "The Matter" by Faded Paper Figures sound bank)
+    - Slot 2: **Synthwave** (`synthwave.swm`)
+    - Slot 3: **Crystal Castles** (`crystal-castles.swm`)
+    - Slot 4: **8-Bit Arcade** (`8bit-arcade.swm`)
     - Slot 5: **User Patches** (`user-custom.swm` - full in-app patch editor and export/import)
 - **Proprietary Sound Module Specification (`.swm`)**:
   - Portable, standardized JSON specification with format ID `shallotwham_module_v1`, author metadata, and complete parameters for 8 leads and 8 basslines.
@@ -112,10 +116,19 @@ Both Lead and Bass audio pipelines route through independent 5-stompbox series-p
 
 | Feature Area | Component | Status | Notes |
 | :--- | :--- | :---: | :--- |
+| **Modules** | WOLF Sound Bank ("The Matter") | ✅ Complete | Flagship indietronica bank (8 leads, 8 basses, signature pedals) inspired by Faded Paper Figures |
+| **Modules** | SWM v2.0 Standards Specification | ✅ Complete | Official `MODULE_STANDARDS.md` schema, volume normalization & ADSR envelopes |
+| **Modules** | Automated Module Validator | ✅ Complete | `scripts/validate-modules.js` CLI test suite with 100% compliance |
+| **Modules** | 11 Remastered Sound Banks | ✅ Complete | 176 studio-grade punchy presets + 11 curated signature pedalboards |
 | **Modules** | 5-Slot Modular Sound Banks | ✅ Complete | Dynamic slots 1-5 customizable via UI modal or Alt+1..Alt+5 |
 | **Modules** | Proprietary `.swm` Format | ✅ Complete | Export/import standardized portable module file format |
 | **Modules** | Pornophonique "Sad Robot" | ✅ Complete | Official module with 8 SID 6581 / LSDJ leads & 8 basses |
 | **Modules** | Sound Module Manager Modal | ✅ Complete | Drag-and-drop `.swm` loader, slot assignment, preset info |
+| **Synthesis** | Full Amplitude ADSR Envelopes | ✅ Complete | Dynamic attack, decay to sustain, and release curves on Lead & Bass voices |
+| **Synthesis** | Live Lead Decay Control | ✅ Complete | Real-time `LEAD DECAY` slider on GUI matrix for plucks, brass & bells |
+| **Synthesis** | Live Bass Attack & Decay Controls | ✅ Complete | Interactive `BASS ATTACK` and `BASS DECAY` sliders on Bassline Engine |
+| **Synthesis** | Filter ADSR Envelopes | ✅ Complete | Dynamic filter attack, decay, sustain & mod depth per patch |
+| **Synthesis** | Noise Generator & Octave Spread | ✅ Complete | Per-voice noise texture and dual-oscillator octave transpositions |
 | **Performance**| Low-Latency Bitcrusher | ✅ Complete | 256-sample buffer (~5.8ms vs former ~46.4ms; >87% reduction) |
 | **Performance**| O(1) Keyboard Key Caching | ✅ Complete | Pre-computed DOM maps eliminate layout thrashing during chords |
 | **Performance**| Interactive Audio Latency | ✅ Complete | Web Audio Context configured with `latencyHint: interactive` |

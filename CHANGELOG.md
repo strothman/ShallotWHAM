@@ -23,6 +23,87 @@ Version numbers use three numbers separated by dots: `MAJOR.MINOR.PATCH` (e.g. `
 - 1-Click WAV Recording & Audio Session Export.
 - Step sequencer integration.
 
+### [1.8.0] - 2026-09-24
+#### Added
+- **Flagship Sound Module: "WOLF" ("The Matter" by Faded Paper Figures)**:
+  - Created official SWM v2.0 sound module `modules/wolf.swm` faithfully engineered from the sonic palette of the 2012 album *The Matter* by indietronica pioneers Faded Paper Figures.
+  - **8 Expressive Lead Presets**:
+    1. `SAN NARCISO` ("SAN NARCISO LEAD"): Anthemic dual-saw/square octave hook with cutting transient bite.
+    2. `PILEDRIVE` ("PILEDRIVE BITE"): Sharp, aggressive resonant pulse lead with noise bite.
+    3. `INFO RUNS` ("INFO RUNS PLUCK"): Ultra-snappy 16th-note bandpass digital pluck for fast arpeggiations.
+    4. `HOLY SMOKE` ("HOLY SMOKE CHIME"): Luminous bell chime with gentle vibrato and sparkling overtones.
+    5. `MAGELLAN` ("MY MAGELLAN SAW"): Singing dual-saw melodic lead with expressive vibrato and wide sustain.
+    6. `FIRST SON` ("FIRST SON PROPHET"): Warm vintage analog brass-synth lead with rich sub-fundamental body.
+    7. `AVIDA LEAD` ("AVIDA DISCO LEAD"): High-resonance squelchy art-pop hook with tight funk envelope.
+    8. `PANTECHNE` ("PANTECHNE GLITCH"): Searing bandpass hyper-speed lead combining indie grit with digital bite.
+  - **8 Punchy Bass Presets**:
+    1. `NARCISO BASS` ("SAN NARCISO BASS"): Tight driving 16th-note staccato bass with punchy filter snap.
+    2. `PILE PUNCH` ("PILEDRIVE PUNCH"): Heavy, aggressive forward-thrusting dance-rock bass with midrange bite.
+    3. `CIRCUIT RUNS` ("CIRCUIT RUNS SUB"): Rounded sequencer sub-pulse that locks into high-speed arpeggios.
+    4. `RELATIVELY` ("RELATIVELY GROOVE"): Rubbery, warm analog groove bass with singing melodic sustain.
+    5. `MOON SUB` ("POINTING MOON SUB"): Cavernous, chest-rattling pure sub-bass weight.
+    6. `AVIDA SQUELC` ("AVIDA DISCO SQUELCH"): Resonant 303-meets-Moroder squelch with sharp filter sweep.
+    7. `SMOKE GROWL` ("HOLY SMOKE GROWL"): Dark, rumbling analog sub-octave growl with chorused spread.
+    8. `DRIVER PULSE` ("DRIVER 16TH PULSE"): Relentless 16th-note square pulse for driving 128+ BPM indie-dance.
+  - **Curated Signature Pedalboards**:
+    - Lead Chain: French Preamp (warm analog drive) -> Dimension Chorus (spatial BBD width) -> Sidechain Pumper (rhythmic electro pump) -> Space Echo (tape delay flutter) -> Cosmic Shimmer (signature celestial shimmer-pop hall).
+    - Bass Chain: Tube Screamer (midrange punch overdrive) -> Dimension Chorus -> Sidechain Pumper (4-on-the-floor glue) -> Analog Delay -> Room Reverb.
+  - Promoted "WOLF" to flagship **Slot 1** default configuration.
+
+#### Improved
+- **Full Amplitude ADSR Envelope Synthesis Engine (`spawnLeadVoice` & `spawnBassVoice`)**:
+  - Replaced former flat-sustain voice curves with true exponential ADSR amplitude envelopes.
+  - Pluck, bell, and staccato patches now punch with realistic transient bite and decay down to their calibrated sustain levels (`sustainGain`) instead of droning indefinitely.
+  - Bass voices now feature snappy, punchy amplitude and filter decay envelopes that eliminate low-end muddiness and lock into driving electro-pop rhythms.
+  - Fixed detune oscillator pitch drop in `spawnBassVoice` so unison sub-oscillators stay phase-coherent.
+- **Hardware Console Tone Manipulation Controls**:
+  - Added live **LEAD DECAY** slider (0.01s - 2.0s) to the Lead Synth matrix, allowing real-time morphing between tight staccato plucks and singing sustain leads.
+  - Added live **BASS ATTACK** slider (0.001s - 0.1s) to the Bassline Engine matrix for dialing in soft vs punchy transient bite.
+  - Activated and connected **BASS DECAY** slider with real-time Web Audio filter and amplitude modulation.
+  - Preset switching in both Lead and Bass now instantly updates all physical sliders (Cutoff, Reso, Attack, Decay, Release, Sub Mix) so the hardware controls match the preset's actual parameters.
+  - Restored loaded module slot configuration persistence from `shallotwham_settings` in localStorage.
+
+### [1.7.0] - 2026-09-22
+#### Added
+- **Boutique Stompbox Overhaul & Modular Pedalboard Redesign**:
+  - Transformed flat generic pedal racks into rugged boutique flight cases with die-cast metal enclosures, recessed hardware fader channels, and corner hex-head screws.
+  - **Dynamic Anodized Metal Finishes**: Each pedal automatically tints its chassis faceplate dynamically using `var(--pedal-accent)` with soft metallic edge bevels and neon underglow.
+  - **3D Domed Jewel Indicator LEDs**: Photorealistic jewel lenses with chrome bezel rings, specular multi-stop highlights, and reactive neon bloom when engaged.
+  - **Tactile 3PDT Chrome Stomp Switches**: Authentic heavy-duty concentric foot plungers with knurled hex nuts, active depression feedback (`:active`), and micro status readouts (`ENGAGED` / `BYPASS`).
+  - **Recessed OLED Cartridge Selectors**: Custom micro-contrast digital nameplates with border containment, native arrow suppression, and high readability.
+  - **Hardware Channel Strip Faders**: Precision-grooved sliders with brushed metal knurled caps, accent indicators, and strict 100% chassis width containment (preventing browser native rail overflow).
+  - **First-Boot & Persistence Restoration**: Added automated pedalboard UI rendering on app launch and settings restoration from `shallotwham_pedalboards` localStorage.
+
+#### Fixed
+- **Synthesizer Instrument Keyboard Engine Triggering**:
+  - Restored full polyphonic voice triggering for Lead (Rows 0 & 1, keys `1`–`=` and `Q`–`\`) and Bassline (Rows 2 & 3, keys `A`–`'` and `Z`–`/`).
+  - Re-routed active oscillator signals through dynamic ADSR envelopes, filter modulation nodes, and voice bus summers.
+  - Added real-time visual polyphony indicators across active notes and visualizer canvas.
+
+### [1.6.0] - 2026-09-22
+#### Added
+- **Official Sound Module Standards Specification (SWM v2.0)**:
+  - Formally specified in `MODULE_STANDARDS.md`.
+  - Standardized schema for metadata, dual 8-patch matrices (8 Leads + 8 Basses), gain staging normalization, and curated signature pedalboards.
+  - **Dynamic Filter ADSR Envelopes**: Added `filterEnv` (attack, decay, sustain, modulation depth) providing punchy brass, snappy plucks, acid squelches, and ambient sweeps.
+  - **Enhanced Oscillator Capabilities**: Added `osc2Octave` (-2 to +2), `oscMix` balance, and `noiseMix` per voice for analog breath, vintage hiss, and percussive 8-bit transients.
+  - **Perceptual Loudness Normalization**: Every preset specifies a calibrated `volume` coefficient (0.4 to 1.0) to eliminate volume jumps and digital clipping between patches.
+  - **Faceplate Label Constraints**: Strict $\le 12$ uppercase character requirement for crisp, unclipped LCD button readouts.
+  - **Signature Pedalboard Standard**: Every module includes tailored, active signature stompboxes (e.g. Dimension Chorus, Tape Delay, Sidechain Pumper, SID Acid) that load automatically with the sound bank.
+- **Automated Module Validator (`scripts/validate-modules.js`)**:
+  - Comprehensive CLI verification tool that audits all `.swm` files for JSON structure, audio frequency boundaries (20Hz-20kHz), filter resonance safety, envelope timings, gain normalization, and pedalboard cartridge validity.
+  - Integrated into `npm test` and `scripts/create-module.js`.
+- **Full Remaster of All 10 Official Sound Banks (160 Presets Total)**:
+  - Remastered `synthwave.swm`, `crystal-castles.swm`, `8bit-arcade.swm`, `pornophonique-sad-robot.swm`, `daft-punk.swm`, `kraftwerk.swm`, `dungeon-synth.swm`, `depeche-mode.swm`, `vaporwave-dreams.swm`, and `user-custom.swm` to 100% SWM v2.0 compliance with zero errors and zero warnings.
+
+#### Fixed
+- **Restored Voice Generation & Note Handlers in `app.js`**:
+  - Resolved missing `spawnLeadVoice`, `spawnBassVoice`, `handleKeyDown`, `handleKeyUp`, `releaseVoice`, and `getHarmonizedFrequencies` functions.
+  - Fixed pedalboard slot mismatch in `crystal-castles`, `synthwave`, and `user-custom` where `decimator` was assigned to the modulation chassis instead of the drive chassis.
+  - Restored real-time polyphony counter updates (`[VOICES: X/4]`).
+
+---
+
 ### [1.5.0] - 2026-09-20
 #### Added
 - **Modular Pedal System ("Modules Within Modules")**:

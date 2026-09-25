@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShallotWHAM Dual-Engine Synth Station</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23180d21'/%3E%3Crect x='4' y='8' width='5' height='16' rx='1' fill='%23ffffff'/%3E%3Crect x='10' y='8' width='5' height='16' rx='1' fill='%23ffffff'/%3E%3Crect x='16' y='8' width='5' height='16' rx='1' fill='%23ffffff'/%3E%3Crect x='22' y='8' width='5' height='16' rx='1' fill='%23ffffff'/%3E%3Crect x='7' y='8' width='3.5' height='10' rx='0.5' fill='%23d48244'/%3E%3Crect x='14' y='8' width='3.5' height='10' rx='0.5' fill='%23d48244'/%3E%3Crect x='20' y='8' width='3.5' height='10' rx='0.5' fill='%23d48244'/%3E%3Ccircle cx='28' cy='4' r='2' fill='%2300e5ff'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css?t=1788407800">
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;600&display=swap"
         rel="stylesheet">
@@ -18,7 +19,7 @@
     <header class="app-header">
         <div class="logo">
             <span class="neon-text-blue">Shallot</span><span class="neon-text-pink">WHAM</span>
-            <span class="badge">V1.0</span>
+            <span class="badge">V1.6.0</span>
         </div>
 
         <div class="header-controls">
@@ -77,7 +78,7 @@
                         <div class="bank-selector-group">
                             <span class="bank-title-badge">SOUND MODULES:</span>
                             <div class="bank-tabs module-slots-tabs" id="module-slots-tabs">
-                                <button class="bank-tab module-tab active" data-bank-idx="0" onclick="setSoundBank(0)" id="slot-tab-0" title="Slot 1 [Alt+1]"><span class="slot-num">1:</span> <span class="slot-name" id="tab-label-0">SYNTHWAVE</span></button>
+                                <button class="bank-tab module-tab active" data-bank-idx="0" onclick="setSoundBank(0)" id="slot-tab-0" title="Slot 1 [Alt+1]"><span class="slot-num">1:</span> <span class="slot-name" id="tab-label-0">WOLF</span></button>
                                 <button class="bank-tab module-tab" data-bank-idx="1" onclick="setSoundBank(1)" id="slot-tab-1" title="Slot 2 [Alt+2]"><span class="slot-num">2:</span> <span class="slot-name" id="tab-label-1">CRYSTAL CASTLES</span></button>
                                 <button class="bank-tab module-tab" data-bank-idx="2" onclick="setSoundBank(2)" id="slot-tab-2" title="Slot 3 [Alt+3]"><span class="slot-num">3:</span> <span class="slot-name" id="tab-label-2">8-BIT ARCADE</span></button>
                                 <button class="bank-tab module-tab" data-bank-idx="3" onclick="setSoundBank(3)" id="slot-tab-3" title="Slot 4 [Alt+4]"><span class="slot-num">4:</span> <span class="slot-name" id="tab-label-3">SAD ROBOT</span></button>
@@ -132,6 +133,11 @@
                                 <div class="lead-control-item">
                                     <label class="label">ATTACK: <span id="lead-val-attack">0.01s</span></label>
                                     <input type="range" id="lead-attack" min="0.001" max="2" step="0.01" value="0.01"
+                                        class="cyber-slider lead-slider">
+                                </div>
+                                <div class="lead-control-item">
+                                    <label class="label">DECAY: <span id="lead-val-decay">0.25s</span></label>
+                                    <input type="range" id="lead-decay" min="0.01" max="2" step="0.01" value="0.25"
                                         class="cyber-slider lead-slider">
                                 </div>
                                 <div class="lead-control-item">
@@ -206,6 +212,11 @@
                                 <div class="bass-control-item">
                                     <label class="label">SUB MIX: <span id="bass-val-sub">50%</span></label>
                                     <input type="range" id="bass-sub-mix" min="0" max="100" value="50"
+                                        class="cyber-slider bass-slider">
+                                </div>
+                                <div class="bass-control-item">
+                                    <label class="label">ATTACK: <span id="bass-val-attack">0.005s</span></label>
+                                    <input type="range" id="bass-attack" min="0.001" max="0.1" step="0.001" value="0.005"
                                         class="cyber-slider bass-slider">
                                 </div>
                                 <div class="bass-control-item">
@@ -348,7 +359,12 @@
                                     </div>
                                     <div class="mini-pedal-body" id="lead-pedal-body-0"></div>
                                     <button class="mini-pedal-footswitch" id="lead-pedal-footswitch-0" onclick="togglePedalSlot('lead', 0)">
-                                        <span>ON/OFF</span>
+                                        <div class="stomp-switch-assembly">
+                                            <div class="stomp-nut-ring">
+                                                <div class="stomp-plunger"></div>
+                                            </div>
+                                        </div>
+                                        <span class="stomp-status-label">BYPASS</span>
                                     </button>
                                 </div>
                                 <div class="mini-pedal modular-pedal" id="lead-pedal-1" data-instrument="lead" data-slot="1">
@@ -358,7 +374,12 @@
                                     </div>
                                     <div class="mini-pedal-body" id="lead-pedal-body-1"></div>
                                     <button class="mini-pedal-footswitch" id="lead-pedal-footswitch-1" onclick="togglePedalSlot('lead', 1)">
-                                        <span>ON/OFF</span>
+                                        <div class="stomp-switch-assembly">
+                                            <div class="stomp-nut-ring">
+                                                <div class="stomp-plunger"></div>
+                                            </div>
+                                        </div>
+                                        <span class="stomp-status-label">BYPASS</span>
                                     </button>
                                 </div>
                                 <div class="mini-pedal modular-pedal" id="lead-pedal-2" data-instrument="lead" data-slot="2">
@@ -368,7 +389,12 @@
                                     </div>
                                     <div class="mini-pedal-body" id="lead-pedal-body-2"></div>
                                     <button class="mini-pedal-footswitch" id="lead-pedal-footswitch-2" onclick="togglePedalSlot('lead', 2)">
-                                        <span>ON/OFF</span>
+                                        <div class="stomp-switch-assembly">
+                                            <div class="stomp-nut-ring">
+                                                <div class="stomp-plunger"></div>
+                                            </div>
+                                        </div>
+                                        <span class="stomp-status-label">BYPASS</span>
                                     </button>
                                 </div>
                                 <div class="mini-pedal modular-pedal" id="lead-pedal-3" data-instrument="lead" data-slot="3">
@@ -378,7 +404,12 @@
                                     </div>
                                     <div class="mini-pedal-body" id="lead-pedal-body-3"></div>
                                     <button class="mini-pedal-footswitch" id="lead-pedal-footswitch-3" onclick="togglePedalSlot('lead', 3)">
-                                        <span>ON/OFF</span>
+                                        <div class="stomp-switch-assembly">
+                                            <div class="stomp-nut-ring">
+                                                <div class="stomp-plunger"></div>
+                                            </div>
+                                        </div>
+                                        <span class="stomp-status-label">BYPASS</span>
                                     </button>
                                 </div>
                                 <div class="mini-pedal modular-pedal" id="lead-pedal-4" data-instrument="lead" data-slot="4">
@@ -388,7 +419,12 @@
                                     </div>
                                     <div class="mini-pedal-body" id="lead-pedal-body-4"></div>
                                     <button class="mini-pedal-footswitch" id="lead-pedal-footswitch-4" onclick="togglePedalSlot('lead', 4)">
-                                        <span>ON/OFF</span>
+                                        <div class="stomp-switch-assembly">
+                                            <div class="stomp-nut-ring">
+                                                <div class="stomp-plunger"></div>
+                                            </div>
+                                        </div>
+                                        <span class="stomp-status-label">BYPASS</span>
                                     </button>
                                 </div>
                             </div>
@@ -497,7 +533,12 @@
                                     </div>
                                     <div class="mini-pedal-body" id="bass-pedal-body-0"></div>
                                     <button class="mini-pedal-footswitch" id="bass-pedal-footswitch-0" onclick="togglePedalSlot('bass', 0)">
-                                        <span>ON/OFF</span>
+                                        <div class="stomp-switch-assembly">
+                                            <div class="stomp-nut-ring">
+                                                <div class="stomp-plunger"></div>
+                                            </div>
+                                        </div>
+                                        <span class="stomp-status-label">BYPASS</span>
                                     </button>
                                 </div>
                                 <div class="mini-pedal modular-pedal bass-theme" id="bass-pedal-1" data-instrument="bass" data-slot="1">
@@ -507,7 +548,12 @@
                                     </div>
                                     <div class="mini-pedal-body" id="bass-pedal-body-1"></div>
                                     <button class="mini-pedal-footswitch" id="bass-pedal-footswitch-1" onclick="togglePedalSlot('bass', 1)">
-                                        <span>ON/OFF</span>
+                                        <div class="stomp-switch-assembly">
+                                            <div class="stomp-nut-ring">
+                                                <div class="stomp-plunger"></div>
+                                            </div>
+                                        </div>
+                                        <span class="stomp-status-label">BYPASS</span>
                                     </button>
                                 </div>
                                 <div class="mini-pedal modular-pedal bass-theme" id="bass-pedal-2" data-instrument="bass" data-slot="2">
@@ -517,7 +563,12 @@
                                     </div>
                                     <div class="mini-pedal-body" id="bass-pedal-body-2"></div>
                                     <button class="mini-pedal-footswitch" id="bass-pedal-footswitch-2" onclick="togglePedalSlot('bass', 2)">
-                                        <span>ON/OFF</span>
+                                        <div class="stomp-switch-assembly">
+                                            <div class="stomp-nut-ring">
+                                                <div class="stomp-plunger"></div>
+                                            </div>
+                                        </div>
+                                        <span class="stomp-status-label">BYPASS</span>
                                     </button>
                                 </div>
                                 <div class="mini-pedal modular-pedal bass-theme" id="bass-pedal-3" data-instrument="bass" data-slot="3">
@@ -527,7 +578,12 @@
                                     </div>
                                     <div class="mini-pedal-body" id="bass-pedal-body-3"></div>
                                     <button class="mini-pedal-footswitch" id="bass-pedal-footswitch-3" onclick="togglePedalSlot('bass', 3)">
-                                        <span>ON/OFF</span>
+                                        <div class="stomp-switch-assembly">
+                                            <div class="stomp-nut-ring">
+                                                <div class="stomp-plunger"></div>
+                                            </div>
+                                        </div>
+                                        <span class="stomp-status-label">BYPASS</span>
                                     </button>
                                 </div>
                                 <div class="mini-pedal modular-pedal bass-theme" id="bass-pedal-4" data-instrument="bass" data-slot="4">
@@ -537,7 +593,12 @@
                                     </div>
                                     <div class="mini-pedal-body" id="bass-pedal-body-4"></div>
                                     <button class="mini-pedal-footswitch" id="bass-pedal-footswitch-4" onclick="togglePedalSlot('bass', 4)">
-                                        <span>ON/OFF</span>
+                                        <div class="stomp-switch-assembly">
+                                            <div class="stomp-nut-ring">
+                                                <div class="stomp-plunger"></div>
+                                            </div>
+                                        </div>
+                                        <span class="stomp-status-label">BYPASS</span>
                                     </button>
                                 </div>
                             </div>
@@ -658,7 +719,7 @@
         <div>ShallotWHAM Dual-Engine Synth Station &bull; Built for Performance by Shallot &bull; Click anywhere to enable Audio</div>
     </footer>
 
-    <script src="app.js?t=1788405500"></script>
+    <script src="app.js?t=1788407700"></script>
 </body>
 
 </html>

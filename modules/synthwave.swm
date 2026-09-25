@@ -1,108 +1,190 @@
 {
   "format": "ShallotWHAM-Module",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "id": "synthwave",
   "name": "SYNTHWAVE",
   "subtitle": "Classic 80s Analog Leads & Basslines",
-  "author": "Shallot & Antigravity IDE",
+  "author": "Shallot",
+  "category": "Synthwave",
   "description": "Warm retro synthwave sounds with dual detuned sawtooth leads, lush brass, G-Funk sines, and punchy 303/Moog basslines.",
   "themeGlow": "#00e5ff",
+  "tags": [
+    "synthwave",
+    "retrowave",
+    "80s",
+    "analog",
+    "outrun"
+  ],
   "leads": [
     {
       "name": "TRANCE SAW LEAD",
       "label": "TRANCE SAW",
       "osc1": "sawtooth",
       "osc2": "sawtooth",
-      "osc2Detune": 1.006,
+      "osc2Octave": 0,
+      "osc2Detune": 1.007,
+      "oscMix": 0.5,
       "filterType": "lowpass",
       "cutoff": 4200,
-      "reso": 2,
+      "reso": 2.2,
+      "filterEnv": {
+        "attack": 0.005,
+        "decay": 0.32,
+        "sustain": 0.4,
+        "amount": 2800
+      },
       "attack": 0.005,
-      "release": 0.35
+      "release": 0.35,
+      "volume": 0.85
     },
     {
       "name": "CHIPTUNE PULSE",
       "label": "CHIPTUNE",
       "osc1": "square",
       "osc2": "square",
-      "osc2Detune": 2,
+      "osc2Octave": 1,
+      "osc2Detune": 1.002,
+      "oscMix": 0.45,
       "filterType": "lowpass",
-      "cutoff": 8000,
-      "reso": 1,
+      "cutoff": 7500,
+      "reso": 1.2,
+      "filterEnv": {
+        "attack": 0.001,
+        "decay": 0.18,
+        "sustain": 0.6,
+        "amount": 3500
+      },
       "attack": 0.001,
-      "release": 0.15
+      "release": 0.18,
+      "volume": 0.78
     },
     {
       "name": "80s SYNTH BRASS",
       "label": "80s BRASS",
       "osc1": "sawtooth",
       "osc2": "sawtooth",
-      "osc2Detune": 0.992,
+      "osc2Octave": 0,
+      "osc2Detune": 0.993,
+      "oscMix": 0.5,
       "filterType": "lowpass",
-      "cutoff": 3200,
+      "cutoff": 3000,
       "reso": 3.5,
+      "filterEnv": {
+        "attack": 0.045,
+        "decay": 0.38,
+        "sustain": 0.45,
+        "amount": 2600
+      },
       "attack": 0.04,
-      "release": 0.45
+      "release": 0.45,
+      "vibrato": {
+        "rate": 5.6,
+        "depth": 5
+      },
+      "volume": 0.82
     },
     {
-      "name": "CYBERPUNK LEAD",
+      "name": "CYBERPUNK SAW",
       "label": "CYBERPUNK",
       "osc1": "sawtooth",
       "osc2": "square",
-      "osc2Detune": 1.01,
+      "osc2Octave": 0,
+      "osc2Detune": 1.012,
+      "oscMix": 0.6,
       "filterType": "lowpass",
-      "cutoff": 3800,
-      "reso": 4,
+      "cutoff": 3600,
+      "reso": 4.2,
+      "filterEnv": {
+        "attack": 0.008,
+        "decay": 0.28,
+        "sustain": 0.35,
+        "amount": 3200
+      },
       "attack": 0.01,
-      "release": 0.28
+      "release": 0.28,
+      "volume": 0.8
     },
     {
       "name": "G-FUNK SINE",
       "label": "G-FUNK",
       "osc1": "sine",
       "osc2": "sine",
-      "osc2Detune": 2.002,
+      "osc2Octave": 1,
+      "osc2Detune": 1.002,
+      "oscMix": 0.4,
       "filterType": "lowpass",
-      "cutoff": 6000,
+      "cutoff": 6200,
       "reso": 0.8,
       "attack": 0.02,
-      "release": 0.3
+      "release": 0.3,
+      "vibrato": {
+        "rate": 6,
+        "depth": 8
+      },
+      "volume": 0.92
     },
     {
       "name": "HYPER PLUCK",
       "label": "HYPER PLUCK",
       "osc1": "triangle",
       "osc2": "sine",
-      "osc2Detune": 3,
+      "osc2Octave": 1,
+      "osc2Detune": 1.005,
+      "oscMix": 0.5,
       "filterType": "lowpass",
-      "cutoff": 5500,
-      "reso": 2.5,
+      "cutoff": 4800,
+      "reso": 2.8,
+      "filterEnv": {
+        "attack": 0.002,
+        "decay": 0.15,
+        "sustain": 0.1,
+        "amount": 4200
+      },
       "attack": 0.002,
-      "release": 0.18
+      "release": 0.18,
+      "volume": 0.88
     },
     {
       "name": "VOCO VOICE",
       "label": "VOCO LEAD",
       "osc1": "sawtooth",
       "osc2": "sawtooth",
-      "osc2Detune": 1.003,
+      "osc2Octave": 0,
+      "osc2Detune": 1.004,
+      "oscMix": 0.5,
       "filterType": "bandpass",
       "cutoff": 2200,
-      "reso": 6,
-      "attack": 0.01,
-      "release": 0.25
+      "reso": 5.5,
+      "filterEnv": {
+        "attack": 0.015,
+        "decay": 0.3,
+        "sustain": 0.4,
+        "amount": 1500
+      },
+      "attack": 0.015,
+      "release": 0.25,
+      "volume": 0.8
     },
     {
       "name": "RAVE HOOVER",
       "label": "RAVE HOOVER",
       "osc1": "sawtooth",
       "osc2": "sawtooth",
-      "osc2Detune": 1.015,
+      "osc2Octave": 0,
+      "osc2Detune": 1.018,
+      "oscMix": 0.5,
       "filterType": "lowpass",
-      "cutoff": 4800,
-      "reso": 3,
-      "attack": 0.015,
-      "release": 0.4
+      "cutoff": 4000,
+      "reso": 3.8,
+      "filterEnv": {
+        "attack": 0.02,
+        "decay": 0.45,
+        "sustain": 0.5,
+        "amount": 2800
+      },
+      "attack": 0.02,
+      "release": 0.4,
+      "volume": 0.82
     }
   ],
   "basses": [
@@ -112,12 +194,13 @@
       "oscType": "sawtooth",
       "subType": "square",
       "subOctave": -1,
+      "subMix": 0.4,
       "cutoff": 1200,
-      "reso": 6,
-      "envMod": 2200,
-      "decay": 0.28,
-      "attack": 0.005,
-      "subMix": 0.4
+      "reso": 7.5,
+      "envMod": 2800,
+      "decay": 0.26,
+      "attack": 0.004,
+      "volume": 0.85
     },
     {
       "name": "DEEP SUB SINE",
@@ -125,12 +208,13 @@
       "oscType": "sine",
       "subType": "sine",
       "subOctave": -1,
-      "cutoff": 450,
-      "reso": 1,
-      "envMod": 400,
+      "subMix": 0.75,
+      "cutoff": 480,
+      "reso": 1.2,
+      "envMod": 450,
       "decay": 0.45,
       "attack": 0.01,
-      "subMix": 0.75
+      "volume": 0.95
     },
     {
       "name": "FAT REESE BASS",
@@ -138,13 +222,14 @@
       "oscType": "sawtooth",
       "subType": "sine",
       "subOctave": -1,
+      "subMix": 0.55,
       "detune": 1.018,
-      "cutoff": 1800,
+      "cutoff": 1600,
       "reso": 3.5,
-      "envMod": 1500,
+      "envMod": 1600,
       "decay": 0.5,
       "attack": 0.01,
-      "subMix": 0.5
+      "volume": 0.85
     },
     {
       "name": "FM PUNCH BASS",
@@ -152,12 +237,13 @@
       "oscType": "triangle",
       "subType": "square",
       "subOctave": -1,
-      "cutoff": 2400,
-      "reso": 4,
-      "envMod": 3200,
-      "decay": 0.22,
+      "subMix": 0.45,
+      "cutoff": 2200,
+      "reso": 4.5,
+      "envMod": 3000,
+      "decay": 0.2,
       "attack": 0.002,
-      "subMix": 0.45
+      "volume": 0.88
     },
     {
       "name": "SLAP SQUARE",
@@ -165,12 +251,13 @@
       "oscType": "square",
       "subType": "triangle",
       "subOctave": -1,
-      "cutoff": 2000,
-      "reso": 5,
-      "envMod": 2800,
-      "decay": 0.2,
+      "subMix": 0.4,
+      "cutoff": 1800,
+      "reso": 5.2,
+      "envMod": 2600,
+      "decay": 0.18,
       "attack": 0.003,
-      "subMix": 0.35
+      "volume": 0.82
     },
     {
       "name": "80s ANALOG BASS",
@@ -178,13 +265,14 @@
       "oscType": "sawtooth",
       "subType": "sawtooth",
       "subOctave": -1,
-      "detune": 1.006,
-      "cutoff": 1600,
-      "reso": 2.5,
+      "subMix": 0.5,
+      "detune": 1.008,
+      "cutoff": 1500,
+      "reso": 2.8,
       "envMod": 1800,
       "decay": 0.35,
       "attack": 0.008,
-      "subMix": 0.5
+      "volume": 0.86
     },
     {
       "name": "WARM MOOG BASS",
@@ -192,12 +280,13 @@
       "oscType": "sawtooth",
       "subType": "triangle",
       "subOctave": -1,
-      "cutoff": 900,
-      "reso": 3,
+      "subMix": 0.6,
+      "cutoff": 950,
+      "reso": 3.2,
       "envMod": 1200,
       "decay": 0.4,
       "attack": 0.01,
-      "subMix": 0.6
+      "volume": 0.88
     },
     {
       "name": "SUB DROPPER",
@@ -205,25 +294,26 @@
       "oscType": "sine",
       "subType": "sine",
       "subOctave": -1,
+      "subMix": 0.85,
       "pitchDrop": true,
       "cutoff": 600,
-      "reso": 1.5,
-      "envMod": 800,
-      "decay": 0.6,
+      "reso": 1.8,
+      "envMod": 900,
+      "decay": 0.65,
       "attack": 0.01,
-      "subMix": 0.85
+      "volume": 0.95
     }
   ],
   "pedalboard": {
     "lead": [
       {
         "slot": 0,
-        "cartridge": "ds1",
+        "cartridge": "french-preamp",
         "active": false,
         "params": {
-          "dist": 50,
-          "tone": 2500,
-          "level": 65
+          "drive": 30,
+          "warmth": 70,
+          "output": 70
         }
       },
       {
@@ -232,7 +322,7 @@
         "active": true,
         "params": {
           "mode": 3,
-          "width": 75,
+          "width": 80,
           "mix": 55
         }
       },
@@ -249,11 +339,12 @@
       },
       {
         "slot": 3,
-        "cartridge": "delay",
-        "active": false,
+        "cartridge": "space-echo",
+        "active": true,
         "params": {
           "time": 380,
-          "feedback": 40,
+          "intensity": 45,
+          "flutter": 35,
           "mix": 45
         }
       },
@@ -262,8 +353,8 @@
         "cartridge": "reverb",
         "active": false,
         "params": {
-          "mix": 55,
-          "decay": 2.5
+          "decay": 2.4,
+          "mix": 45
         }
       }
     ],
@@ -271,42 +362,41 @@
       {
         "slot": 0,
         "cartridge": "ds1",
-        "active": false,
+        "active": true,
         "params": {
-          "dist": 45,
-          "tone": 900,
+          "dist": 40,
+          "tone": 1100,
           "level": 70
         }
       },
       {
         "slot": 1,
-        "cartridge": "decimator",
+        "cartridge": "dimension-chorus",
         "active": false,
         "params": {
-          "bits": 8,
-          "rate": 35,
-          "mix": 50
+          "mode": 1,
+          "width": 50,
+          "mix": 35
         }
       },
       {
         "slot": 2,
-        "cartridge": "ps6",
-        "active": false,
+        "cartridge": "sidechain-pumper",
+        "active": true,
         "params": {
-          "key": "C",
-          "scale": "minor",
-          "interval": "oct-down",
-          "mix": 60
+          "depth": 70,
+          "rate": 4,
+          "release": 0.3
         }
       },
       {
         "slot": 3,
-        "cartridge": "delay",
+        "cartridge": "analog-delay",
         "active": false,
         "params": {
-          "time": 280,
-          "feedback": 30,
-          "mix": 35
+          "time": 240,
+          "feedback": 25,
+          "mix": 30
         }
       },
       {
@@ -314,8 +404,8 @@
         "cartridge": "reverb",
         "active": false,
         "params": {
-          "mix": 40,
-          "decay": 1.8
+          "decay": 1.5,
+          "mix": 30
         }
       }
     ]
